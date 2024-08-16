@@ -2,9 +2,11 @@ const userTypeDef=`#graphql
 
     type User {
         _id:ID!
-        username:String!
-        name:String!
+        email:String!
+        fullName:String!
         password:String!
+        gender:String!
+        salt:String
         profilePicture:String
     }
 
@@ -16,18 +18,20 @@ const userTypeDef=`#graphql
 
     type Mutation{
         signUp(input:SignUpInput!):User
-        login(input:LoginInput!):User
+        # signUp(email:String!,name:String!,password:String!,gender:String!):User
+        login(input:LogInInput!):User
         logout:LogoutResponse
     }
 
     input SignUpInput{
-        username:String!
-        name:String!
+        email:String!
+        fullName:String!
         password:String!
+        gender:String!
     }
 
-    input LoginInput{
-        username:String!
+    input LogInInput{
+        email:String!
         password:String!
     }
 

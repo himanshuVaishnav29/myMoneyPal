@@ -2,7 +2,7 @@
 const users = [
 	{
 		_id: "1",
-		username: "user1",
+		email: "user1@gmail.com",
 		name: "User One",
 		password: "password1",
 		profilePicture: "profile1.jpg",
@@ -10,7 +10,7 @@ const users = [
 	},
 	{
 		_id: "2",
-		username: "user2",
+		email: "user2@gmail.com",
 		name: "User Two",
 		password: "password2",
 		profilePicture: "profile2.jpg",
@@ -18,7 +18,7 @@ const users = [
 	},
 	{
 		_id: "3",
-		username: "user3",
+		email: "user3@gmail.com",
 		name: "User Three",
 		password: "password3",
 		profilePicture: "profile3.jpg",
@@ -26,7 +26,7 @@ const users = [
 	},
 	{
 		_id: "4",
-		username: "user4",
+		email: "user4@gmail.com",
 		name: "User Four",
 		password: "password4",
 		profilePicture: "profile4.jpg",
@@ -34,7 +34,7 @@ const users = [
 	},
 	{
 		_id: "5",
-		username: "user5",
+		email: "user5@gmail.com",
 		name: "User Five",
 		password: "password5",
 		profilePicture: "profile5.jpg",
