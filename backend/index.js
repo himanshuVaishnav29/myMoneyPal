@@ -16,9 +16,14 @@ const app=express();
 const PORT=(process.env.PORT)|| 8001;
 
 const corsOptions = {
-    origin: 'https://expense-tracker-app-xi-one.vercel.app',
-    credentials: true,
+  origin: ['https://expense-tracker-app-xi-one.vercel.app'], // Frontend Vercel URL
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true, 
 };
+
+// Apply CORS globally
+app.use(cors(corsOptions));
 
 app.use(cors(corsOptions));
 app.use(express.json()); 
@@ -46,7 +51,7 @@ const GQLServer=new ApolloServer({
     context: ({ req, res }) => ({
         req,
         res,
-        user: req.user, // Ensure user is passed to context
+        user: req.user, 
     }),
 });
 
