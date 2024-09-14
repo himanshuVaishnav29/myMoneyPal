@@ -12,12 +12,12 @@ const transactionSchema=new mongoose.Schema({
     },
     paymentType:{
         type:String,
-        enum:["UPI","Cash","Card"],
+        enum:["upi","cash","card"],
         required:true
     },
     category:{
         type:String,
-        enum:["Expense","Saving","Investment"],
+        enum:["expense","saving","investment"],
         required:true
     },
     amount:{

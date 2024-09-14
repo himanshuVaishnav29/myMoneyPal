@@ -16,16 +16,32 @@ const app=express();
 const PORT=(process.env.PORT)|| 8001;
 
 app.use(express.json()); 
-app.use(cors());
-app.use(cookieParser());
-app.use(checkForAuthenticationCookie());
+// app.use(cors());
+// app.use(cookieParser());
+// app.use(checkForAuthenticationCookie('token'));
  
+
+
+const buildContext = (req,res) => {
+    // const user = req.user;
+    return {
+        req,
+        res,
+        user:req.user
+    };
+};
+
 //graphQl server
 const GQLServer=new ApolloServer({
      
     typeDefs:mergedTypeDef, //schema's
     resolvers:mergedResolvers,
-    context: ({ req, res }) => ({ req, res })
+    // context: ({ req, res }) => buildContext(req,res)
+    context: ({ req, res }) => ({
+        req,
+        res,
+        user: req.user, // Ensure user is passed to context
+    }),
 });
 
 
@@ -45,9 +61,24 @@ const connectDb=async()=>{
 await connectDb();
 
 
-app.use('/graphql',expressMiddleware(GQLServer,{
-    context: ({ req, res }) => ({ req, res })
-}));
+app.use(
+    '/graphql',
+    cors({
+        origin:["http://localhost:3000", "http://127.0.0.1:3000"],
+        credentials:true
+    }),
+    cookieParser(),
+    express.json(),
+    checkForAuthenticationCookie('token'),
+    expressMiddleware(GQLServer,{
+        // context: ({ req, res }) =>buildContext(req,res),
+        context: ({ req, res }) => ({
+            req,
+            res,
+            user: req.user, // Ensure user is passed to context
+        }),
+    }
+));
 
 app.get('/',(req,res)=>{
     res.json({message:"Server running"});
@@ -58,5 +89,3 @@ app.listen(PORT,()=>{
 })
 
 
-
-// intializeServer();
