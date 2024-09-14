@@ -23,3 +23,12 @@ const client = new ApolloClient({
         </ApolloProvider>
 4) create a graphql folder inside src, and then mutations and queries folder inside it 
 
+
+
+##ALL DEPENDENCIES
+#backend
+npm install express express-session graphql @apollo/server @graphql-tools/merge bcryptjs connect-mongodb-session dotenv graphql-passport passport mongoose
+
+#frontend
+npm install graphql @apollo/client react-router-dom react-icons react-hot-toast tailwind-merge @tailwindcss/aspect-ratio clsx chart.js react-chartjs-2 mini-svg-data-uri framer-motion
+
