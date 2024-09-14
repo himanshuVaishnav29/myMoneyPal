@@ -19,9 +19,8 @@ const HomePage = () => {
 	const [logout,{loading,client}]=useMutation(LOGOUT,{
 		refetchQueries:["GetAuthenticatedUser"]
 	});
-	if(authUserData){
-		const {data, categoryStatsLoading}=useQuery(GET_STATS_BY_CATEGORY);
-	}
+	const {data, categoryStatsLoading}=useQuery(GET_STATS_BY_CATEGORY);
+	
 
 	console.log("statsByCategory",data) ;
 
