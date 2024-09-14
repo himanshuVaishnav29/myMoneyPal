@@ -5,9 +5,8 @@ import { GET_AUTHETICATED_USER } from "../graphql/queries/user.query";
 
 const Cards = () => {
 	const { data: authUser } = useQuery(GET_AUTHETICATED_USER);
-	if(authUser){r
-		const{data,loading,error}=useQuery(GET_TRANSACTIONS_BY_USER);
-	}
+	const{data,loading,error}=useQuery(GET_TRANSACTIONS_BY_USER);
+	
 	// if(error){
 	// 	return <p>Error:{error.message}</p>
 	// }
