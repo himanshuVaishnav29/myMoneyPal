@@ -15,6 +15,12 @@ dotenv.config();
 const app=express();
 const PORT=(process.env.PORT)|| 8001;
 
+const corsOptions = {
+    origin: 'https://expense-tracker-app-xi-one.vercel.app',
+    credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json()); 
 // app.use(cors());
 // app.use(cookieParser());
