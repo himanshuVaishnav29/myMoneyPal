@@ -69,11 +69,11 @@ await connectDb();
 
 app.use(
     '/graphql',
-    cors({
-        // origin:["http://localhost:3000", "http://127.0.0.1:3000"],
-        origin:["https://expense-tracker-app-xi-one.vercel.app/"],
-        credentials:true
-    }),
+    // cors({
+    //     // origin:["http://localhost:3000", "http://127.0.0.1:3000"],
+    //     origin:["https://expense-tracker-app-xi-one.vercel.app/"],
+    //     credentials:true
+    // }),
     cookieParser(),
     express.json(),
     checkForAuthenticationCookie('token'),
