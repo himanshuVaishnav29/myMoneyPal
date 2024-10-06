@@ -21,7 +21,7 @@ const PORT=(process.env.PORT)|| 8001;
 app.use(express.json()); 
 // app.use(cors("*"));
 const corsOptions = {
-    origin: ["http://127.0.0.1:5173","http://localhost:3000", "http://127.0.0.1:3000"],
+    origin: ["https://my-money-pal-app.vercel.app/"],
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true, 
@@ -76,7 +76,8 @@ await connectDb();
 app.use(
     '/graphql',
     cors({
-        origin:["http://127.0.0.1:5173/","http://localhost:3000", "http://127.0.0.1:3000"],
+        // origin:["http://127.0.0.1:5173/","http://localhost:3000", "http://127.0.0.1:3000"],
+        origin: ["https://my-money-pal-app.vercel.app/"],
         credentials:true
     }),
     cookieParser(),
