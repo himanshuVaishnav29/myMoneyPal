@@ -321,7 +321,6 @@ import { LuBox, LuUser, LuHistory, LuMessageSquare, LuCalendar, LuLogOut } from 
 import { FaSuitcase,FaTimes } from 'react-icons/fa';
 import { GrAnalytics } from "react-icons/gr";
 import { Link, useLocation } from 'react-router-dom';
-import moneyPalLogo from '../assets/moneyPalLogo3.jpg';
 import { useMutation } from "@apollo/client";
 import { LOGOUT } from "../graphql/mutations/user.mutations";
 import { toast } from 'react-hot-toast'; // Don't forget to import toast
