@@ -1,5 +1,4 @@
 {
-<<<<<<< Updated upstream
   "version": 2,
   "builds": [
     {
@@ -25,31 +24,3 @@
     }
   ]
 }
-
-=======
-    "version": 2,
-    "builds": [
-      {
-        "src": "index.js",
-        "use": "@vercel/node"
-      }
-    ],
-    "routes": [
-      
-      {
-          "src": "/(.*)",
-          "dest": "/"
-      },
-      {
-        "src": "/graphql",
-        "methods": ["GET", "POST", "OPTIONS"],
-        "headers": {
-          "Access-Control-Allow-Origin": "https://expense-tracker-app-xi-one.vercel.app",
-          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type, Authorization",
-          "Access-Control-Allow-Credentials": "true"
-        }
-      }
-    ]
-  }
->>>>>>> Stashed changes
