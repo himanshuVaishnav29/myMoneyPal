@@ -8,7 +8,7 @@ import { BrowserRouter } from "react-router-dom";
 
 const client = new ApolloClient({
   // uri: 'http://localhost:4000/graphql',
-  uri:'https://expense-tracker-app-api-omega.vercel.app/graphql',
+  uri:'https://api-my-money-pal.vercel.app/graphql',
   cache: new InMemoryCache(), 
   credentials:"include" //helps in sending cookies with every req
 });
