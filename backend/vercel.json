@@ -10,7 +10,7 @@
     
     {
         "src": "/(.*)",
-        "dest": "/index.html" 
+        "dest": "../newFrontend/index.html" 
     },
     {
       "src": "/graphql",
