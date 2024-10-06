@@ -20,15 +20,15 @@ const PORT=(process.env.PORT)|| 8001;
 
 app.use(express.json()); 
 // app.use(cors("*"));
-const corsOptions = {
-    origin: ["https://my-money-pal-app.vercel.app/"],
-    methods: ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true, 
-  };
+// const corsOptions = {
+//     origin: ["https://my-money-pal-app.vercel.app/"],
+//     methods: ['GET', 'POST', 'OPTIONS'],
+//     allowedHeaders: ['Content-Type', 'Authorization'],
+//     credentials: true, 
+//   };
   
   // Apply CORS globally
-  app.use(cors(corsOptions));
+  // app.use(cors(corsOptions));
 // app.use(cookieParser());
 // app.use(checkForAuthenticationCookie('token'));
  
