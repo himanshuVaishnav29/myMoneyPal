@@ -15,19 +15,20 @@ dotenv.config();
 const app=express();
 const PORT=(process.env.PORT)|| 8001;
 
-const corsOptions = {
-  origin: ['https://expense-tracker-app-xi-one.vercel.app'], // Frontend Vercel URL
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true, 
-};
 
-// Apply CORS globally
-app.use(cors(corsOptions));
 
-app.use(cors(corsOptions));
+
 app.use(express.json()); 
-// app.use(cors());
+// app.use(cors("*"));
+const corsOptions = {
+    origin: ["http://127.0.0.1:5173","http://localhost:3000", "http://127.0.0.1:3000"],
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true, 
+  };
+  
+  // Apply CORS globally
+  app.use(cors(corsOptions));
 // app.use(cookieParser());
 // app.use(checkForAuthenticationCookie('token'));
  
@@ -74,11 +75,10 @@ await connectDb();
 
 app.use(
     '/graphql',
-    // cors({
-    //     // origin:["http://localhost:3000", "http://127.0.0.1:3000"],
-    //     origin:["https://expense-tracker-app-xi-one.vercel.app/"],
-    //     credentials:true
-    // }),
+    cors({
+        origin:["http://127.0.0.1:5173/","http://localhost:3000", "http://127.0.0.1:3000"],
+        credentials:true
+    }),
     cookieParser(),
     express.json(),
     checkForAuthenticationCookie('token'),

@@ -1,5 +1,14 @@
-//resolvers
 
+
+```bash
+
+#backend
+npm install express  graphql @apollo/server @graphql-tools/merge bcryptjs dotenv passport mongoose
+
+#frontend
+npm install graphql @apollo/client react-router-dom react-icons react-hot-toast tailwind-merge @tailwindcss/aspect-ratio clsx chart.js react-chartjs-2 mini-svg-data-uri framer-motion
+
+```
 
 
 

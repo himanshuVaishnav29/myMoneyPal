@@ -1,4 +1,3 @@
-import { users } from "../testData/testData.js";
 import USER from '../models/userSchema.js'; 
 import {createToken} from '../services/authentication.js';
 import {createHmac } from "crypto";
@@ -11,6 +10,8 @@ const userResolver={
                 // console.log("now",req.user);
                 // user=req.user;
                 console.log(user);
+                
+                // await new Promise(resolve => setTimeout(resolve, 10000));    
                 return user;
             }catch(err){
                 console.log("Error in authUser",err);
