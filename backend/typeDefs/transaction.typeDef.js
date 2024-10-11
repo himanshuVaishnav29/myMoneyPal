@@ -85,6 +85,7 @@ const transactionTypeDef=`#graphql
         amount:Float!
         location:String
         date:String!
+        tag:String!
     }
 `;
 
