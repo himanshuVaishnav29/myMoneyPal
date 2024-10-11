@@ -15,7 +15,7 @@ export const CreateTransactionModal = ({ isOpen, toggleModal }) => {
             &#10005;
           </button>
         </div>
-        <TransactionForm /> 
+        <TransactionForm toggleModal={toggleModal}/> 
       </div>
     </div>
   );

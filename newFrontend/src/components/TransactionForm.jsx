@@ -1,10 +1,10 @@
 import { useMutation } from "@apollo/client";
 import { CREATE_TRANSACTION } from "../graphql/mutations/transaction.mutation";
 import toast from 'react-hot-toast';
-import { GET_CURRENT_MONTH_STATS_BY_CATEGORY, GET_CURRENT_MONTH_STATS_BY_PAYMENT_TYPE, GET_CURRENT_WEEK_STATS_BY_CATEGORY, GET_CURRENT_WEEK_STATS_BY_PAYMENT_TYPE, GET_STATS_BY_CATEGORY, GET_STATS_BY_PAYMENT_TYPE, GET_TRANSACTIONS_BY_USER } from "../graphql/queries/transaction.query";
+import { GET_CURRENT_MONTH_STATS_BY_CATEGORY, GET_CURRENT_MONTH_STATS_BY_PAYMENT_TYPE, GET_CURRENT_MONTH_STATS_BY_TAG, GET_CURRENT_WEEK_STATS_BY_CATEGORY, GET_CURRENT_WEEK_STATS_BY_PAYMENT_TYPE, GET_CURRENT_WEEK_STATS_BY_TAG, GET_STATS_BY_CATEGORY, GET_STATS_BY_PAYMENT_TYPE, GET_STATS_BY_TAG, GET_TRANSACTIONS_BY_USER } from "../graphql/queries/transaction.query";
 import {FaRupeeSign} from "react-icons/fa";
 
-const TransactionForm = () => {
+const TransactionForm = ({toggleModal}) => {
 
 	const[createTransaction,{loading,error}]=useMutation(CREATE_TRANSACTION,{
 		refetchQueries: [
@@ -15,10 +15,23 @@ const TransactionForm = () => {
 			{query:GET_STATS_BY_PAYMENT_TYPE},
 			{query:GET_CURRENT_WEEK_STATS_BY_PAYMENT_TYPE},
 			{query:GET_CURRENT_MONTH_STATS_BY_PAYMENT_TYPE},
-
+			{query:GET_STATS_BY_TAG},
+			{query:GET_CURRENT_MONTH_STATS_BY_TAG},
+			{query:GET_CURRENT_WEEK_STATS_BY_TAG},
 		]		
 	});
-
+	const tagArray=[
+		"Food & Dining",
+		"Entertainment & Leisure",
+		"Utilities & Bills",
+		"Transportation & Fuel",
+		"Groceries & Household",
+		"Repairs & Maintenance",
+		"Healthcare & Medical",
+		"Travel & Vacation",
+		"Shopping & Personal Care",
+		"Others"
+	];
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -32,6 +45,7 @@ const TransactionForm = () => {
 			amount: parseFloat(formData.get("amount")),
 			location: formData.get("location"),
 			date: formData.get("date"),
+			tag:formData.get("tag")
 		};
 		// if(!description || !paymentType || !category || !amount || !date){
 		// 	toast.error("Please fill out necessary fields for creating transaction");
@@ -45,6 +59,7 @@ const TransactionForm = () => {
 			})
 			form.reset();
 			toast.success("Transaction added successfully");
+			toggleModal();
 		} catch (error) {
 			console.log("Error in handleSubmit transaction");
 			toast.error(error.message);
@@ -56,8 +71,55 @@ const TransactionForm = () => {
 	return (
 		<form className='w-full max-w-lg flex flex-col gap-5 px-3' onSubmit={handleSubmit}>
 			{/* TRANSACTION */}
-			<div className='flex flex-wrap form-Background'>
-				<div className='w-full'>
+			<div className='flex flex-wrap'>
+
+			<div className='w-1/2 pr-5'>
+					<label
+						className='block uppercase tracking-wide  text-xs font-bold mb-2'
+						htmlFor='tag'
+					>
+						Tag
+					</label>
+					<div className='relative'>
+						<select
+							className=' block appearance-none w-full bg-transparent border border-gray-200  py-3 px-4 pr-8 rounded leading-tight focus:outline-none  focus:border-gray-500 overflow-y-auto'
+							id='tag'
+							name='tag'
+							defaultValue=""
+							required
+						>
+							<option value="" disabled className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Tag</option>
+							<option value={"Food & Dining"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Food & Dining</option>
+							<option value={"Entertainment & Leisure"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer" >Entertainment & Leisure</option>
+							<option value={"Utilities & Bills"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Utilities & Bills</option>
+							<option value={"Transportation & Fuel"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Transportation & Fuel</option>
+							<option value={"Groceries & Household"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Utilities & Bills</option>
+							<option value={"Repairs & Maintenance"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Repairs & Maintenance</option>
+							<option value={"Healthcare & Medical"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Healthcare & Medical</option>
+							<option value={"Travel & Vacation"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Travel & Vacation</option>
+							<option value={"Shopping & Personal Care"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Shopping & Personal Care</option>
+							<option value={"Others"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Others</option>
+							{/* {
+								tagArray.map((opt, index) => (
+								<option key={index} value={opt} className="bg-gray-800 text-white hover:bg-gray-700 cursor-pointer">
+									{opt}
+								</option>
+							))} */}
+
+						</select>
+						<div className='pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white'>
+							<svg
+								className='fill-current h-4 w-4 text-white'
+								xmlns='http://www.w3.org/2000/svg'
+								viewBox='0 0 20 20'
+							>
+								<path d='M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z' />
+							</svg>
+						</div>
+					</div>
+				</div>
+
+				<div className='w-1/2'>
 					<label
 						className='block uppercase tracking-wide  text-xs font-bold mb-2'
 						htmlFor='description'
@@ -70,9 +132,11 @@ const TransactionForm = () => {
 						name='description'
 						type='text'
 						required
-						placeholder='Rent, Groceries, Salary, etc.'
+						placeholder='Fuel'
 					/>
 				</div>
+
+				
 			</div>
 			{/* PAYMENT TYPE */}
 			<div className='flex flex-wrap gap-3'>

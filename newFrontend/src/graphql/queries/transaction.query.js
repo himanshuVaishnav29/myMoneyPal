@@ -11,6 +11,7 @@ export const GET_TRANSACTIONS_BY_USER=gql`
             amount
             location
             date
+            tag
         }
     }
 `;
@@ -25,6 +26,7 @@ export const GET_TRANSACTION=gql`
             amount
             location
             date
+            tag
         }
     }
 `;
@@ -79,6 +81,35 @@ export const GET_CURRENT_MONTH_STATS_BY_PAYMENT_TYPE=gql`
     query GetCurrentMonthStatsByPaymentType{
         getCurrentMonthStatsByPaymentType{
             paymentType
+            totalAmount
+        }
+    }
+`;
+
+
+export const GET_STATS_BY_TAG=gql`
+    query GetStatsByTag{
+        getStatsByTag{
+            tag
+            totalAmount
+        }
+    }
+`;
+
+
+export const GET_CURRENT_WEEK_STATS_BY_TAG=gql`
+    query GetCurrentWeekStatsByTag{
+        getCurrentWeekStatsByTag{
+            tag
+            totalAmount
+        }
+    }
+`;
+
+export const GET_CURRENT_MONTH_STATS_BY_TAG=gql`
+    query GetCurrentMonthStatsByTag{
+        getCurrentMonthStatsByTag{
+            tag
             totalAmount
         }
     }

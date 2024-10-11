@@ -9,6 +9,7 @@ const transactionTypeDef=`#graphql
         amount:Float!
         location:String!
         date:String!
+        tag:String!
     }
 
     type Query{
@@ -23,6 +24,11 @@ const transactionTypeDef=`#graphql
         getStatsByPaymentType:[paymentTypeStatistics!]
         getCurrentWeekStatsByPaymentType:[paymentTypeStatistics!]
         getCurrentMonthStatsByPaymentType:[paymentTypeStatistics!]
+
+        getStatsByTag:[tagStatistics!]
+        getCurrentWeekStatsByTag:[tagStatistics!]
+        getCurrentMonthStatsByTag:[tagStatistics!]
+
     }
     type CategoryStatistics {
         category: String!
@@ -30,6 +36,10 @@ const transactionTypeDef=`#graphql
     }
     type paymentTypeStatistics{
         paymentType:String!
+        totalAmount:Float!
+    }
+    type tagStatistics{
+        tag:String!
         totalAmount:Float!
     }
     type Mutation{
@@ -47,6 +57,7 @@ const transactionTypeDef=`#graphql
         amount:Float!
         location:String
         date:String!
+        tag:String!
     }
 
     input UpdateTransactionInput{
@@ -57,12 +68,14 @@ const transactionTypeDef=`#graphql
         amount:Float
         location:String
         date:String
+        tag:String
     }
     input UserFilterRequestInput{
         startDate:String
         endDate:String
         paymentType:String
         category:String
+        tag:String
     }
     input excelFileDownloadInput{
         _id:ID!

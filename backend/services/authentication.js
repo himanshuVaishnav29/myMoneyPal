@@ -13,7 +13,7 @@ export function createToken(user){
         profilePicture:user.profilePicture
     }
 
-    const token=jwt.sign(payload,secret);
+    const token=jwt.sign(payload,secret,{ expiresIn: '24h' });
     return token;
 }
 

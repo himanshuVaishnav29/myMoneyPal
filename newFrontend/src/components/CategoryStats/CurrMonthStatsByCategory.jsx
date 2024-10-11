@@ -1,10 +1,9 @@
 import React from 'react'
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { useMutation, useQuery } from "@apollo/client";
-import { GET_CURRENT_MONTH_STATS_BY_CATEGORY} from "../graphql/queries/transaction.query";
-import { GET_AUTHETICATED_USER } from "../graphql/queries/user.query";
+import {  useQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
+import { GET_CURRENT_MONTH_STATS_BY_CATEGORY } from '../../graphql/queries/transaction.query';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -12,6 +11,9 @@ const CurrMonthStatsByCategory = () => {
 
   const { data, categoryStatsLoading } = useQuery(GET_CURRENT_MONTH_STATS_BY_CATEGORY);
 
+  if(categoryStatsLoading){
+    return <h1>Loading....</h1>
+  }
     const [chartData, setChartData] = useState({
         labels: [],
         datasets: [
@@ -63,6 +65,24 @@ const CurrMonthStatsByCategory = () => {
           }));
         }
       }, [data]);
+      const options = {
+        plugins: {
+          legend: {
+            labels: {
+              color: 'white', 
+            },
+          },
+          tooltip: {
+            titleColor: 'white', 
+            bodyColor: 'white', 
+          },
+        },
+        elements: {
+          arc: {
+            borderWidth: 0,
+          },
+        },
+      };
 
   return (
     <div className='flex flex-col justify-center items-center gap-6 h-full '>
@@ -77,7 +97,7 @@ const CurrMonthStatsByCategory = () => {
         {
 
           (data?.getCurrentMonthStatsByCategory.length>0)?
-          <Doughnut data={chartData} className='p-5'/>
+          <Doughnut data={chartData} className='p-5' options={options}/>
           :
           
           <span className='font-semibold m-5'>

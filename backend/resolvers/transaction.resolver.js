@@ -15,9 +15,9 @@ const transactionResolver={
                 }
                 // const userId=await context.getUser()._id;
                 const userId=user._id;
-                console.log("userId",userId);
+                // console.log("userId",userId);
                 const transactions=await TRANSACTION.find({userId:userId});
-                console.log("getTxnsfun");
+                // console.log("getTxnsfun");
                 // const transactions=await TRANSACTION.find({userId:req.user._id});
 
                 return transactions;
@@ -67,7 +67,6 @@ const transactionResolver={
                 throw new Error(error.message," ",error);
             }
         },
-
         getCurrentWeekStatsByCategory:async (_, __, { req, res, user }) => {
             try {
               if (!user) {
@@ -119,7 +118,6 @@ const transactionResolver={
               throw new Error(error.message);
             }
         },
-
         getCurrentMonthStatsByCategory : async (_, __, { req, res, user }) => {
             try {
               if (!user) {
@@ -193,8 +191,7 @@ const transactionResolver={
               console.log("Error in getStatsByPaymentType", error);
               throw new Error(error.message);
             }
-        },
-          
+        }, 
         getCurrentWeekStatsByPaymentType:async(_,__,{req,res,user})=>{
             try {
                 if (!user) {
@@ -241,7 +238,6 @@ const transactionResolver={
                 throw new Error(error.message);
             }
         },
-
         getCurrentMonthStatsByPaymentType:async(_,__,{req,res,user})=>{
              try {
                 if (!user) {
@@ -285,6 +281,119 @@ const transactionResolver={
             }
         },
 
+        getStatsByTag:async(_,__,{req,res,user})=>{
+          try {
+            if(!user){
+              throw new Error("Unauthorized");
+            }
+            const userId = user._id;
+            const transactions = await TRANSACTION.find({ userId });
+            const tagsMap = {};
+        
+            transactions.forEach((txn) => {
+              if (!tagsMap[txn.tag]) {
+                tagsMap[txn.tag] = 0;
+              }
+              tagsMap[txn.tag] += txn.amount;
+            });
+            return Object.entries(tagsMap).map(([tag, totalAmount]) => ({
+              tag,
+              totalAmount,
+            }));
+          } catch (error) {
+            console.log("Error in getStatsByTag", error);
+            throw new Error(error.message);
+          }
+        },
+        getCurrentWeekStatsByTag:async(_,__,{req,res,user})=>{
+          try {
+              if (!user) {
+                throw new Error("Unauthorized");
+              }
+          
+              const userId = user._id;
+          
+              const now = new Date();
+              const dayOfWeek = now.getDay(); 
+          
+             
+              const startOfWeek = new Date(now);
+              startOfWeek.setHours(0, 0, 0, 0); 
+              startOfWeek.setDate(now.getDate() - dayOfWeek);
+          
+              const endOfWeek = new Date(startOfWeek);
+              endOfWeek.setDate(startOfWeek.getDate() + 6);
+              endOfWeek.setHours(23, 59, 59, 999); 
+          
+              const transactions = await TRANSACTION.find({
+                userId,
+                $or: [
+                  { date: { $gte: startOfWeek, $lte: endOfWeek } }
+                ],
+              });
+          
+              const tagMap = {};
+          
+              transactions.forEach((txn) => {
+                if (!tagMap[txn.tag]) {
+                  tagMap[txn.tag] = 0;
+                }
+                tagMap[txn.tag] += txn.amount;
+              });
+          
+              return Object.entries(tagMap).map(([tag, totalAmount]) => ({
+                tag,
+                totalAmount,
+              }));
+          
+          } catch (error) {
+              console.log("Error in getCurrentWeekStatsByTag", error);
+              throw new Error(error.message);
+          }
+        },
+        getCurrentMonthStatsByTag:async(_,__,{req,res,user})=>{
+          try {
+             if (!user) {
+                 throw new Error("Unauthorized");
+             }
+
+             const userId = user._id;
+
+             const now = new Date();
+
+             const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+             startOfMonth.setHours(0, 0, 0, 0);
+         
+             const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+             endOfMonth.setHours(23, 59, 59, 999); 
+
+             const transactions = await TRANSACTION.find({
+             userId,
+             $or: [
+                 { date: { $gte: startOfMonth, $lte: endOfMonth } }
+             ],
+             });
+
+             const tagMap = {};
+
+             transactions.forEach((txn) => {
+             if (!tagMap[txn.tag]) {
+                tagMap[txn.tag] = 0;
+             }
+             tagMap[txn.tag] += txn.amount;
+             });
+
+             return Object.entries(tagMap).map(([tag, totalAmount]) => ({
+                 tag,
+                 totalAmount,
+             }));
+
+          } catch (error) {
+              console.log("Error in getCurrentMonthStatsByTag", error);
+              throw new Error(error.message);
+          }
+        },
+
     },
     Mutation:{
         createTransaction:async(_,{input},{req,res})=>{
@@ -292,9 +401,9 @@ const transactionResolver={
                 // if(!req.user){
                 //     throw new Error("Unauthenticated");
                 // }
-                console.log("curr",req.user);
-                const {description,paymentType,category,amount,location,date}=input;
-                if(!description || !paymentType || !category || !amount || !date){
+                // console.log("curr",req.user);
+                const {description,paymentType,category,amount,location,date,tag}=input;
+                if(!description || !paymentType || !category || !amount || !date || !tag){
                     throw new Error("Please provide all the fields");
                 }
                 // console.log(req.user._id);
@@ -305,8 +414,10 @@ const transactionResolver={
                     category:category,
                     amount:amount,
                     location:location,
-                    date:date,
+                    date:date, 
+                    tag:tag
                 });
+                console.log(transaction,"createdtxn");
                 return transaction;
             } catch (error) {
                 console.log("Error in createTransaction",error);
@@ -315,8 +426,8 @@ const transactionResolver={
         },
         updateTransaction:async(_,{input},context)=>{
             try {
-                const {transactionId,description,paymentType,category,amount,location,date}=input;
-                if(!description || !paymentType || !category || !amount || !date){
+                const {transactionId,description,paymentType,category,amount,location,date ,tag}=input;
+                if(!description || !paymentType || !category || !amount || !date || !tag){
                     throw new Error("Please provide all the fields");
                 }
                 const updatedTransaction=await TRANSACTION.findByIdAndUpdate(transactionId,{
@@ -326,6 +437,7 @@ const transactionResolver={
                     amount:amount,
                     location:location,
                     date:date,
+                    tag:tag,
                 },{new:true});
                 return updatedTransaction;
             } catch (error) {
@@ -346,7 +458,7 @@ const transactionResolver={
             }
         },
         userFilterRequest:async(_,{input},{req,res})=>{
-          const { startDate, endDate, paymentType, category } = input;
+          const { startDate, endDate, paymentType, category ,tag} = input;
 
           const filterCriteria = {
             userId: req.user._id,
@@ -366,7 +478,9 @@ const transactionResolver={
           if (category) {
             filterCriteria.category = category;
           }
-        
+          if (tag) {
+            filterCriteria.tag = tag;
+          }
           try {
             const transactions = await TRANSACTION.find(filterCriteria);
             return transactions || [];
@@ -388,6 +502,7 @@ const transactionResolver={
               { label: 'Payment Type', value: 'paymentType' },
               { label: 'Category', value: 'category' },
               { label: 'Amount (INR)', value: 'amount' },
+              {label: 'Tag', value: 'tag'},
               { label: 'Location', value: 'location' },
               { label: 'Date', value: 'date' }
             ];

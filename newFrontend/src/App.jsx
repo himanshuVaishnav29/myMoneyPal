@@ -1,7 +1,7 @@
 
 import Layout from './components/Layout';
-import LoadingSkeleton from './components/LoadingSkeleton';
 import Home from './pages/Home';
+import LoadingSkeleton from './components/Skeletons/LoadingSkeleton';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import History from './pages/History'

@@ -366,6 +366,7 @@ const Statement = () => {
   //   }
   // };
 
+  //removing typename, modifying date and other fields for csv
   function cleanInput(transactions) {
 
     return transactions.map(transaction => {

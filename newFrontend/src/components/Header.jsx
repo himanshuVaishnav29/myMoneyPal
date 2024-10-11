@@ -103,6 +103,7 @@ import React, { useState } from 'react';
 import { GoBell} from 'react-icons/go';
 import { CreateTransactionModal } from './CreateTransactionModal'; 
 import { FaBars } from "react-icons/fa6";
+import { formatName } from '../helpers/helperFunctions';
 const Header = ({ loggedInUser,toggleSidebar }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -119,7 +120,7 @@ const Header = ({ loggedInUser,toggleSidebar }) => {
         </button>
       <div>
         <h1 className='hidden md:block md:text-xs'>Welcome Back!</h1>
-        <p className=' hidden md:block text-xl md:font-semibold'>{loggedInUser?.fullName}</p>
+        <p className=' hidden md:block text-xl md:font-semibold'>{formatName(loggedInUser?.fullName)}</p>
       </div>
 
       <div className='flex items-center space-x-5'>
@@ -150,11 +151,11 @@ const Header = ({ loggedInUser,toggleSidebar }) => {
             src={loggedInUser?.profilePicture}
             alt='profilePicture'
             className='w-8 h-8 rounded-full border-2 border-indigo-400 '
+            loading='lazy'
           />
         </div>
       </div>
 
-      
       {isModalOpen && <CreateTransactionModal isOpen={isModalOpen} toggleModal={toggleModal} />}
     </div>
   );

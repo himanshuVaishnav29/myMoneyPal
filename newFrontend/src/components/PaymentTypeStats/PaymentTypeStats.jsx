@@ -2,13 +2,14 @@ import React from 'react';
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { useQuery } from "@apollo/client";
-import { GET_CURRENT_MONTH_STATS_BY_PAYMENT_TYPE } from "../graphql/queries/transaction.query";
+
 import { useEffect, useState } from "react";
+import { GET_STATS_BY_PAYMENT_TYPE } from '../../graphql/queries/transaction.query';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const CurrMonthStatsByPaymentType = () => {
-  const { data, paymentTypeStatsLoading } = useQuery(GET_CURRENT_MONTH_STATS_BY_PAYMENT_TYPE);
+const PaymentTypeStats = () => {
+  const { data, paymentTypeStatsLoading } = useQuery(GET_STATS_BY_PAYMENT_TYPE);
   // console.log(data, "GET_CURRENT_WEEK_STATS_BY_PAYMENT_TYPE");
 
   const [chartData, setChartData] = useState({
@@ -27,11 +28,11 @@ const CurrMonthStatsByPaymentType = () => {
   });
 
   useEffect(() => {
-    if (data?.getCurrentMonthStatsByPaymentType) {
-      const paymentTypes = data.getCurrentMonthStatsByPaymentType.map((stat) =>
+    if (data?.getStatsByPaymentType) {
+      const paymentTypes = data.getStatsByPaymentType.map((stat) =>
         stat.paymentType.charAt(0).toUpperCase() + stat.paymentType.slice(1)
       );
-      const totalAmounts = data.getCurrentMonthStatsByPaymentType.map((stat) => stat.totalAmount);
+      const totalAmounts = data.getStatsByPaymentType.map((stat) => stat.totalAmount);
 
       const backgroundColors = [];
       const borderColors = [];
@@ -62,28 +63,45 @@ const CurrMonthStatsByPaymentType = () => {
       }));
     }
   }, [data]);
+  const options = {
+    plugins: {
+      legend: {
+        labels: {
+          color: 'white', 
+        },
+      },
+      tooltip: {
+        titleColor: 'white', 
+        bodyColor: 'white', 
+      },
+    },
+    elements: {
+      arc: {
+        borderWidth: 0,
+      },
+    },
+  };
 
   return (
-    <div className='flex flex-col justify-center items-center gap-6 h-full '>
-     
+    <div className='flex flex-col justify-center items-center gap-6 h-full text-white'>
+      
 
       {
-        (data?.getCurrentMonthStatsByPaymentType.length)? 
+        (data?.getStatsByPaymentType.length)? 
         <span className='font-semibold mt-5 text-indigo-500'>
-        This month Stats by Payment Type
-      </span>:""
+          All time Stats by Payment Type
+        </span>:""
       }
       {
-        data?.getCurrentMonthStatsByPaymentType && data.getCurrentMonthStatsByPaymentType.length > 0  
-        ? 
-        <Pie data={chartData} className='p-5' />
-         : 
-         <span className='font-semibold m-5'>
-          <h1>No transactions this month &#128566;</h1>
+      (data?.getStatsByPaymentType.length>0) ? 
+        <Pie data={chartData} className='p-5'options={options} />
+       : (
+        <span className='font-semibold m-5'>
+          <h1>No data found  &#128566;</h1>
         </span>
-      }
+      )}
     </div>
   );
 };
 
-export default CurrMonthStatsByPaymentType;
+export default PaymentTypeStats;

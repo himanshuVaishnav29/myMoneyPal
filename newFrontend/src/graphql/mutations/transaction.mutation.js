@@ -10,6 +10,7 @@ export const CREATE_TRANSACTION=gql`
             amount
             location
             date
+			tag
         }
     }
 `;
@@ -25,6 +26,7 @@ export const UPDATE_TRANSACTION = gql`
 			amount
 			location
 			date
+			tag
 		}
 	}
 `;
@@ -39,6 +41,7 @@ export const DELETE_TRANSACTION=gql`
 			amount
 			location
 			date
+			tag
         }
     }
 `;
@@ -53,6 +56,7 @@ export const USER_FILTER_REQUEST=gql`
 			amount
 			location
 			date
+			tag
 		}
 	}
 `;

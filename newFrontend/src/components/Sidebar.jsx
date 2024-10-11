@@ -355,7 +355,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     const SIDEBAR_LINKS = [
         { id: 1, path: "/", name: "Dashboard", icon: LuBox },
         { id: 2, path: "/analytics", name: "Analytics", icon: GrAnalytics },
-        { id: 3, path: "/history", name: "History", icon: LuHistory },
+        { id: 3, path: "/history", name: "Transactions", icon: LuHistory },
         { id: 4, path: "/statement", name: "Statement", icon: FaSuitcase },
         // { id: 5, path: "/clients", name: "Clients", icon: LuUser },
         // { id: 6, path: "/work", name: "Work Plan", icon: LuCalendar },
@@ -390,9 +390,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                     alt='My moneyPal'
                     className='w-40  h-13 hidden md:flex'
                 /> */}
-                <a className='w-40  h-13 hidden md:flex'>
+                <a className='w-40 cursor:pointer h-13 hidden md:flex' href='/'>
                     <FcMoneyTransfer className='text-2xl' />
-                    <span className='font-bold text-pink-500'>My MoneyPal</span>
+                    <span className='ml-2 font-bold text-pink-500'>My MoneyPal</span>
                 </a>
                 <img
                     src='https://img.freepik.com/premium-vector/savings-icon-logo-vector-design-template_827767-3198.jpg'

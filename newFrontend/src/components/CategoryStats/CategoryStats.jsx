@@ -2,9 +2,9 @@ import React from 'react'
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { useMutation, useQuery } from "@apollo/client";
-import { GET_STATS_BY_CATEGORY } from "../graphql/queries/transaction.query";
-import { GET_AUTHETICATED_USER } from "../graphql/queries/user.query";
+
 import { useEffect, useState } from "react";
+import { GET_STATS_BY_CATEGORY } from '../../graphql/queries/transaction.query';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const CategoryStats = () => {
@@ -14,11 +14,16 @@ const CategoryStats = () => {
     // });
     const { data, categoryStatsLoading } = useQuery(GET_STATS_BY_CATEGORY);
 
+    if(categoryStatsLoading){
+      return <h1>Loading....</h1>
+    }
+
     const [chartData, setChartData] = useState({
         labels: [],
         datasets: [
           {
             label: "₹",
+            color: '#ffffff',
             data: [],
             backgroundColor: [],
             borderColor: [],
@@ -65,6 +70,25 @@ const CategoryStats = () => {
           }));
         }
       }, [data]);
+
+      const options = {
+        plugins: {
+          legend: {
+            labels: {
+              color: 'white', 
+            },
+          },
+          tooltip: {
+            titleColor: 'white', 
+            bodyColor: 'white', 
+          },
+        },
+        elements: {
+          arc: {
+            borderWidth: 0,
+          },
+        },
+      };
     
   return (
     // <div className='flex justify-center'>
@@ -87,7 +111,7 @@ const CategoryStats = () => {
         ""
       )}
       {data?.getStatsByCategory.length > 0 ? (
-        <Doughnut data={chartData} className="p-5" />
+        <Doughnut data={chartData} className="p-5" options={options} />
       ) : (
         <span className="font-semibold m-5">
           <h1>No data found &#128566;</h1>

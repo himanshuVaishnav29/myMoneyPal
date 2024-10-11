@@ -35,16 +35,21 @@
 
 
 import React, { useState } from 'react';
-import CategoryStats from '../components/CategoryStats';
-import CurrWeekStatsByCategory from '../components/CurrWeekStatsByCategory';
-import CurrMonthStatsByCategory from '../components/CurrMonthStatsByCategory';
-import PaymentTypeStats from '../components/PaymentTypeStats';
-import CurrWeekStatsByPaymentType from '../components/CurrWeekStatsByPaymentType';
-import CurrMonthStatsByPaymentType from '../components/CurrMonthStatsByPaymentType';
+import CurrMonthStatsByCategory from '../components/CategoryStats/CurrMonthStatsByCategory';
+import CurrWeekStatsByCategory from '../components/CategoryStats/CurrWeekStatsByCategory';
+import CategoryStats from '../components/CategoryStats/CategoryStats';
+import CurrWeekStatsByPaymentType from '../components/PaymentTypeStats/CurrWeekStatsByPaymentType';
+import CurrMonthStatsByPaymentType from '../components/PaymentTypeStats/CurrMonthStatsByPaymentType';
+import PaymentTypeStats from '../components/PaymentTypeStats/PaymentTypeStats';
+import CurrWeekStatsByTag from '../components/TagStats/CurrWeekStatsByTag';
+import CurrMonthStatsByTag from '../components/TagStats/CurrMonthStatsByTag';
+import TagStats from '../components/TagStats/TagStats';
+
 
 const Analytics = () => {
   const [categoryTimeframe, setCategoryTimeframe] = useState('All time');
   const [paymentTimeframe, setPaymentTimeframe] = useState('All time');
+  const [tagTimeframe,setTagTimeframe] = useState('All time');
 
   const renderCategoryComponent = () => {
     switch (categoryTimeframe) {
@@ -65,6 +70,17 @@ const Analytics = () => {
         return <CurrMonthStatsByPaymentType />;
       default:
         return <PaymentTypeStats />;
+    }
+  };
+
+  const renderTagComponent = () => {
+    switch (tagTimeframe) {
+      case 'This week':
+        return <CurrWeekStatsByTag />;
+      case 'This month':
+        return <CurrMonthStatsByTag />;
+      default:
+        return <TagStats />;
     }
   };
 
@@ -107,19 +123,19 @@ const Analytics = () => {
 
 
         <div className='w-full pb-8'>
-          <label htmlFor="categoryDropdown" className='block mb-2 text-sm  font-bold text-pink-500 hover:text-white'>Stats by Tags Time frame</label>
-          {/* <select
-            id="categoryDropdown"
-            className='w-full p-2 border border-gray-300 rounded hover:cursor-pointer'
-            value={categoryTimeframe}
-            onChange={(e) => setCategoryTimeframe(e.target.value)}
+          <label htmlFor="tagDropdown" className='block mb-2 text-sm  font-bold text-pink-500 hover:text-white'>Stats by Tags Time frame</label>
+          <select
+            id="tagDropdown"
+            className='w-full p-2 border bg-transparent border-gray-300 rounded hover:cursor-pointer'
+            value={tagTimeframe}
+            onChange={(e) => setTagTimeframe(e.target.value)}
           >
-            <option value="All time">All time</option>
-            <option value="This week">This week</option>
-            <option value="This month">This month</option>
+            <option className='bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer' value="All time">All time</option>
+            <option className='bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer' value="This week">This week</option>
+            <option className='bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer' value="This month">This month</option>
           </select>
-          {renderCategoryComponent()} */}
-          Coming soon...
+          {renderTagComponent()}
+          
         </div>
 
       </div>

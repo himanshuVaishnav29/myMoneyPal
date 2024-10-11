@@ -1,9 +1,9 @@
 import React from 'react'
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { useMutation, useQuery } from "@apollo/client";
-import { GET_CURRENT_WEEK_STATS_BY_CATEGORY, GET_STATS_BY_CATEGORY } from "../graphql/queries/transaction.query";
+import { useQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
+import { GET_CURRENT_WEEK_STATS_BY_CATEGORY } from '../../graphql/queries/transaction.query';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const Platforms = () => {
@@ -13,6 +13,9 @@ const Platforms = () => {
     // });
     const { data, categoryStatsLoading } = useQuery(GET_CURRENT_WEEK_STATS_BY_CATEGORY);
   // console.log(data,"GET_CURRENT_WEEK_STATS_BY_CATEGORY");
+    if(categoryStatsLoading){
+      return <h1>Loading....</h1>
+    }
     const [chartData, setChartData] = useState({
         labels: [],
         datasets: [
@@ -66,6 +69,24 @@ const Platforms = () => {
           }));
         }
       }, [data]);
+      const options = {
+        plugins: {
+          legend: {
+            labels: {
+              color: 'white', 
+            },
+          },
+          tooltip: {
+            titleColor: 'white', 
+            bodyColor: 'white', 
+          },
+        },
+        elements: {
+          arc: {
+            borderWidth: 0,
+          },
+        },
+      };
     
   return (
         // <div className='flex justify-center'>
@@ -90,7 +111,7 @@ const Platforms = () => {
                 
                 {
                   (data?.getCurrentWeekStatsByCategory.length>0)?
-                  <Doughnut data={chartData} className='p-5'/>
+                  <Doughnut data={chartData} className='p-5' options={options}/>
                   :
                   <span className='font-semibold m-5'>
                     <h1>No transaction's this week  &#128566;</h1>

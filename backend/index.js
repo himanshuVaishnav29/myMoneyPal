@@ -34,21 +34,13 @@ app.use(express.json());
  
 
 
-const buildContext = (req,res) => {
-    // const user = req.user;
-    return {
-        req,
-        res,
-        user:req.user
-    };
-};
+
 
 //graphQl server
 const GQLServer=new ApolloServer({
      
     typeDefs:mergedTypeDef, //schema's
     resolvers:mergedResolvers,
-    // context: ({ req, res }) => buildContext(req,res)
     context: ({ req, res }) => ({
         req,
         res,
@@ -76,9 +68,10 @@ await connectDb();
 app.use(
     '/graphql',
     // cors({
-    //     // origin:["http://127.0.0.1:5173/","http://localhost:3000", "http://127.0.0.1:3000"],
-    //     origin: ["https://my-money-pal-app.vercel.app/"],
-    //     credentials:true
+    //   origin: "https://my-money-pal-app.vercel.app",
+    //   credentials: true, 
+    //   methods: ['GET', 'POST', 'OPTIONS'],
+    //   allowedHeaders: ['Content-Type', 'Authorization']
     // }),
     cors({
       origin: "https://my-money-pal-app.vercel.app",
@@ -90,7 +83,7 @@ app.use(
     express.json(),
     checkForAuthenticationCookie('token'),
     expressMiddleware(GQLServer,{
-        // context: ({ req, res }) =>buildContext(req,res),
+ 
         context: ({ req, res }) => ({
             req,
             res,

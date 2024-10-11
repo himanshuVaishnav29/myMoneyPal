@@ -28,6 +28,22 @@ const transactionSchema=new mongoose.Schema({
         type:String,
         default:"Not Provided"
     },
+    tag:{
+        type:String,
+        enum:[
+            "Food & Dining",
+            "Entertainment & Leisure",
+            "Utilities & Bills",
+            "Transportation & Fuel",
+            "Groceries & Household",
+            "Repairs & Maintenance",
+            "Healthcare & Medical",
+            "Travel & Vacation",
+            "Shopping & Personal Care",
+            "Others"
+        ],
+        required:true
+    },
     date:{
         type:Date,
         required:true,
