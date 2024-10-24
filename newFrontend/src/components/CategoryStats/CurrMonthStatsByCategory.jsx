@@ -9,11 +9,9 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 const CurrMonthStatsByCategory = () => {
 
-  const { data, categoryStatsLoading } = useQuery(GET_CURRENT_MONTH_STATS_BY_CATEGORY);
+  const { data, loading:categoryStatsLoading,error } = useQuery(GET_CURRENT_MONTH_STATS_BY_CATEGORY);
 
-  if(categoryStatsLoading){
-    return <h1>Loading....</h1>
-  }
+
     const [chartData, setChartData] = useState({
         labels: [],
         datasets: [
@@ -84,6 +82,12 @@ const CurrMonthStatsByCategory = () => {
         },
       };
 
+    if(categoryStatsLoading){
+      return <h1>Loading....</h1>
+    }
+    if(error){
+      return <h1>Something went wrong</h1>
+    }
   return (
     <div className='flex flex-col justify-center items-center gap-6 h-full '>
             

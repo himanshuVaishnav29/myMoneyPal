@@ -12,12 +12,9 @@ const CategoryStats = () => {
     // const [logout, { loading, client }] = useMutation(LOGOUT, {
     //   refetchQueries: ["GetAuthenticatedUser"],
     // });
-    const { data, categoryStatsLoading } = useQuery(GET_STATS_BY_CATEGORY);
-
-    if(categoryStatsLoading){
-      return <h1>Loading....</h1>
-    }
-
+    const { data, loading: statsLoading,error } = useQuery(GET_STATS_BY_CATEGORY);
+    // console.log(statsLoading);
+  
     const [chartData, setChartData] = useState({
         labels: [],
         datasets: [
@@ -89,7 +86,14 @@ const CategoryStats = () => {
           },
         },
       };
-    
+  if (statsLoading) {
+    return <h1>Loading....</h1>;
+  }
+
+  if (error) {
+    return <h1>Something went wrong</h1>;
+  }
+  
   return (
     // <div className='flex justify-center'>
     //     	<Doughnut data={chartData} />
@@ -103,14 +107,14 @@ const CategoryStats = () => {
     // </div>
 
     <div className="flex flex-col justify-center items-center gap-6 h-full">
-      {data?.getStatsByCategory.length ? (
+      {data?.getStatsByCategory.length>0 && !statsLoading ? (
         <span className="font-semibold mt-5 text-indigo-500">
           All time Stats by Category
         </span>
       ) : (
         ""
       )}
-      {data?.getStatsByCategory.length > 0 ? (
+      {data?.getStatsByCategory.length > 0 && !statsLoading ? (
         <Doughnut data={chartData} className="p-5" options={options} />
       ) : (
         <span className="font-semibold m-5">

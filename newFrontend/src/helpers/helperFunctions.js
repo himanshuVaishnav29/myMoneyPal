@@ -23,12 +23,6 @@ export const calculateStepSize=(maxValue)=>{
     return 10000; 
   }
 }
-// export const calculateYMax = (data) => {
-//   const maxValue = Math.max(...data);
-//   const buffer = maxValue * 0.1; // Adding a buffer of 10%
-//   const roundedMax = Math.ceil((maxValue + buffer) / 10000) * 10000; // Round up to the nearest 10,000
-//   return roundedMax;
-// };
 
 export const calculateYMax = (data) => {
   const maxValue = Math.max(...data);

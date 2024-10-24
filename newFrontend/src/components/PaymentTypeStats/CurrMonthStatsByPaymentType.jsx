@@ -9,12 +9,9 @@ import { GET_CURRENT_MONTH_STATS_BY_PAYMENT_TYPE } from '../../graphql/queries/t
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const CurrMonthStatsByPaymentType = () => {
-  const { data, paymentTypeStatsLoading } = useQuery(GET_CURRENT_MONTH_STATS_BY_PAYMENT_TYPE);
+  const { data, loading:paymentTypeStatsLoading,error } = useQuery(GET_CURRENT_MONTH_STATS_BY_PAYMENT_TYPE);
   // console.log(data, "GET_CURRENT_WEEK_STATS_BY_PAYMENT_TYPE");
 
-  if(paymentTypeStatsLoading){
-    return <h1>Loading....</h1>
-  }
 
   const [chartData, setChartData] = useState({
     labels: [],
@@ -85,7 +82,12 @@ const CurrMonthStatsByPaymentType = () => {
       },
     },
   };
-
+  if(paymentTypeStatsLoading){
+    return <h1>Loading....</h1>
+  }
+  if(error){
+    return <h1>Something went wrong</h1>
+  }
   return (
     <div className='flex flex-col justify-center items-center gap-6 h-full '>
      

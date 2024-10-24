@@ -1,3 +1,4 @@
+
 {
   "version": 2,
   "builds": [
@@ -6,21 +7,23 @@
       "use": "@vercel/node"
     }
   ],
-  "routes": [
-    
+  "rewrites": [
     {
-        "src": "/(.*)",
-        "dest": "/" 
-    },
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "routes": [
     {
       "src": "/graphql",
       "methods": ["GET", "POST", "OPTIONS"],
       "headers": {
         "Access-Control-Allow-Origin": "https://my-money-pal-app.vercel.app/",
         "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization,Set-Cookie,Cookie",
         "Access-Control-Allow-Credentials": "true"
       }
     }
   ]
 }
+

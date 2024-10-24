@@ -505,10 +505,15 @@ const History = () => {
                                         <tr key={transaction._id} className="text-center">
                                             <td className="p-2 border">{index + 1}</td>
                                             <td className="p-2 border">{transaction.description}</td>
-                                            <td className="p-2 border">{transaction.paymentType.charAt(0).toUpperCase() + transaction.paymentType.slice(1)}</td>
+                                            <td className="p-2 border">
+                                                { 
+                                                (transaction.paymentType==='upi')?"UPI":
+                                                transaction.paymentType.charAt(0).toUpperCase() + transaction.paymentType.slice(1)
+                                                }
+                                            </td>
                                             <td className="p-2 border">{transaction.category.charAt(0).toUpperCase() + transaction.category.slice(1)}</td>
                                             <td className="p-2 border">₹ {transaction.amount}</td>
-                                            <td className="p-2 border">{transaction.location || "N/A"}</td>
+                                            <td className="p-2 border">{transaction.location || ""}</td>
                                             <td className="p-2 border">
                                                 {new Date(parseInt(transaction.date)).toLocaleDateString()}
                                             </td>

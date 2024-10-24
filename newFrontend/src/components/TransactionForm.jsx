@@ -88,12 +88,11 @@ const TransactionForm = ({toggleModal}) => {
 							defaultValue=""
 							required
 						>
-							<option value="" disabled className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Tag</option>
+							<option value="" disabled className="bg-neutral-500 text-white hover:bg-gray-700 hover:cursor-pointer">Tag</option>
 							<option value={"Food & Dining"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Food & Dining</option>
 							<option value={"Entertainment & Leisure"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer" >Entertainment & Leisure</option>
 							<option value={"Utilities & Bills"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Utilities & Bills</option>
 							<option value={"Transportation & Fuel"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Transportation & Fuel</option>
-							<option value={"Groceries & Household"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Utilities & Bills</option>
 							<option value={"Repairs & Maintenance"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Repairs & Maintenance</option>
 							<option value={"Healthcare & Medical"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Healthcare & Medical</option>
 							<option value={"Travel & Vacation"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Travel & Vacation</option>
@@ -155,7 +154,7 @@ const TransactionForm = ({toggleModal}) => {
 							defaultValue=""
 							required
 						>
-							<option value="" disabled className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Type</option>
+							<option value="" disabled className="bg-neutral-500 text-white hover:bg-gray-700 hover:cursor-pointer">Type</option>
 							<option value={"upi"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">UPI</option>
 							<option value={"card"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer" >Card</option>
 							<option value={"cash"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Cash</option>
@@ -188,7 +187,7 @@ const TransactionForm = ({toggleModal}) => {
 							defaultValue=""
 							required
 						>
-							<option value="" disabled className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Category</option>
+							<option value="" disabled className="bg-neutral-500 text-white hover:bg-gray-700 hover:cursor-pointer">Category</option>
 							<option value={"saving"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Saving</option>
 							<option value={"expense"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Expense</option>
 							<option value={"investment"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Investment</option>

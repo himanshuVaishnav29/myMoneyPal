@@ -71,13 +71,13 @@ app.use(
     //   origin: "https://my-money-pal-app.vercel.app",
     //   credentials: true, 
     //   methods: ['GET', 'POST', 'OPTIONS'],
-    //   allowedHeaders: ['Content-Type', 'Authorization']
+    //   allowedHeaders: ['Content-Type', 'Authorization','Set-Cookie', 'Cookie']
     // }),
     cors({
       origin: "https://my-money-pal-app.vercel.app",
       credentials: true, 
       methods: ['GET', 'POST', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization']
+      allowedHeaders: ['Content-Type', 'Authorization','Set-Cookie', 'Cookie']
     }),
     cookieParser(),
     express.json(),

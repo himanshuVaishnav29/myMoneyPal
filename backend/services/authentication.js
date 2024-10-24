@@ -1,8 +1,7 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
-// const secret=process.env.secret;
-const secret="$ThisIsHeavySecret";
+const secret=process.env.secret;
 
 export function createToken(user){
     const payload={

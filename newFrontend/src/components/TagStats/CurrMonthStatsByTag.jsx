@@ -9,10 +9,8 @@ import { GET_CURRENT_MONTH_STATS_BY_TAG } from '../../graphql/queries/transactio
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const CurrMonthStatsByTag = () => {
-    const { data, monthStatsLoading } = useQuery(GET_CURRENT_MONTH_STATS_BY_TAG);
-    if(monthStatsLoading){
-        return <h1>Loading....</h1>
-    }
+    const { data, loading:monthStatsLoading,error } = useQuery(GET_CURRENT_MONTH_STATS_BY_TAG);
+
     const [chartData, setChartData] = useState({
         labels: [],
         datasets: [
@@ -102,7 +100,7 @@ const CurrMonthStatsByTag = () => {
                 // labels: {
                 //     color: 'white',
                 // },
-                display:false
+                display:true
             },
             tooltip: {
                 titleColor: 'white',
@@ -115,7 +113,12 @@ const CurrMonthStatsByTag = () => {
             },
         },
     };
-
+    if(monthStatsLoading){
+        return <h1>Loading....</h1>
+    }
+    if(error){
+        return <h1>Something went wrong</h1>
+    }
     return (
         <div className="flex flex-col justify-center items-center gap-6 h-full text-white">
             {data?.getCurrentMonthStatsByTag.length ? (

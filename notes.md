@@ -41,3 +41,34 @@ npm install express express-session graphql @apollo/server @graphql-tools/merge 
 #frontend
 npm install graphql @apollo/client react-router-dom react-icons react-hot-toast tailwind-merge @tailwindcss/aspect-ratio clsx chart.js react-chartjs-2 mini-svg-data-uri framer-motion
 
+
+
+
+
+// {
+//   "version": 2,
+//   "builds": [
+//     {
+//       "src": "index.js",
+//       "use": "@vercel/node"
+//     }
+//   ],
+//   "routes": [
+    
+//     {
+//         "src": "/(.*)",
+//         "dest": "/" 
+//     },
+//     {
+//       "src": "/graphql",
+//       "methods": ["GET", "POST", "OPTIONS"],
+//       "headers": {
+//         "Access-Control-Allow-Origin": "https://my-money-pal-app.vercel.app/",
+//         "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+//         "Access-Control-Allow-Headers": "Content-Type, Authorization",
+//         "Access-Control-Allow-Credentials": "true"
+//       }
+//     }
+//   ]
+// }
+

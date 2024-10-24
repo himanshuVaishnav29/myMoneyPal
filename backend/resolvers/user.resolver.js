@@ -32,9 +32,18 @@ const userResolver={
         signUp:async(_,{input},{ req, res })=>{
             try{
                 const {email,fullName,password,gender}=input;
+                
                 if(!email || ! fullName || !password || !gender){
                     throw new Error("All fields are required");
                 }
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    throw new Error("Please enter a valid email.");
+                }
+                if (password.length < 5) {
+                    throw new Error("Password must be at least 5 characters long.");
+                }
+
                 const existingUser=await USER.findOne({email});
                 if(existingUser){
                     throw new Error("User already exists with this email");
@@ -79,7 +88,8 @@ const userResolver={
                 const cookieOptions={
                     httpOnly:true,
                     sameSite: "None", 
-                    secure: true,     
+                    secure: true,  
+                    maxAge: 24 * 60 * 60 * 1000 //one day   
                 };
 
                 // console.log(token);

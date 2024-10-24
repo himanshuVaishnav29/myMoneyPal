@@ -18,11 +18,31 @@ const Signup = () => {
 		refetchQueries: [{ query: GET_AUTHETICATED_USER }],
 	});
 
+  const validateForm = () => {
+		const { email, fullName, password, gender } = signUpData;
+		if (!email || !fullName || !password || !gender) {
+			toast.error("All fields are required.");
+			return false;
+		}
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if (!emailRegex.test(email)) {
+			toast.error("Please enter a valid email.");
+			return false;
+		}
+		if (password.length < 5) {
+			toast.error("Password must be at least 5 characters long.");
+			return false;
+		}
+		return true;
+	};
+
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		try{
-			console.log("signdata",signUpData);
+			// console.log("signdata",signUpData);
+      if (!validateForm()) return;
+
 			await signUp({
 				variables:{
 					input:signUpData

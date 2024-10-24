@@ -11,11 +11,9 @@ const Platforms = () => {
     // const [logout, { loading, client }] = useMutation(LOGOUT, {
     //   refetchQueries: ["GetAuthenticatedUser"],
     // });
-    const { data, categoryStatsLoading } = useQuery(GET_CURRENT_WEEK_STATS_BY_CATEGORY);
+    const { data, laoding:categoryStatsLoading,error } = useQuery(GET_CURRENT_WEEK_STATS_BY_CATEGORY);
   // console.log(data,"GET_CURRENT_WEEK_STATS_BY_CATEGORY");
-    if(categoryStatsLoading){
-      return <h1>Loading....</h1>
-    }
+   
     const [chartData, setChartData] = useState({
         labels: [],
         datasets: [
@@ -69,6 +67,7 @@ const Platforms = () => {
           }));
         }
       }, [data]);
+
       const options = {
         plugins: {
           legend: {
@@ -87,7 +86,12 @@ const Platforms = () => {
           },
         },
       };
-    
+     if(categoryStatsLoading){
+      return <h1>Loading....</h1>
+    }
+    if(error){
+      return<h1>Something went wrong</h1>
+    }
   return (
         // <div className='flex justify-center'>
         //     	<Doughnut data={chartData} />

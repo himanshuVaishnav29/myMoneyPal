@@ -285,14 +285,23 @@ const HomePage = ({ loggedInUser }) => {
                   {recentTransactions?.map((transaction) => (
                       <div key={transaction._id} className="border-b border-gray-300 py-2 text-white">
                           <div className="flex justify-between">
-                              <p>{transaction.description.toUpperCase()}</p> |
-                              <p>₹ {transaction.amount.toFixed(2)}</p> |
+                          <p>
+                            {transaction.description.length >10
+                              ? `${transaction.description.substring(0,8).toUpperCase()}...` 
+                              : transaction.description.toUpperCase()}
+                          </p>  |
+                          <p>{transaction.paymentType=='upi'?"UPI":formatName(transaction.paymentType)}</p>
+                          |
+                          {/* <p>
+                            ₹ {transaction.amount.toFixed(2).length >4
+                              ? `${transaction.amount.toFixed(2).substring(0, 7)}...` 
+                              : transaction.amount.toFixed(2)}
+                          </p>  | */}
                               <p>{new Date(parseInt(transaction.date)).toLocaleDateString()}</p>
                           </div>
                           <div className="flex justify-between text-gray-300 text-sm">
-                              <p>{transaction.paymentType=='upi'?"UPI":formatName(transaction.paymentType)}</p>
                               <p>{formatName(transaction.category)}</p>
-                              {/* <p>{(transaction.location)?transaction.location:""}</p> */}
+                              <p>₹ {transaction.amount.toFixed(2)}</p>
 
                           </div>
                       </div>

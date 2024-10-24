@@ -9,11 +9,9 @@ import { GET_STATS_BY_TAG } from '../../graphql/queries/transaction.query';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const TagStats = () => {
-    const { data, tagStatsLoading } = useQuery(GET_STATS_BY_TAG);
+    const { data, loading:tagStatsLoading,error } = useQuery(GET_STATS_BY_TAG);
 
-    if(tagStatsLoading){
-        return <h1>Loading..</h1>
-    }
+
 
     const [chartData, setChartData] = useState({
         labels: [],
@@ -104,7 +102,7 @@ const TagStats = () => {
                 // labels: {
                 //     color: 'white',
                 // },
-                display:false
+                display:true
             },
             tooltip: {
                 callbacks: {
@@ -125,7 +123,12 @@ const TagStats = () => {
             },
         },
     };
-
+    if(tagStatsLoading){
+        return <h1>Loading..</h1>
+    }
+    if(error){
+        return <h1>Something went wrong</h1>
+    }
     return (
         <div className="flex flex-col justify-center items-center gap-6 h-full text-white">
             {data?.getStatsByTag.length ? (

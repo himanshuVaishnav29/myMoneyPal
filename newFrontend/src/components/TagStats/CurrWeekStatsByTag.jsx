@@ -9,11 +9,8 @@ import { GET_CURRENT_WEEK_STATS_BY_TAG } from '../../graphql/queries/transaction
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const CurrWeekStatsByTag = () => {
-    const { data, weekStatsLoading } = useQuery(GET_CURRENT_WEEK_STATS_BY_TAG);
+    const { data, loading:weekStatsLoading,error} = useQuery(GET_CURRENT_WEEK_STATS_BY_TAG);
 
-    if(weekStatsLoading){
-        return <h1>Loading....</h1>
-    }
 
     const [chartData, setChartData] = useState({
         labels: [],
@@ -104,7 +101,7 @@ const CurrWeekStatsByTag = () => {
                 // labels: {
                 //     color: 'white',
                 // },
-                display:false
+                display:true
             },
             tooltip: {
                 titleColor: 'white',
@@ -117,7 +114,12 @@ const CurrWeekStatsByTag = () => {
             },
         },
     };
-
+    if(weekStatsLoading){
+        return <h1>Loading....</h1>
+    }
+    if(error){
+        return <h1>Something went wrong</h1>
+    }
     return (
         <div className="flex flex-col justify-center items-center gap-6 h-full text-white">
             {data?.getCurrentWeekStatsByTag.length ? (
