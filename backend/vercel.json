@@ -6,19 +6,14 @@
       "use": "@vercel/node"
     }
   ],
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ],
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
   "headers": [
     {
       "source": "/graphql",
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://my-money-pal-app.vercel.app/"
+          "value": "https://my-money-pal-app.vercel.app"
         },
         {
           "key": "Access-Control-Allow-Methods",
@@ -26,7 +21,7 @@
         },
         {
           "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization, Set-Cookie, Cookie"
+          "value": "Content-Type, Authorization"
         },
         {
           "key": "Access-Control-Allow-Credentials",
