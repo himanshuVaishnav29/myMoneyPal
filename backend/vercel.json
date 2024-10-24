@@ -1,33 +1,27 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "index.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
-  "headers": [
-    {
-      "source": "/graphql",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "https://my-money-pal-app.vercel.app"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET, POST, OPTIONS"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization"
-        },
-        {
-          "key": "Access-Control-Allow-Credentials",
-          "value": "true"
-        }
-      ]
-    }
-  ]
+ "version": 2,
+ "builds": [
+   {
+     "src": "index.js",
+     "use": "@vercel/node"
+   }
+ ],
+ "routes": [
+  
+   {
+       "src": "/(.*)",
+       "dest": "/index.html" 
+   },
+   {
+     "src": "/graphql",
+     "methods": ["GET", "POST", "OPTIONS"],
+     "headers": {
+       "Access-Control-Allow-Origin": "https:my-money-pal-app.vercel.app/",
+       "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+       "Access-Control-Allow-Headers": "Content-Type, Authorization",
+       "Access-Control-Allow-Credentials": "true"
+     }
+   }
+ ]
 }
+
