@@ -394,7 +394,7 @@ const History = () => {
     const { data, loading, error } = useQuery(GET_TRANSACTIONS_BY_USER);
     const [transactionData, setTransactionData] = useState([]);
     const [filteredTransactions, setFilteredTransactions] = useState([]);
-    const [sortConfig, setSortConfig] = useState({ key: 'date', direction: 'ascending' });
+    const [sortConfig, setSortConfig] = useState({ key: 'date', direction: 'descending' });
     const [deleteTransactionId, setDeleteTransactionId] = useState(null); // For modal confirmation
     const [showModal, setShowModal] = useState(false); // For modal visibility
     const navigate = useNavigate();

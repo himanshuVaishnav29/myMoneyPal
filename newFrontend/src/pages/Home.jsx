@@ -20,6 +20,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement,LogarithmicScale, Title,
 const HomePage = ({ loggedInUser }) => {
   const [quote, setQuote] = useState('');
   const [author, setAuthor] = useState(''); 
+  const [quoteLoading,setQuoteLoading]=useState(true);
   const [recentTransactions, setRecentTransactions] = useState([]);
   const [totalExpenses, setTotalExpenses] = useState(0);
   const [totalInvestment, setTotalInvestment] = useState(0);
@@ -68,6 +69,7 @@ const HomePage = ({ loggedInUser }) => {
   useEffect(() => {
     const fetchQuote = async () => {
       try { 
+        setQuoteLoading(true);
         const response = await fetch('https://api.api-ninjas.com/v1/quotes?category=money', {
           headers: { 'X-Api-Key': import.meta.env.VITE_QUOTE_API_KEY}, 
         });
@@ -81,12 +83,16 @@ const HomePage = ({ loggedInUser }) => {
         }
       } catch (error) {
         console.error('Error fetching the quote:', error);
+      }finally{
+        setQuoteLoading(false);
       }
     };
 
     fetchQuote();
-  }, []);
+  },[]);
+ 
 
+  
 
   const [barGraphData, setBarGraphData] = useState({
     labels: [],
@@ -230,10 +236,18 @@ const HomePage = ({ loggedInUser }) => {
           <div className="space-y-4">
             <h2 className="text-2xl font-bold">Hey {formatName(loggedInUser?.fullName)},</h2>
             {/* <p className="text-pink-600">Today's Thought</p> */}
-            <div className="text-gray-300 font-thin pr-5">
-              <blockquote className="italic">"{quote}"</blockquote>
-              <p className="text-right mt-2 font-thin">- {author}</p>
-            </div>
+
+            
+
+            {quoteLoading ? ( 
+                <div className="loader">.......</div>
+            ) : (
+              <div className="text-gray-300 font-thin pr-5">
+                <blockquote className="italic">"{quote}"</blockquote>
+                <p className="text-right mt-2 font-thin">- {author}</p>
+              </div>
+            )}
+
             {/* <button className="bg-teal-500 text-white px-4 py-2 rounded">Download</button> */}
           </div>
 
