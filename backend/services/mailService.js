@@ -31,19 +31,19 @@ const transporter = nodemailer.createTransport({
 
 
 export async function sendMailAtFirstDayOfMonth() {
-
   try {
     const info = await transporter.sendMail({
         from: process.env.EMAIL, // sender address
         to: ["himanshu.29vaishnav@gmail.com","himanshu1268.be21@chitkarauniversity.edu.in"], // list of receivers
-        subject: "Hello ✔", // Subject line
+        subject: "Monthly Report"+new Date(), // Subject line
         text: "Hello world?", // plain text body
-        html: "<b>Hello world?</b>", // html body
+        html: "<b>Hello world</b>", // html body
     });
       // console.log("Message sent: %s", info.messageId);
-    console.log("Mail sent Successfully");
   } catch (error) {
     console.log("Error sending mail",error);
+  }finally{
+    console.log("Mail sent Successfully");
   }
 
 }

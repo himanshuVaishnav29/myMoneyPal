@@ -11,6 +11,7 @@ import TRANSACTION from './models/transactionSchema.js';
 import cookieParser from 'cookie-parser';
 import checkForAuthenticationCookie from './middlewares/checkForAuthentication.js';
 import { monthlyReportJob } from './services/monthlyReportJob.js';
+import { sendMailAtFirstDayOfMonth } from './services/mailService.js';
 
 dotenv.config(); 
 const app=express();
@@ -52,7 +53,6 @@ const GQLServer=new ApolloServer({
 
 //starting the gql server
 await GQLServer.start();
-monthlyReportJob();
 
 const connectDb=async()=>{
     try{
@@ -93,7 +93,7 @@ app.use(
         context: ({ req, res }) => ({
             req,
             res,
-            user: req.user, // Ensure user is passed to context
+            user: req.user, 
         }),
     }
 ));
@@ -101,6 +101,23 @@ app.use(
 app.get('/',(req,res)=>{
     res.json({message:"Server running"});
 });
+
+app.get("/monthlyReport",async(req,res)=>{
+    try{
+        // monthlyReportJob();
+        const cronSecret = req.headers['CRON_SECRET'];
+        if(cronSecret!=process.env.CRON_SECRET){
+            res.json("INVALID JOB CODE");
+        }
+       await sendMailAtFirstDayOfMonth();
+    }catch(err){
+        console.log("error in report",err);
+    }finally{
+        console.log("Mail sent successfukky");
+    }
+    res.json("hello World");
+});
+
 
 app.listen(PORT,()=>{
     console.log(`Server listening on port ${PORT}`)
