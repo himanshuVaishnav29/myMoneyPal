@@ -104,9 +104,10 @@ app.get('/',(req,res)=>{
 app.get("/monthlyReport",async(req,res)=>{
     try{
         // monthlyReportJob();
-        const cronSecret = req.headers['CRON_SECRET'];
-        if(cronSecret!=process.env.CRON_SECRET){
-            res.json("INVALID JOB CODE");
+        const cronSecret = req.headers['cron_secret']; 
+        console.log(req.headers['cron_secret']);
+        if (cronSecret !== process.env.CRON_SECRET) {
+            return res.status(403).json("INVALID JOB HEADER"); 
         }
        await sendMailAtFirstDayOfMonth();
     }catch(err){
