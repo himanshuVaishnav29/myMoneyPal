@@ -7,7 +7,8 @@ dotenv.config();
 
 
 // console.log("mail",process.env.EMAIL);
-// console.log("key",key);
+// console.log("key",process.env.PASS_KEY);
+// console.log("hello");
 
 const transporter = nodemailer.createTransport({
     service: process.env.MAIL_SERVICE ,
@@ -38,9 +39,9 @@ export async function sendMailAtFirstDayOfMonth() {
         subject: "Hello ✔", // Subject line
         text: "Hello world?", // plain text body
         html: "<b>Hello world?</b>", // html body
-      });
+    });
       // console.log("Message sent: %s", info.messageId);
-      console.log("Mail sent Successfully");
+    console.log("Mail sent Successfully");
   } catch (error) {
     console.log("Error sending mail",error);
   }

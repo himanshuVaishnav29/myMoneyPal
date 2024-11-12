@@ -10,6 +10,7 @@ import USER from './models/userSchema.js';
 import TRANSACTION from './models/transactionSchema.js';
 import cookieParser from 'cookie-parser';
 import checkForAuthenticationCookie from './middlewares/checkForAuthentication.js';
+import { monthlyReportJob } from './services/monthlyReportJob.js';
 
 dotenv.config(); 
 const app=express();
@@ -51,7 +52,7 @@ const GQLServer=new ApolloServer({
 
 //starting the gql server
 await GQLServer.start();
-  
+monthlyReportJob();
 
 const connectDb=async()=>{
     try{

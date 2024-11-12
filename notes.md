@@ -72,3 +72,9 @@ npm install graphql @apollo/client react-router-dom react-icons react-hot-toast 
 //   ]
 // }
 
+<!-- "crons": [
+    {
+      "path": "/api/cron",
+      "schedule": "31 12 12 * *"
+    }
+  ] -->

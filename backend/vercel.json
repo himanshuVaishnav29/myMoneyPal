@@ -22,12 +22,6 @@
        "Access-Control-Allow-Credentials": "true"
      }
    }
- ],
- "crons": [
-    {
-      "path": "/api/cron",
-      "schedule": "31 12 12 * *"
-    }
-  ]
+ ]
 }
 
