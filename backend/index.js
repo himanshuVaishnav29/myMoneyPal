@@ -110,11 +110,12 @@ app.get("/monthlyReport",async(req,res)=>{
         }
        await sendMailAtFirstDayOfMonth();
     }catch(err){
+        res.json("Mail Not sent caught in error",err);
         console.log("error in report",err);
     }finally{
-        console.log("Mail sent successfukky");
+        console.log("Mail sent successfully from /monthlyReport");
     }
-    res.json("hello World");
+    res.json("Mail sent successfully"); 
 });
 
 

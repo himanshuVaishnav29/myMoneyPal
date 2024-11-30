@@ -1,0 +1,160 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>myMoneyPal Monthly Report</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .page-break {
+            page-break-before: always;
+            margin: 20px;
+        }
+        .logoStyle {
+            width: 100px; 
+            height: auto; 
+            float: left;
+            margin-right: 15px; 
+            margin-bottom: 10px; 
+        }
+
+        
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <div class="container mx-auto my-10 bg-white p-8 shadow-lg rounded-lg">
+        <div class="header text-center mb-10">
+            <img
+                src=" https://himanshu-portfolio-wine.vercel.app/myMoneyPalLogo.jpg"
+                alt="MyMoneyPal Logo"
+                class="logoStyle"
+            >
+            <h1 class="pb-8 text-5xl font-thin lg:mt-16 lg:text-6.9xl text-teal-600">My MoneyPal Monthly Report</h1>
+            <strong>
+                <p class="text-sm text-gray-600"><i>Month:</i> {{month}}</p>
+                <p class="text-sm text-gray-600"><i>This is an auto generated report</i></p>
+            </strong>
+        </div>
+
+        <!-- <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-teal-700 mb-4">User Details</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <p><span class="font-medium">User Name:</span> {{userName}}</p>
+                <p><span class="font-medium">Email:</span> {{email}}</p>
+                <p><span class="font-medium">Account Created:</span> {{accountCreationDate}}</p>
+                <p><span class="font-medium">Total count of transactions:</span> {{totalTransactionsMadeThisMonth}}</p>
+            </div>
+        </section> -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-teal-700 mb-4">User Details</h2>
+            <table class="w-full text-left border border-gray-300 mb-4">
+                <tr>
+                    <th class="py-2 px-4 font-medium bg-teal-50 text-teal-700">User Name</th>
+                    <td class="py-2 px-4">{{userName}}</td>
+                </tr>
+                <tr>
+                    <th class="py-2 px-4 font-medium bg-teal-50 text-teal-700">Email</th>
+                    <td class="py-2 px-4">{{email}}</td>
+                </tr>
+                <tr>
+                    <th class="py-2 px-4 font-medium bg-teal-50 text-teal-700">Account Created on</th>
+                    <td class="py-2 px-4">{{accountCreationDate}}</td>
+                </tr>
+                <tr>
+                    <th class="py-2 px-4 font-medium bg-teal-50 text-teal-700">Total Transactions This Month</th>
+                    <td class="py-2 px-4">{{totalTransactionsMadeThisMonth}}</td>
+                </tr>
+            </table>
+        </section>
+
+
+        <!-- Summary Section -->
+        <section class="mb-8 pt-10">
+            <h2 class="section-title text-2xl font-semibold text-teal-700 mb-4">Summary for this month</h2>
+            <table class="w-full text-left border border-gray-300">
+                <tbody class="divide-y divide-gray-200">
+                    <tr>
+                        <th class="py-2 px-4 font-medium bg-teal-50 text-green-900">You spent the most on</th>
+                        <td class="py-2 px-4 text-right font-bold">{{maxSpendingTag}}</td>
+                    </tr>
+                    <tr>
+                        <th class="py-2 px-4 font-medium bg-teal-50 text-red-700">Total Expenses</th>
+                        <td class="py-2 px-4 text-right font-bold">₹ {{totalExpenses}}</td>
+                    </tr>
+                    <tr>
+                        <th class="py-2 px-4 font-medium bg-teal-50 text-blue-700">Total Investments</th>
+                        <td class="py-2 px-4 text-right font-bold">₹ {{totalInvestment}}</td>
+                    </tr>
+                    <tr>
+                        <th class="py-2 px-4 font-medium bg-teal-50 text-green-900">Total Savings</th>
+                        <td class="py-2 px-4 text-right font-bold">₹ {{totalSaving}}</td>
+                    </tr>
+                    <tr>
+                        <th class="py-2 px-4 font-medium bg-teal-50 text-teal-700">Total Spending by UPI</th>
+                        <td class="py-2 px-4 text-right font-bold">₹ {{upiTotal}}</td>
+                    </tr>
+                    <tr>
+                        <th class="py-2 px-4 font-medium bg-teal-50 text-teal-700">Total Spending by Cash</th>
+                        <td class="py-2 px-4 text-right font-bold">₹ {{cashTotal}}</td>
+                    </tr>
+                    <tr>
+                        <th class="py-2 px-4 font-medium bg-teal-50 text-teal-700">Total Spending by Card</th>
+                        <td class="py-2 px-4 text-right font-bold">₹ {{cardTotal}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Page Break for PDF -->
+        <!-- <div class="page-break"></div> -->
+
+        <!-- Transaction History Section -->
+        <section class="mb-8">
+            <h2 class="section-title text-2xl font-semibold text-teal-700 mb-4 mt-3 pt-19">Transaction History</h2>
+            {{#if transactionHistory.length}}
+                <table class="w-full border border-gray-300 text-sm">
+                    <thead class="bg-teal-600 text-black font-bold">
+                        <tr>
+                            <th class="py-2 px-4">S.No</th>
+                            <th class="py-2 px-4">Date</th>
+                            <th class="py-2 px-4">Description</th>
+                            <th class="py-2 px-4">Amount (INR)</th>
+                            <th class="py-2 px-4">Payment Type</th>
+                            <th class="py-2 px-4">Category</th>
+                            <th class="py-2 px-4">Tag</th>
+                            <th class="py-2 px-4">Location</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        {{#each transactionHistory}}
+                        <tr class="hover:bg-teal-50 font-thin">
+                            <td class="py-2 px-4">{{increment @index}}</td>
+                            <td class="py-2 px-4">{{this.date}}</td>
+                            <td class="py-2 px-4">{{this.description}}</td>
+                            <td class="py-2 px-4 text-right">{{this.amount}}</td>
+                            <td class="py-2 px-4">{{this.paymentType}}</td>
+                            <td class="py-2 px-4">{{this.category}}</td>
+                            <td class="py-2 px-4">{{this.tag}}</td>
+                            <td class="py-2 px-4">{{this.location}}</td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            {{else}}
+                <p class="text-gray-600 italic">No transactions this month.</p>
+            {{/if}}
+        </section>
+
+        <!-- Additional Notes Section -->
+        <section class="notes mt-10">
+            <h2 class="text-2xl font-semibold text-teal-700 mb-4">Note</h2>
+            <ul class="list-disc pl-5 text-gray-700 space-y-1">
+                {{#each notes}}
+                <li>{{this}}</li>
+                {{/each}}
+            </ul>
+        </section>
+    </div>
+</body>
+</html>
