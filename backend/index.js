@@ -33,7 +33,20 @@ app.use(express.json());
 
 // app.use(checkForAuthenticationCookie('token'));
  
-
+app.get("/monthlyReport",async(req,res)=>{
+    try{
+        // monthlyReportJob();
+        const cronSecret = req.headers['cron_secret']; 
+        console.log(req.headers['cron_secret']);
+        if (cronSecret !== process.env.CRON_SECRET) {
+            return res.json("INVALID JOB HEADER"); 
+        }
+       await sendMailAtFirstDayOfMonth();
+    }catch(err){
+        console.error("Error in /monthlyReport:", err);
+        res.json({ message: "Mail not sent", error: err.message });
+    }
+});
 
 
 
@@ -100,22 +113,6 @@ app.use(
 app.get('/',(req,res)=>{
     res.json({message:"Server running"});
 });
-
-app.get("/monthlyReport",async(req,res)=>{
-    try{
-        // monthlyReportJob();
-        const cronSecret = req.headers['cron_secret']; 
-        console.log(req.headers['cron_secret']);
-        if (cronSecret !== process.env.CRON_SECRET) {
-            return res.json("INVALID JOB HEADER"); 
-        }
-       await sendMailAtFirstDayOfMonth();
-    }catch(err){
-        console.error("Error in /monthlyReport:", err);
-        res.json({ message: "Mail not sent", error: err.message });
-    }
-});
-
 
 app.listen(PORT,()=>{
     console.log(`Server listening on port ${PORT}`)
