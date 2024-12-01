@@ -115,8 +115,8 @@ app.get("/monthlyReport",async(req,res)=>{
         console.log("error in report",err);
     }finally{
         console.log("Mail sent successfully from /monthlyReport");
+        res.json("Mail sent successfully");
     }
-    res.json("Mail sent successfully"); 
 });
 
 
