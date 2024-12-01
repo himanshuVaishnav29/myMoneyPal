@@ -107,12 +107,12 @@ app.get("/monthlyReport",async(req,res)=>{
         const cronSecret = req.headers['cron_secret']; 
         console.log(req.headers['cron_secret']);
         if (cronSecret !== process.env.CRON_SECRET) {
-            return res.status(403).json("INVALID JOB HEADER"); 
+            return res.json("INVALID JOB HEADER"); 
         }
        await sendMailAtFirstDayOfMonth();
     }catch(err){
         console.error("Error in /monthlyReport:", err);
-        res.status(500).json({ message: "Mail not sent", error: err.message });
+        res.json({ message: "Mail not sent", error: err.message });
     }
 });
 
