@@ -10,8 +10,12 @@ const Signup = () => {
 		email: "",
 		fullName: "",
 		password: "",
+		confirmPassword: "",
 		gender: "",
 	});
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
 	const navigate = useNavigate(); 
 	const [signUp,{loading,error}]= useMutation(SIGN_UP, {
@@ -19,8 +23,8 @@ const Signup = () => {
 	});
 
   const validateForm = () => {
-		const { email, fullName, password, gender } = signUpData;
-		if (!email || !fullName || !password || !gender) {
+		const { email, fullName, password, confirmPassword, gender } = signUpData;
+		if (!email || !fullName || !password || !confirmPassword || !gender) {
 			toast.error("All fields are required.");
 			return false;
 		}
@@ -33,6 +37,10 @@ const Signup = () => {
 			toast.error("Password must be at least 5 characters long.");
 			return false;
 		}
+		if (password !== confirmPassword) {
+			toast.error("Passwords do not match.");
+			return false;
+		}
 		return true;
 	};
 
@@ -43,9 +51,10 @@ const Signup = () => {
 			// console.log("signdata",signUpData);
       if (!validateForm()) return;
 
+			const { confirmPassword, ...submitData } = signUpData;
 			await signUp({
 				variables:{
-					input:signUpData
+					input:submitData
 				}
 			})
 			toast.success("Sign up successful!");
@@ -92,7 +101,7 @@ const Signup = () => {
           <div className='absolute inset-x-60 top-0 bg-gradient-to-r from-transparent via-sky-500 to-transparent h-px w-1/4' />
         </div> 
 
-      <div className="w-full form-Background rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0">
+      <div className="w-full form-Background rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0  dark:border-gray-700">
         <div className="p-6 space-y-4 md:space-y-3 sm:p-8">
           <h1 className="text-xl font-thin leading-tight tracking-tight text-neutral-100 md:text-2xl mb-6">
             Register Now !
@@ -110,7 +119,7 @@ const Signup = () => {
                 name='fullName'
                 value={signUpData.fullName}
                 onChange={handleChange}
-                className="bg-transparent text-neutral-200 border border-gray-300  rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
+                className="form-Background border bg-transparent text-neutral-200 border-gray-300  rounded-lg focus:text-neutral-100 focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Thomas Shelby"
                 required
               />
@@ -128,7 +137,7 @@ const Signup = () => {
                 type='email'
                 value={signUpData.email}
                 onChange={handleChange}
-                className=" border border-gray-300 bg-transparent text-neutral-200 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="form-Background border bg-transparent text-neutral-200 border-gray-300  rounded-lg focus:text-neutral-100 focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="shelby@gmail.com"
                 required
               />
@@ -140,16 +149,71 @@ const Signup = () => {
               >
                 Password
               </label>
-              <input
-                id='password'
-                name='password'
-                type='password'
-                value={signUpData.password}
-                onChange={handleChange}
-                placeholder="••••••••"
-                className=" border border-gray-300 bg-transparent text-neutral-200 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                required
-              />
+              <div className="relative">
+                <input
+                  id='password'
+                  name='password'
+                  type={showPassword ? 'text' : 'password'}
+                  value={signUpData.password}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  className="form-Background border bg-transparent text-neutral-200 border-gray-300  rounded-lg focus:text-neutral-100 focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 pr-10 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-neutral-400 hover:text-neutral-200"
+                >
+                  {showPassword ? (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label
+                htmlFor="confirmPassword"
+                className="block mb-2 text-sm font-medium text-neutral-100 "
+              >
+                Confirm Password
+              </label>
+              <div className="relative">
+                <input
+                  id='confirmPassword'
+                  name='confirmPassword'
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  value={signUpData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  className="form-Background border bg-transparent text-neutral-200 border-gray-300  rounded-lg focus:text-neutral-100 focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 pr-10 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-neutral-400 hover:text-neutral-200"
+                >
+                  {showConfirmPassword ? (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  )}
+                </button>
+              </div>
             </div>
 
 
@@ -159,7 +223,7 @@ const Signup = () => {
                   Gender
                 </span>
                 <div className="flex items-center space-x-4">
-                  <div className="flex items-center">
+                  <div className="flex items-center ">
                     <input
                       type='radio'
                       id='male'
@@ -171,7 +235,7 @@ const Signup = () => {
                     />
                     <label
                       htmlFor="male"
-                      className="ml-2 text-sm font-medium text-neutral-100 "
+                      className="ml-2 text-sm font-medium text-neutral-100 hover:cursor-pointer"
                     >
                       Male
                     </label>
@@ -188,7 +252,7 @@ const Signup = () => {
                     />
                     <label
                       htmlFor="female"
-                      className="ml-2 text-sm font-medium text-neutral-100"
+                      className="ml-2 text-sm font-medium text-neutral-100 hover:cursor-pointer"
                     >
                       Female
                     </label>
@@ -207,7 +271,7 @@ const Signup = () => {
               {loading?"Loading...":"Register"}
             </button>
             <p className="text-sm font-light text-neutral-100 ">
-              ALready have an account?{" "}
+              Already have an account?{" "}
               <Link
                 to='/login'
                 className="font-medium text-primary-600 hover:underline hover: text-purple-400 cursor-pointer"

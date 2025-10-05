@@ -7,8 +7,7 @@ import { BrowserRouter } from "react-router-dom";
 
 
 const client = new ApolloClient({
-  // uri: 'http://localhost:4000/graphql',
-  uri:'https://api-my-money-pal.vercel.app/graphql',
+  uri: import.meta.env.VITE_API_URL,
   cache: new InMemoryCache(), 
   credentials:"include" //helps in sending cookies with every req
 });
