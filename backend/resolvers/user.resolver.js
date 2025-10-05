@@ -99,7 +99,8 @@ const userResolver={
                 // console.log('Response Headers: ', res.getHeaders());
                 // console.log("cookieNow",req.cookies['token']);
 
-                return user;
+                const { password: _, salt: __, ...userWithoutPassword } = user.toObject();
+                return userWithoutPassword;
             }catch(err){
                 console.log("Error in login",err);
                 throw new Error(err,":",err.message);

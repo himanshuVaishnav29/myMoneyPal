@@ -230,7 +230,7 @@ const TransactionForm = ({toggleModal}) => {
 						Location
 					</label>
 					<input
-						className='appearance-none block w-full bg-transparent  border  rounded py-3 px-4 mb-3 leading-tight focus:outline-none'
+						className='appearance-none block w-full bg-transparent  border  rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:border-gray-500'
 						id='location'
 						name='location'
 						type='text'
@@ -247,7 +247,7 @@ const TransactionForm = ({toggleModal}) => {
 						type='date'
 						name='date'
 						id='date'
-						className='appearance-none block w-full bg-transparent  border  rounded py-[11px] px-4 mb-3 leading-tight focus:outline-none'
+						className='appearance-none block w-full bg-transparent  border  rounded py-[11px] px-4 mb-3 leading-tight focus:outline-none focus:border-gray-500'
 						placeholder='Select date'
 						required
 					/>

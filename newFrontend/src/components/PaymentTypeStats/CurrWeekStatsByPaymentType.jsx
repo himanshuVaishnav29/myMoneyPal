@@ -94,7 +94,6 @@ const CurrWeekStatsByPaymentType = () => {
       {
         (data?.getCurrentWeekStatsByPaymentType.length)? 
         <span className='font-semibold mt-5 text-indigo-500'>
-        This week Stats by Payment Type
       </span>:""
       }
       { (data?.getCurrentWeekStatsByPaymentType.length>0 )?

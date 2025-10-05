@@ -4,7 +4,7 @@ const userTypeDef=`#graphql
         _id:ID!
         email:String!
         fullName:String!
-        password:String!
+        password:String
         gender:String!
         salt:String
         profilePicture:String

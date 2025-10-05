@@ -16,6 +16,29 @@ export const GET_TRANSACTIONS_BY_USER=gql`
     }
 `;
 
+export const GET_TRANSACTIONS_BY_USER_PAGINATED=gql`
+    query GetTransactionsByUserPaginated($page: Int, $limit: Int){
+        getTransactionsByUserPaginated(page: $page, limit: $limit){
+            transactions{
+                _id
+                userId
+                description
+                paymentType
+                category
+                amount
+                location
+                date
+                tag
+            }
+            totalCount
+            currentPage
+            totalPages
+            hasNextPage
+            hasPrevPage
+        }
+    }
+`;
+
 export const GET_TRANSACTION=gql`
     query GetTransaction($id:ID!){
         getTransaction(transactionId:$id){

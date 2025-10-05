@@ -95,7 +95,6 @@ const CurrMonthStatsByPaymentType = () => {
       {
         (data?.getCurrentMonthStatsByPaymentType.length)? 
         <span className='font-semibold mt-5 text-indigo-500'>
-        This month Stats by Payment Type
       </span>:""
       }
       {

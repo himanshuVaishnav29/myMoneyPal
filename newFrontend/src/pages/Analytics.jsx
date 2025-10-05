@@ -1,37 +1,3 @@
-// import React from 'react'
-// import CategoryStats from '../components/CategoryStats'
-// import CurrWeekStatsByCategory from '../components/CurrWeekStatsByCategory'
-// import CurrWeekStatsByPaymentType from '../components/CurrWeekStatsByPaymentType'
-// import CurrMonthStatsByCategory from '../components/CurrMonthStatsByCategory'
-// import PaymentTypeStats from '../components/PaymentTypeStats'
-// import CurrMonthStatsByPaymentType from '../components/CurrMonthStatsByPaymentType'
-
-
-// const Analytics = () => {
-//   return (
-//     <div className='p-5'>
-//       {
-        
-//           <div className='grid md:grid:cols-2 xl:grid-cols-3 gap-4'>
-//           <CategoryStats/>
-//           <CurrWeekStatsByCategory/>
-//           <CurrMonthStatsByCategory/>
-  
-//           <PaymentTypeStats/>
-//           <CurrWeekStatsByPaymentType/>
-//           <CurrMonthStatsByPaymentType/>
-//         </div>
-//       }
-      
-       
-//     </div>
-//   )
-// }
-
-// export default Analytics
-
-
-
 
 
 import React, { useState } from 'react';
@@ -41,9 +7,9 @@ import CategoryStats from '../components/CategoryStats/CategoryStats';
 import CurrWeekStatsByPaymentType from '../components/PaymentTypeStats/CurrWeekStatsByPaymentType';
 import CurrMonthStatsByPaymentType from '../components/PaymentTypeStats/CurrMonthStatsByPaymentType';
 import PaymentTypeStats from '../components/PaymentTypeStats/PaymentTypeStats';
-import CurrWeekStatsByTag from '../components/TagStats/CurrWeekStatsByTag';
-import CurrMonthStatsByTag from '../components/TagStats/CurrMonthStatsByTag';
-import TagStats from '../components/TagStats/TagStats';
+import CurrWeekStatsByTagBar from '../components/TagStats/CurrWeekStatsByTagBar';
+import CurrMonthStatsByTagBar from '../components/TagStats/CurrMonthStatsByTagBar';
+import TagStatsBar from '../components/TagStats/TagStatsBar';
 
 
 const Analytics = () => {
@@ -76,69 +42,83 @@ const Analytics = () => {
   const renderTagComponent = () => {
     switch (tagTimeframe) {
       case 'This week':
-        return <CurrWeekStatsByTag />;
+        return <CurrWeekStatsByTagBar />;
       case 'This month':
-        return <CurrMonthStatsByTag />;
+        return <CurrMonthStatsByTagBar />;
       default:
-        return <TagStats />;
+        return <TagStatsBar />;
     }
   };
 
   return (
-    <div className='p-6 pt-7 text-white'>
-       <center>
-        <h1 className="text-2xl font-bold mb-4 bg-gradient-to-r from-pink-600 via-indigo-500 to-pink-400 inline-block text-transparent bg-clip-text pb-8">Analytics</h1>
-      </center>
-      {/* <div className='grid md:grid-cols-2 xl:grid-cols-3 gap-4'> */}
-      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
-        <div className='w-full pb-8'>
-          <label htmlFor="categoryDropdown" className='block mb-2 text-sm font-bold text-pink-500 hover:text-white'>Category Time frame</label>
-          <select
-            id="categoryDropdown"
-            className='w-full p-2 border bg-transparent border-gray-300 rounded hover:cursor-pointer'
-            value={categoryTimeframe}
-            onChange={(e) => setCategoryTimeframe(e.target.value)}
-          >
-            <option className='bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer'  value="All time">All time</option>
-            <option className='bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer'  value="This week">This week</option>
-            <option className='bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer'  value="This month">This month</option>
-          </select>
-          {renderCategoryComponent()}
-        </div>
-
-        <div className='w-full pb-8'>
-          <label htmlFor="paymentDropdown" className="block mb-2 text-sm font-bold text-pink-500 hover:text-white">Payment Type Time frame</label>
-          <select
-            id="paymentDropdown"
-            className='w-full p-2 border bg-transparent border-gray-300 rounded hover:cursor-pointer'
-            value={paymentTimeframe}
-            onChange={(e) => setPaymentTimeframe(e.target.value)}
-          >
-            <option className='bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer'  value="All time">All time</option>
-            <option className='bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer'  value="This week">This week</option>
-            <option className='bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer'  value="This month">This month</option>
-          </select>
-          {renderPaymentTypeComponent()}
-        </div>
+    <div className='p-4 md:p-6 text-white min-h-screen'>
+      <div className='text-center mb-8'>
+        <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-pink-600 via-indigo-500 to-pink-400 inline-block text-transparent bg-clip-text">Analytics Dashboard</h1>
+      </div>
 
 
-        <div className='w-full pb-8'>
-          <label htmlFor="tagDropdown" className='block mb-2 text-sm  font-bold text-pink-500 hover:text-white'>Stats by Tags Time frame</label>
+      {/* Second row - Bar chart for tags */}
+      <div className='bg-transparent rounded-xl p-6 shadow-lg border border-gray-700 mb-8'>
+        <div className='mb-4'>
+          <h2 className='text-lg font-semibold text-white mb-3'>Tag-wise Spending Analysis</h2>
           <select
             id="tagDropdown"
-            className='w-full p-2 border bg-transparent border-gray-300 rounded hover:cursor-pointer'
+            className='w-full max-w-xs p-2 bg-transparent border border-gray-600 rounded-lg text-white hover:bg-gray-600 transition-colors hover:cursor-pointer'
             value={tagTimeframe}
             onChange={(e) => setTagTimeframe(e.target.value)}
           >
-            <option className='bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer' value="All time">All time</option>
-            <option className='bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer' value="This week">This week</option>
-            <option className='bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer' value="This month">This month</option>
+            <option className='bg-gray-800 text-white' value="All time">All time</option>
+            <option className='bg-gray-800 text-white' value="This week">This week</option>
+            <option className='bg-gray-800 text-white' value="This month">This month</option>
           </select>
+        </div>
+        <div className='w-full' style={{height: '400px'}}>
           {renderTagComponent()}
-          
+        </div>
+      </div>
+
+      {/* First row - 2 pie charts */}
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8'>
+        <div className='bg-transparent rounded-xl p-6 shadow-lg border border-gray-700'>
+          <div className='mb-4'>
+            <h2 className='text-lg font-semibold text-white mb-3'>Category Statistics</h2>
+            <select
+              id="categoryDropdown"
+              className='w-full max-w-xs p-2 bg-transparent border border-gray-600 rounded-lg text-white hover:bg-gray-600 transition-colors hover:cursor-pointer'
+              value={categoryTimeframe}
+              onChange={(e) => setCategoryTimeframe(e.target.value)}
+            >
+              <option className='bg-gray-800 text-white' value="All time">All time</option>
+              <option className='bg-gray-800 text-white' value="This week">This week</option>
+              <option className='bg-gray-800 text-white' value="This month">This month</option>
+            </select>
+          </div>
+          <div className='flex justify-center items-center' style={{height: '320px'}}>
+            {renderCategoryComponent()}
+          </div>
         </div>
 
+        <div className='bg-transparent rounded-xl p-6 shadow-lg border border-gray-700'>
+          <div className='mb-4'>
+            <h2 className='text-lg font-semibold text-white mb-3'>Payment Type Statistics</h2>
+            <select
+              id="paymentDropdown"
+              className='w-full max-w-xs p-2 bg-transparent border border-gray-600 rounded-lg text-white hover:bg-gray-600 transition-colors hover:cursor-pointer'
+              value={paymentTimeframe}
+              onChange={(e) => setPaymentTimeframe(e.target.value)}
+            >
+              <option className='bg-gray-800 text-white' value="All time">All time</option>
+              <option className='bg-gray-800 text-white' value="This week">This week</option>
+              <option className='bg-gray-800 text-white' value="This month">This month</option>
+            </select>
+          </div>
+          <div className='flex justify-center items-center' style={{height: '320px'}}>
+            {renderPaymentTypeComponent()}
+          </div>
+        </div>
       </div>
+
+      
     </div>
   );
 };

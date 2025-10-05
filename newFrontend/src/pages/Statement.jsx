@@ -399,7 +399,7 @@ const Statement = () => {
   return (
     <div className="container mx-auto p-4 text-white">
       <center>
-        <h1 className="text-2xl font-bold mb-4 bg-gradient-to-r from-pink-600 via-indigo-500 to-pink-400 inline-block text-transparent bg-clip-text">Transaction Statement</h1>
+        <h1 className="text-3xl font-bold mb-4 bg-gradient-to-r from-pink-600 via-indigo-500 to-pink-400 inline-block text-transparent bg-clip-text">Transaction Statement</h1>
       </center>
       {/* Search Filters */}
       <div className="mb-4 grid grid-cols-1 md:grid-cols-4 gap-4">

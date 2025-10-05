@@ -108,8 +108,7 @@ const CategoryStats = () => {
 
     <div className="flex flex-col justify-center items-center gap-6 h-full">
       {data?.getStatsByCategory.length>0 && !statsLoading ? (
-        <span className="font-semibold mt-5 text-indigo-500">
-          All time Stats by Category
+        <span className="font-semibold mt-5 text-pink-400">
         </span>
       ) : (
         ""

@@ -95,7 +95,6 @@ const PaymentTypeStats = () => {
       {
         (data?.getStatsByPaymentType.length)? 
         <span className='font-semibold mt-5 text-indigo-500'>
-          All time Stats by Payment Type
         </span>:""
       }
       {

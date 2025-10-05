@@ -15,6 +15,7 @@ const transactionTypeDef=`#graphql
     type Query{
 
         getAllTransactionsByUser:[Transaction!]
+        getTransactionsByUserPaginated(page:Int, limit:Int):TransactionPaginatedResponse!
         getTransaction(transactionId:ID!):Transaction
 
         getStatsByCategory:[CategoryStatistics!]
@@ -41,6 +42,14 @@ const transactionTypeDef=`#graphql
     type tagStatistics{
         tag:String!
         totalAmount:Float!
+    }
+    type TransactionPaginatedResponse{
+        transactions:[Transaction!]!
+        totalCount:Int!
+        currentPage:Int!
+        totalPages:Int!
+        hasNextPage:Boolean!
+        hasPrevPage:Boolean!
     }
     type Mutation{
         createTransaction(input:CreateTransactionInput!):Transaction!

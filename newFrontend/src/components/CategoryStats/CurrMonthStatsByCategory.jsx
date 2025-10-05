@@ -23,7 +23,7 @@ const CurrMonthStatsByCategory = () => {
             borderWidth: 1,
             borderRadius: 0,
             spacing: 5,
-            cutout: 130,
+            cutout: 60,
           },
         ],
       });
@@ -94,8 +94,7 @@ const CurrMonthStatsByCategory = () => {
 
         {
             (data?.getCurrentMonthStatsByCategory.length)? 
-            <span className='font-semibold mt-5 text-indigo-500'>
-                 This month stats by Category
+            <span className='font-semibold mt-5 text-pink-400'>
             </span>:""
         }
         {

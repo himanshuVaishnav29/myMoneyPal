@@ -128,28 +128,30 @@ const HomePage = ({ loggedInUser }) => {
         }
       });
   
-    
       const filteredTags = Object.keys(tagAmounts).filter(tag => tagAmounts[tag] > 0);
       const filteredAmounts = filteredTags.map(tag => tagAmounts[tag]);
+      
+      // Apply square root scaling to make smaller values more visible
+      const scaledAmounts = filteredAmounts.map(amount => Math.sqrt(amount));
   
-     
       setBarGraphData({
         labels: filteredTags,
         datasets: [
           {
             label: 'INR', 
-            data: filteredAmounts,
+            data: scaledAmounts,
+            originalData: filteredAmounts, // Store original values for tooltips
             backgroundColor: [
-              'rgba(54, 162, 235, 0.5)',
-              'rgba(255, 99, 132, 0.5)',
-              'rgba(255, 206, 86, 0.5)',
-              'rgba(75, 192, 192, 0.5)',
-              'rgba(153, 102, 255, 0.5)',
-              'rgba(255, 159, 64, 0.5)',
-              'rgba(201, 203, 207, 0.5)',
-              'rgba(255, 205, 86, 0.5)',
-              'rgba(75, 192, 192, 0.5)',
-              'rgba(153, 102, 255, 0.5)',
+              'rgba(54, 162, 235, 0.7)',
+              'rgba(255, 99, 132, 0.7)',
+              'rgba(255, 206, 86, 0.7)',
+              'rgba(75, 192, 192, 0.7)',
+              'rgba(153, 102, 255, 0.7)',
+              'rgba(255, 159, 64, 0.7)',
+              'rgba(201, 203, 207, 0.7)',
+              'rgba(255, 205, 86, 0.7)',
+              'rgba(75, 192, 192, 0.7)',
+              'rgba(153, 102, 255, 0.7)',
             ].slice(0, filteredTags.length), 
             borderColor: [
               'rgba(54, 162, 235, 1)',
@@ -163,7 +165,7 @@ const HomePage = ({ loggedInUser }) => {
               'rgba(75, 192, 192, 1)',
               'rgba(153, 102, 255, 1)',
             ].slice(0, filteredTags.length),
-            borderWidth: 1,
+            borderWidth: 2,
           },
         ],
       });
@@ -188,36 +190,39 @@ const HomePage = ({ loggedInUser }) => {
           size: 18,
         },
       },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            const originalValue = context.dataset.originalData[context.dataIndex];
+            if (originalValue >= 1000000) return `₹${(originalValue / 1000000).toFixed(1)}M`;
+            if (originalValue >= 1000) return `₹${(originalValue / 1000).toFixed(1)}K`;
+            return `₹${originalValue.toFixed(2)}`;
+          }
+        }
+      },
     },
     scales: {
       y: {
         beginAtZero: true,
-        // type: 'linear',
-        type:'logarithmic',
+        type: 'linear',
         ticks: {
-          color: '#ffffff', 
+          color: '#ffffff',
           callback: function (value) {
-            if (value >= 1000000) return `${value / 1000000}M`;
-            if (value >= 1000) return `${value / 1000}K`;
-            return value;
+            const originalValue = Math.pow(value, 2);
+            if (originalValue >= 1000000) return `₹${(originalValue / 1000000).toFixed(1)}M`;
+            if (originalValue >= 1000) return `₹${(originalValue / 1000).toFixed(1)}K`;
+            return `₹${originalValue.toFixed(0)}`;
           },
-          autoSkip:false,
         },
-        afterBuildTicks: function (scale) {
-          const ticks = scale.ticks;
-          scale.ticks = ticks.filter((tick, index) => {
-            return index % 5 === 0 || tick.value === 1; 
-          });
-        },
-
         grid: {
           color: '#444', 
         },
       },
-     
       x: {
         ticks: {
-          color: '#ffffff', 
+          color: '#ffffff',
+          maxRotation: 45,
+          minRotation: 45,
         },
       },
     },
@@ -228,17 +233,13 @@ const HomePage = ({ loggedInUser }) => {
 
 
   return (
-    <div className="p-6 min-h-screen text-white">
+    <div className="p-6 min-h-screen text-white mt-3">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
         {/* hero Section */}
-        <div className="col-span-1 md:col-span-3 form-Background rounded-lg shadow p-6 flex flex-col md:flex-row items-center justify-between">
+        {/* <div className="col-span-1 md:col-span-3 form-Background rounded-lg shadow p-6 flex flex-col md:flex-row items-center justify-between">
           <div className="space-y-4">
             <h2 className="text-2xl font-bold">Hey {formatName(loggedInUser?.fullName)},</h2>
-            {/* <p className="text-pink-600">Today's Thought</p> */}
-
-            
-
             {quoteLoading ? ( 
                 <div className="loader">.......</div>
             ) : (
@@ -248,20 +249,10 @@ const HomePage = ({ loggedInUser }) => {
               </div>
             )}
 
-            {/* <button className="bg-teal-500 text-white px-4 py-2 rounded">Download</button> */}
           </div>
 
-
-          {/* <div className="card">
-            <p className="time-text"><span>11:11</span><span class="time-sub-text">PM</span></p>
-            <p className="day-text">Wednesday, June 15th</p>
-            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16" stroke-width="0" fill="currentColor" stroke="currentColor" className="moon"><path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"></path><path d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z"></path></svg>
-          </div> */}
-
-
-
           <img src={loggedInUser?.profilePicture} alt="profilePicture" className="h-24 w-auto mt-4 md:mt-0" loading='lazy' />
-        </div>
+        </div> */}
 
         {/* Financial Summary Row */}
         <div className="col-span-1 md:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

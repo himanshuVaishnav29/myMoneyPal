@@ -26,6 +26,35 @@ const transactionResolver={
                 throw new Error(error," ",error.message);
             }
         },
+        getTransactionsByUserPaginated:async(_,{page = 1, limit = 10},{req,res,user})=>{
+            try {
+                if(!user){
+                    throw new Error("Unauthorized: User not logged in");
+                }
+                const userId=user._id;
+                const skip = (page - 1) * limit;
+                
+                const transactions = await TRANSACTION.find({userId})
+                    .sort({date: -1})
+                    .skip(skip)
+                    .limit(limit);
+                    
+                const totalCount = await TRANSACTION.countDocuments({userId});
+                const totalPages = Math.ceil(totalCount / limit);
+                
+                return {
+                    transactions,
+                    totalCount,
+                    currentPage: page,
+                    totalPages,
+                    hasNextPage: page < totalPages,
+                    hasPrevPage: page > 1
+                };
+            } catch (error) {
+                console.log("Error in getTransactionsByUserPaginated",error);
+                throw new Error(error.message);
+            }
+        },
         getTransaction:async(_,{transactionId})=>{
             try {
                 const transaction=await TRANSACTION.findById({_id:transactionId});
