@@ -20,6 +20,10 @@ const userTypeDef=`#graphql
         # signUp(email:String!,name:String!,password:String!,gender:String!):User
         login(input:LogInInput!):User
         logout:LogoutResponse
+        updateProfile(input:UpdateProfileInput!):User
+        uploadProfileImage(file:Upload!):ImageUploadResponse
+        requestPasswordReset(email:String!):OTPResponse
+        verifyOTPAndResetPassword(input:ResetPasswordInput!):User
     }
 
     input SignUpInput{
@@ -36,6 +40,29 @@ const userTypeDef=`#graphql
 
     type LogoutResponse{
         message:String!
+    }
+
+    type OTPResponse{
+        message:String!
+        success:Boolean!
+    }
+
+    input UpdateProfileInput{
+        fullName:String
+        profilePicture:String
+    }
+
+    scalar Upload
+
+    type ImageUploadResponse{
+        url:String!
+        message:String!
+    }
+
+    input ResetPasswordInput{
+        email:String!
+        otp:String!
+        newPassword:String!
     }
 `;
 

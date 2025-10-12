@@ -66,30 +66,30 @@ const HomePage = ({ loggedInUser }) => {
   
   
 
-  useEffect(() => {
-    const fetchQuote = async () => {
-      try { 
-        setQuoteLoading(true);
-        const response = await fetch('https://api.api-ninjas.com/v1/quotes?category=money', {
-          headers: { 'X-Api-Key': import.meta.env.VITE_QUOTE_API_KEY}, 
-        });
-        // const response = await fetch('https://api.api-ninjas.com/v1/quotes?category=money', {
-        //   headers: { 'X-Api-Key': ''}, 
-        // });
-        const data = await response.json();
-        if (data && data.length > 0) {
-          setQuote(data[0].quote);
-          setAuthor(data[0].author);
-        }
-      } catch (error) {
-        console.error('Error fetching the quote:', error);
-      }finally{
-        setQuoteLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchQuote = async () => {
+  //     try { 
+  //       setQuoteLoading(true);
+  //       const response = await fetch('https://api.api-ninjas.com/v1/quotes?category=money', {
+  //         headers: { 'X-Api-Key': import.meta.env.VITE_QUOTE_API_KEY}, 
+  //       });
+  //       // const response = await fetch('https://api.api-ninjas.com/v1/quotes?category=money', {
+  //       //   headers: { 'X-Api-Key': ''}, 
+  //       // });
+  //       const data = await response.json();
+  //       if (data && data.length > 0) {
+  //         setQuote(data[0].quote);
+  //         setAuthor(data[0].author);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching the quote:', error);
+  //     }finally{
+  //       setQuoteLoading(false);
+  //     }
+  //   };
 
-    fetchQuote();
-  },[]);
+  //   fetchQuote();
+  // },[]);
  
 
   

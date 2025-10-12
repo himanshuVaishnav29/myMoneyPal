@@ -26,6 +26,12 @@ const userSchema=new mongoose.Schema({
     },
     salt:{
         type:String
+    },
+    resetOTP: {
+        type: String
+    },
+    resetOTPExpiry: {
+        type: Date
     }
 },{timestamps:true});
 

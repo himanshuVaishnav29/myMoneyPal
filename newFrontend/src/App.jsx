@@ -13,6 +13,9 @@ import { GET_AUTHETICATED_USER } from './graphql/queries/user.query';
 import Analytics from './pages/Analytics';
 import TransactionUpdateForm from './pages/TransactionUpdateForm';
 import Statement from './pages/Statement';
+import Profile from './pages/Profile';
+import ChangePassword from './pages/ChangePassword';
+import { UserProvider } from './context/UserContext';
  
 
 function App() {
@@ -27,8 +30,7 @@ function App() {
   // }
   // console.log(data?.authUser,"In App");
   return (
-
-    <>
+    <UserProvider>
         <Routes>
           
 
@@ -39,6 +41,8 @@ function App() {
             <Route path='history' element={<History/>} />
             <Route path="history/:id" element={<TransactionUpdateForm/>} />
             <Route path="statement" element={<Statement/>} />
+            <Route path="profile" element={<Profile/>} />
+            <Route path="change-password" element={<ChangePassword/>} />
             <Route path="*" element={<NotFoundPage />} />
 
 
@@ -50,7 +54,7 @@ function App() {
           
         </Routes>
         <Toaster />
-    </>
+    </UserProvider>
   )
 }
 

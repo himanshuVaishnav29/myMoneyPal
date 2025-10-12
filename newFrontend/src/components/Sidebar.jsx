@@ -357,8 +357,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         { id: 2, path: "/analytics", name: "Analytics", icon: GrAnalytics },
         { id: 3, path: "/history", name: "Transactions", icon: LuHistory },
         { id: 4, path: "/statement", name: "Statement", icon: FaSuitcase },
-        // { id: 5, path: "/clients", name: "Clients", icon: LuUser },
-        // { id: 6, path: "/work", name: "Work Plan", icon: LuCalendar },
+        { id: 5, path: "/profile", name: "My Profile", icon: LuUser },
     ];
 
     const location = useLocation();

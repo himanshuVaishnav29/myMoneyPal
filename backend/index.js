@@ -11,6 +11,7 @@ import TRANSACTION from './models/transactionSchema.js';
 import cookieParser from 'cookie-parser';
 import checkForAuthenticationCookie from './middlewares/checkForAuthentication.js';
 import { sendMailAtFirstDayOfMonth } from './services/mailService.js';
+import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';
 
 dotenv.config(); 
 const app=express();
@@ -54,6 +55,7 @@ const GQLServer=new ApolloServer({
      
     typeDefs:mergedTypeDef, //schema's
     resolvers:mergedResolvers,
+    csrfPrevention: false,
     context: ({ req, res }) => ({
         req,
         res,
@@ -95,7 +97,7 @@ app.use(
       methods: ['GET', 'POST', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization','Set-Cookie', 'Cookie']
     }),
-    
+    graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
     cookieParser(),
     express.json(),
     checkForAuthenticationCookie('token'),
