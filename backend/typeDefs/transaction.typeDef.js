@@ -16,6 +16,7 @@ const transactionTypeDef=`#graphql
 
         getAllTransactionsByUser:[Transaction!]
         getTransactionsByUserPaginated(page:Int, limit:Int):TransactionPaginatedResponse!
+        getDashboardSummary:DashboardSummary!
         getTransaction(transactionId:ID!):Transaction
 
         getStatsByCategory:[CategoryStatistics!]
@@ -50,6 +51,19 @@ const transactionTypeDef=`#graphql
         totalPages:Int!
         hasNextPage:Boolean!
         hasPrevPage:Boolean!
+    }
+    
+    type DashboardSummary{
+        totalExpenses:Float!
+        totalSavings:Float!
+        totalInvestment:Float!
+        recentTransactions:[Transaction!]!
+        tagStats:[TagStat!]!
+    }
+    
+    type TagStat{
+        tag:String!
+        totalAmount:Float!
     }
     type Mutation{
         createTransaction(input:CreateTransactionInput!):Transaction!

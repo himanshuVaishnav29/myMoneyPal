@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 // import TransactionFormSkeleton from "../components/skeletons/TransactionFormSkeleton";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
-import { GET_CURRENT_MONTH_STATS_BY_CATEGORY, GET_CURRENT_MONTH_STATS_BY_PAYMENT_TYPE, GET_CURRENT_MONTH_STATS_BY_TAG, GET_CURRENT_WEEK_STATS_BY_CATEGORY, GET_CURRENT_WEEK_STATS_BY_PAYMENT_TYPE, GET_CURRENT_WEEK_STATS_BY_TAG, GET_STATS_BY_CATEGORY, GET_STATS_BY_PAYMENT_TYPE, GET_STATS_BY_TAG, GET_TRANSACTION } from "../graphql/queries/transaction.query";
+import { GET_CURRENT_MONTH_STATS_BY_CATEGORY, GET_CURRENT_MONTH_STATS_BY_PAYMENT_TYPE, GET_CURRENT_MONTH_STATS_BY_TAG, GET_CURRENT_WEEK_STATS_BY_CATEGORY, GET_CURRENT_WEEK_STATS_BY_PAYMENT_TYPE, GET_CURRENT_WEEK_STATS_BY_TAG, GET_STATS_BY_CATEGORY, GET_STATS_BY_PAYMENT_TYPE, GET_STATS_BY_TAG, GET_TRANSACTION, GET_TRANSACTIONS_BY_USER_PAGINATED } from "../graphql/queries/transaction.query";
 import { UPDATE_TRANSACTION } from "../graphql/mutations/transaction.mutation";
+import { GET_DASHBOARD_SUMMARY } from "../graphql/queries/dashboard.query";
 import toast from "react-hot-toast";
 
 const TransactionUpdateForm = () => {
@@ -44,16 +45,13 @@ const TransactionUpdateForm = () => {
 
 	const[updateTransaction,{loading:loadingUpdate,data:updatedData}]=useMutation(UPDATE_TRANSACTION,{
 		refetchQueries: [
-			{query: GET_STATS_BY_CATEGORY },
-			{query:GET_CURRENT_WEEK_STATS_BY_CATEGORY},
-			{query:GET_CURRENT_MONTH_STATS_BY_CATEGORY},
-			{query:GET_STATS_BY_PAYMENT_TYPE},
-			{query:GET_CURRENT_WEEK_STATS_BY_PAYMENT_TYPE},
-			{query:GET_CURRENT_MONTH_STATS_BY_PAYMENT_TYPE},
-			{query:GET_STATS_BY_TAG},
-			{query:GET_CURRENT_MONTH_STATS_BY_TAG},
-			{query:GET_CURRENT_WEEK_STATS_BY_TAG},
+			{query: GET_DASHBOARD_SUMMARY },
+			{query: GET_TRANSACTIONS_BY_USER_PAGINATED, variables: { page: 1, limit: 10 }},
+			{query: GET_STATS_BY_CATEGORY},
+			{query: GET_STATS_BY_PAYMENT_TYPE},
+			{query: GET_STATS_BY_TAG}
 		],
+		awaitRefetchQueries: true
 	});
 
 	const handleSubmit = async (e) => {

@@ -25,6 +25,7 @@
     "graphql-upload": "^17.0.0",
     "handlebars": "^4.7.8",
     "html-pdf-node": "^1.0.8",
+    "ioredis": "^5.8.1",
     "json2csv": "^6.0.0-alpha.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.2",

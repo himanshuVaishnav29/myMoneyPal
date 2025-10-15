@@ -20,18 +20,21 @@ const PORT=(process.env.PORT)|| 8001;
 
 
 
-app.use(express.json()); 
+// Global CORS configuration
+const corsOptions = {
+    origin: ["http://127.0.0.1:5173", "http://localhost:5173", "https://my-money-pal-app.vercel.app"],
+    credentials: true, 
+    methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Set-Cookie', 'Cookie', 'X-Requested-With'],
+    optionsSuccessStatus: 200
+};
 
-//uncomment for local
-// const corsOptions = {
-//     origin: ["http://127.0.0.1:5173","http://localhost:5173"],
-//     methods: ['GET', 'POST', 'OPTIONS'],
-//     allowedHeaders: ['Content-Type', 'Authorization'],
-//     credentials: true, 
-//   };  
-//   app.use(cors(corsOptions));
-// app.use(cookieParser());
-// app.use(checkForAuthenticationCookie('token'));
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(cookieParser());
+
+// Handle preflight requests
+app.options('*', cors(corsOptions));
  
 app.get("/monthlyReport",async(req,res)=>{
     try{
@@ -52,10 +55,10 @@ app.get("/monthlyReport",async(req,res)=>{
 
 //graphQl server
 const GQLServer=new ApolloServer({
-     
     typeDefs:mergedTypeDef, //schema's
     resolvers:mergedResolvers,
     csrfPrevention: false,
+    cors: false, // Disable Apollo's CORS to use Express CORS
     context: ({ req, res }) => ({
         req,
         res,
@@ -81,28 +84,9 @@ await connectDb();
 
 app.use(
     '/graphql',
-
-    //for local
-    // cors({
-    //   origin: ["http://127.0.0.1:5173","http://localhost:5173"],      
-    //   credentials: true, 
-    //   methods: ['GET', 'POST', 'OPTIONS'],
-    //   allowedHeaders: ['Content-Type', 'Authorization','Set-Cookie', 'Cookie']
-    // }),
-
-    //for deployment
-    cors({
-      origin: "https://my-money-pal-app.vercel.app",
-      credentials: true, 
-      methods: ['GET', 'POST', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization','Set-Cookie', 'Cookie']
-    }),
     graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
-    cookieParser(),
-    express.json(),
     checkForAuthenticationCookie('token'),
     expressMiddleware(GQLServer,{
- 
         context: ({ req, res }) => ({
             req,
             res,

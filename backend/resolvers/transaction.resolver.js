@@ -1,6 +1,7 @@
 import TRANSACTION from "../models/transactionSchema.js";
 import { transactions } from "../testData/testData.js";
 import { Parser } from 'json2csv';
+import { cache } from '../services/redisService.js';
 
 const transactionResolver={
     Query:{
@@ -65,32 +66,100 @@ const transactionResolver={
             }
         },
 
+        getDashboardSummary:async(_,__,{req,res,user})=>{
+            try {
+                if(!user){
+                   throw new Error("Unauthorized 😡"); 
+                }
+                const userId=user._id;
+                const cacheKey = `dashboard:${userId}`;
+                
+                // Try cache first
+                let cachedSummary = await cache.get(cacheKey);
+                if (cachedSummary) {
+                    return cachedSummary;
+                }
+                
+                // Get current month date range
+                const now = new Date();
+                const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+                const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+                
+                // Use simple find instead of aggregation to avoid ObjectId issues
+                const [monthlyTransactions, recentTransactions, tagStats] = await Promise.all([
+                    // Monthly transactions
+                    TRANSACTION.find({
+                        userId: userId,
+                        date: { $gte: startOfMonth, $lte: endOfMonth }
+                    }),
+                    // Recent 5 transactions
+                    TRANSACTION.find({ userId }).sort({ date: -1 }).limit(5).lean(),
+                    // Tag spending aggregation (all-time for chart)
+                    TRANSACTION.aggregate([
+                        { $match: { userId: userId } },
+                        { $group: { _id: '$tag', total: { $sum: '$amount' } } },
+                        { $sort: { total: -1 } }
+                    ])
+                ]);
+                
+                // Process monthly stats manually
+                const summary = {
+                    totalExpenses: 0,
+                    totalSavings: 0,
+                    totalInvestment: 0
+                };
+                
+                monthlyTransactions.forEach(txn => {
+                    if (txn.category === 'expense') summary.totalExpenses += txn.amount;
+                    if (txn.category === 'saving') summary.totalSavings += txn.amount;
+                    if (txn.category === 'investment') summary.totalInvestment += txn.amount;
+                });
+                
+                const result = {
+                    ...summary,
+                    recentTransactions,
+                    tagStats: tagStats.map(tag => ({ tag: tag._id, totalAmount: tag.total }))
+                };
+                
+                // Cache for 2 minutes
+                await cache.set(cacheKey, result, 120);
+                
+                return result;
+            } catch (error) {
+                console.log("Error in getDashboardSummary",error);
+                throw new Error(error.message);
+            }
+        },
         getStatsByCategory:async(_,__,{req,res,user})=>{
             try {
                 if(!user){
                    throw new Error("Unauthorized"); 
                 }
                 const userId=user._id;
-                // console.log(userId,"here");
+                const cacheKey = `stats:category:${userId}`;
+                
+                // Try cache first
+                let cachedStats = await cache.get(cacheKey);
+                if (cachedStats) {
+                    return cachedStats;
+                }
+                
                 const transactions=await TRANSACTION.find({userId});
                 const categoryMap={};
-                // const transactions = [
-                // 	{ category: "expense", amount: 50 },
-                // 	{ category: "expense", amount: 75 },
-                // 	{ category: "investment", amount: 100 },
-                // 	{ category: "saving", amount: 30 },
-                // 	{ category: "saving", amount: 20 }
-                // ];
+                
                 transactions.forEach((txn)=>{
                     if(!categoryMap[txn.category]){
                        categoryMap[txn.category]=0; 
                     }
                     categoryMap[txn.category] +=txn.amount;
                 });
-                // Convert the category totals into an array of objects
-                // categoryMap = { expense: 125, investment: 100, saving: 50 }
-                return Object.entries(categoryMap).map(([category,totalAmount])=>({category,totalAmount}) );
-                // return [ { category: "expense", totalAmount: 125 }, { category: "investment", totalAmount: 100 }, { category: "saving", totalAmount: 50 } ]
+                
+                const result = Object.entries(categoryMap).map(([category,totalAmount])=>({category,totalAmount}) );
+                
+                // Cache for 10 minutes
+                await cache.set(cacheKey, result, 600);
+                
+                return result;
             } catch (error) {
                 console.log("Error in getCategoryStatistics",error);
                 throw new Error(error.message," ",error);
@@ -202,6 +271,14 @@ const transactionResolver={
                 throw new Error("Unauthorized");
               }
               const userId = user._id;
+              const cacheKey = `stats:paymentType:${userId}`;
+              
+              // Try cache first
+              let cachedStats = await cache.get(cacheKey);
+              if (cachedStats) {
+                  return cachedStats;
+              }
+              
               const transactions = await TRANSACTION.find({ userId });
               const paymentTypeMap = {};
           
@@ -211,10 +288,16 @@ const transactionResolver={
                 }
                 paymentTypeMap[txn.paymentType] += txn.amount;
               });
-              return Object.entries(paymentTypeMap).map(([paymentType, totalAmount]) => ({
+              
+              const result = Object.entries(paymentTypeMap).map(([paymentType, totalAmount]) => ({
                 paymentType,
                 totalAmount,
               }));
+              
+              // Cache for 10 minutes
+              await cache.set(cacheKey, result, 600);
+              
+              return result;
           
             } catch (error) {
               console.log("Error in getStatsByPaymentType", error);
@@ -316,6 +399,14 @@ const transactionResolver={
               throw new Error("Unauthorized");
             }
             const userId = user._id;
+            const cacheKey = `stats:tag:${userId}`;
+            
+            // Try cache first
+            let cachedStats = await cache.get(cacheKey);
+            if (cachedStats) {
+                return cachedStats;
+            }
+            
             const transactions = await TRANSACTION.find({ userId });
             const tagsMap = {};
         
@@ -325,10 +416,16 @@ const transactionResolver={
               }
               tagsMap[txn.tag] += txn.amount;
             });
-            return Object.entries(tagsMap).map(([tag, totalAmount]) => ({
+            
+            const result = Object.entries(tagsMap).map(([tag, totalAmount]) => ({
               tag,
               totalAmount,
             }));
+            
+            // Cache for 10 minutes
+            await cache.set(cacheKey, result, 600);
+            
+            return result;
           } catch (error) {
             console.log("Error in getStatsByTag", error);
             throw new Error(error.message);
@@ -446,6 +543,11 @@ const transactionResolver={
                     date:date, 
                     tag:tag
                 });
+                
+                // Invalidate user's cache patterns
+                await cache.invalidatePattern(`stats:*:${req.user._id}`);
+                await cache.del(`dashboard:${req.user._id}`);
+                
                 console.log(transaction,"createdtxn");
                 return transaction;
             } catch (error) {
@@ -468,6 +570,13 @@ const transactionResolver={
                     date:date,
                     tag:tag,
                 },{new:true});
+                
+                // Invalidate cache patterns for the user
+                if (updatedTransaction) {
+                    await cache.invalidatePattern(`stats:*:${updatedTransaction.userId}`);
+                    await cache.del(`dashboard:${updatedTransaction.userId}`);
+                }
+                
                 return updatedTransaction;
             } catch (error) {
                 console.log("Error in updateTransaction",error);
@@ -480,6 +589,11 @@ const transactionResolver={
                 if (!deletedTransaction) {
                     throw new Error("Transaction not found");
                 }
+                
+                // Invalidate cache patterns for the user
+                await cache.invalidatePattern(`stats:*:${deletedTransaction.userId}`);
+                await cache.del(`dashboard:${deletedTransaction.userId}`);
+                
                 return deletedTransaction;
             } catch (error) {
                 console.log("Error in deleteTransaction",error);

@@ -13,7 +13,7 @@ import {
   Legend,
 } from 'chart.js';
 import { useQuery } from '@apollo/client';
-import { GET_TRANSACTIONS_BY_USER } from '../graphql/queries/transaction.query';
+import { GET_DASHBOARD_SUMMARY } from '../graphql/queries/dashboard.query';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement,LogarithmicScale, Title, Tooltip, Legend);
 
@@ -26,43 +26,18 @@ const HomePage = ({ loggedInUser }) => {
   const [totalInvestment, setTotalInvestment] = useState(0);
   const [totalSavings, setTotalSavings] = useState(0);
 
-  const {data,loading,error}=useQuery(GET_TRANSACTIONS_BY_USER);
+  const {data,loading,error}=useQuery(GET_DASHBOARD_SUMMARY);
 
 
   useEffect(() => {
-      if (data) {
-          const transactions = data.getAllTransactionsByUser;
-          const lastTransactions = transactions.slice(-4).reverse(); 
-          setRecentTransactions(lastTransactions);
-      }
-  }, [data]);
-
-    
-  useEffect(() => {
-    let expenses = 0;
-    let investment = 0;
-    let savings = 0;
-    if (data && data.getAllTransactionsByUser ) {
-      const currentMonth = new Date().getMonth();
-      const currentYear = new Date().getFullYear();
-  
-      data.getAllTransactionsByUser.forEach((transaction) => {
-        const transactionDate = new Date(parseInt(transaction.date)); 
-        if ( transactionDate.getMonth() === currentMonth && transactionDate.getFullYear() === currentYear ) {
-          if (transaction.category === 'expense') {
-            expenses += transaction.amount;
-          } else if (transaction.category === 'investment') {
-            investment += transaction.amount;
-          } else if (transaction.category === 'saving') {
-            savings += transaction.amount;
-          }
-        }
-      });
+    if (!loading && data?.getDashboardSummary) {
+      const summary = data.getDashboardSummary;
+      setTotalExpenses(summary.totalExpenses);
+      setTotalSavings(summary.totalSavings);
+      setTotalInvestment(summary.totalInvestment);
+      setRecentTransactions(summary.recentTransactions.slice(0, 4));
     }
-    setTotalExpenses(expenses);
-    setTotalInvestment(investment);
-    setTotalSavings(savings);
-  }, [data]);
+  }, [data, loading]);
   
   
 
@@ -108,7 +83,7 @@ const HomePage = ({ loggedInUser }) => {
   });
   
   useEffect(() => {
-    if (!loading && data?.getAllTransactionsByUser) {
+    if (!loading && data?.getDashboardSummary) {
       const tagAmounts = {
         'Food & Dining': 0,
         'Entertainment & Leisure': 0,
@@ -122,55 +97,51 @@ const HomePage = ({ loggedInUser }) => {
         'Others': 0,
       };
   
-      data?.getAllTransactionsByUser.forEach((transaction) => {
-        if (tagAmounts[transaction.tag] !== undefined) {
-          tagAmounts[transaction.tag] += transaction.amount;
+      data.getDashboardSummary.tagStats.forEach((tagStat) => {
+        if (tagAmounts[tagStat.tag] !== undefined) {
+          tagAmounts[tagStat.tag] = tagStat.totalAmount;
         }
       });
   
       const filteredTags = Object.keys(tagAmounts).filter(tag => tagAmounts[tag] > 0);
       const filteredAmounts = filteredTags.map(tag => tagAmounts[tag]);
-      
-      // Apply square root scaling to make smaller values more visible
       const scaledAmounts = filteredAmounts.map(amount => Math.sqrt(amount));
   
       setBarGraphData({
         labels: filteredTags,
-        datasets: [
-          {
-            label: 'INR', 
-            data: scaledAmounts,
-            originalData: filteredAmounts, // Store original values for tooltips
-            backgroundColor: [
-              'rgba(54, 162, 235, 0.7)',
-              'rgba(255, 99, 132, 0.7)',
-              'rgba(255, 206, 86, 0.7)',
-              'rgba(75, 192, 192, 0.7)',
-              'rgba(153, 102, 255, 0.7)',
-              'rgba(255, 159, 64, 0.7)',
-              'rgba(201, 203, 207, 0.7)',
-              'rgba(255, 205, 86, 0.7)',
-              'rgba(75, 192, 192, 0.7)',
-              'rgba(153, 102, 255, 0.7)',
-            ].slice(0, filteredTags.length), 
-            borderColor: [
-              'rgba(54, 162, 235, 1)',
-              'rgba(255, 99, 132, 1)',
-              'rgba(255, 206, 86, 1)',
-              'rgba(75, 192, 192, 1)',
-              'rgba(153, 102, 255, 1)',
-              'rgba(255, 159, 64, 1)',
-              'rgba(201, 203, 207, 1)',
-              'rgba(255, 205, 86, 1)',
-              'rgba(75, 192, 192, 1)',
-              'rgba(153, 102, 255, 1)',
-            ].slice(0, filteredTags.length),
-            borderWidth: 2,
-          },
-        ],
+        datasets: [{
+          label: 'INR', 
+          data: scaledAmounts,
+          originalData: filteredAmounts,
+          backgroundColor: [
+            'rgba(54, 162, 235, 0.7)',
+            'rgba(255, 99, 132, 0.7)',
+            'rgba(255, 206, 86, 0.7)',
+            'rgba(75, 192, 192, 0.7)',
+            'rgba(153, 102, 255, 0.7)',
+            'rgba(255, 159, 64, 0.7)',
+            'rgba(201, 203, 207, 0.7)',
+            'rgba(255, 205, 86, 0.7)',
+            'rgba(75, 192, 192, 0.7)',
+            'rgba(153, 102, 255, 0.7)',
+          ].slice(0, filteredTags.length), 
+          borderColor: [
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 99, 132, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)',
+            'rgba(201, 203, 207, 1)',
+            'rgba(255, 205, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+          ].slice(0, filteredTags.length),
+          borderWidth: 2,
+        }],
       });
     }
-  }, [data]);
+  }, [data, loading]);
   
   const options = {
     responsive: true,

@@ -3,6 +3,7 @@ import {createToken} from '../services/authentication.js';
 import {createHmac, randomBytes } from "crypto";
 import { sendOTPEmail } from '../services/mailService.js';
 import cloudinary from '../services/cloudinaryService.js';
+import { cache } from '../services/redisService.js';
 
 
 const userResolver={
@@ -11,11 +12,23 @@ const userResolver={
             try{
                 if (!user) return null;
                 
+                const cacheKey = `user:${user._id}`;
+                
+                // Try to get from cache first
+                let cachedUser = await cache.get(cacheKey);
+                if (cachedUser) {
+                    return cachedUser;
+                }
+                
                 // Fetch fresh user data from database
                 const freshUser = await USER.findById(user._id);
                 if (!freshUser) return null;
                 
                 const { password: _, salt: __, ...userWithoutPassword } = freshUser.toObject();
+                
+                // Cache user data for 5 minutes
+                await cache.set(cacheKey, userWithoutPassword, 300);
+                
                 return userWithoutPassword;
             }catch(err){
                 console.log("Error in authUser",err);
@@ -137,6 +150,10 @@ const userResolver={
                     { $set: input },
                     { new: true }
                 );
+                
+                // Invalidate user cache
+                await cache.del(`user:${user._id}`);
+                
                 const { password: _, salt: __, ...userWithoutPassword } = updatedUser.toObject();
                 return userWithoutPassword;
             } catch (error) {
@@ -200,6 +217,9 @@ const userResolver={
                 await USER.findByIdAndUpdate(user._id, {
                     profilePicture: uploadResult.secure_url
                 });
+                
+                // Invalidate user cache
+                await cache.del(`user:${user._id}`);
                 
                 return {
                     url: uploadResult.secure_url,

@@ -1,24 +1,21 @@
 import { useMutation } from "@apollo/client";
 import { CREATE_TRANSACTION } from "../graphql/mutations/transaction.mutation";
 import toast from 'react-hot-toast';
-import { GET_CURRENT_MONTH_STATS_BY_CATEGORY, GET_CURRENT_MONTH_STATS_BY_PAYMENT_TYPE, GET_CURRENT_MONTH_STATS_BY_TAG, GET_CURRENT_WEEK_STATS_BY_CATEGORY, GET_CURRENT_WEEK_STATS_BY_PAYMENT_TYPE, GET_CURRENT_WEEK_STATS_BY_TAG, GET_STATS_BY_CATEGORY, GET_STATS_BY_PAYMENT_TYPE, GET_STATS_BY_TAG, GET_TRANSACTIONS_BY_USER } from "../graphql/queries/transaction.query";
+import { GET_CURRENT_MONTH_STATS_BY_CATEGORY, GET_CURRENT_MONTH_STATS_BY_PAYMENT_TYPE, GET_CURRENT_MONTH_STATS_BY_TAG, GET_CURRENT_WEEK_STATS_BY_CATEGORY, GET_CURRENT_WEEK_STATS_BY_PAYMENT_TYPE, GET_CURRENT_WEEK_STATS_BY_TAG, GET_STATS_BY_CATEGORY, GET_STATS_BY_PAYMENT_TYPE, GET_STATS_BY_TAG, GET_TRANSACTIONS_BY_USER, GET_TRANSACTIONS_BY_USER_PAGINATED } from "../graphql/queries/transaction.query";
+import { GET_DASHBOARD_SUMMARY } from "../graphql/queries/dashboard.query";
 import {FaRupeeSign} from "react-icons/fa";
 
 const TransactionForm = ({toggleModal}) => {
 
 	const[createTransaction,{loading,error}]=useMutation(CREATE_TRANSACTION,{
 		refetchQueries: [
-			{query: GET_TRANSACTIONS_BY_USER },
-			{query:GET_STATS_BY_CATEGORY},
-			{query:GET_CURRENT_WEEK_STATS_BY_CATEGORY},
-			{query:GET_CURRENT_MONTH_STATS_BY_CATEGORY},
-			{query:GET_STATS_BY_PAYMENT_TYPE},
-			{query:GET_CURRENT_WEEK_STATS_BY_PAYMENT_TYPE},
-			{query:GET_CURRENT_MONTH_STATS_BY_PAYMENT_TYPE},
-			{query:GET_STATS_BY_TAG},
-			{query:GET_CURRENT_MONTH_STATS_BY_TAG},
-			{query:GET_CURRENT_WEEK_STATS_BY_TAG},
-		]		
+			{query: GET_DASHBOARD_SUMMARY },
+			{query: GET_TRANSACTIONS_BY_USER_PAGINATED, variables: { page: 1, limit: 10 }},
+			{query: GET_STATS_BY_CATEGORY},
+			{query: GET_STATS_BY_PAYMENT_TYPE},
+			{query: GET_STATS_BY_TAG}
+		],
+		awaitRefetchQueries: true
 	});
 	const tagArray=[
 		"Food & Dining",
