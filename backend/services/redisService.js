@@ -4,8 +4,14 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 let redisClient = null;
+const REDIS_ENABLED = process.env.REDIS_ENABLED === 'true';
 
 const initRedis = async () => {
+    if (!REDIS_ENABLED) {
+        console.log('Redis is disabled via REDIS_ENABLED flag');
+        return;
+    }
+    
     try {
         let redisConfig;
         
@@ -63,7 +69,7 @@ initRedis();
 
 export const cache = {
     async get(key) {
-        if (!redisClient) return null;
+        if (!REDIS_ENABLED || !redisClient) return null;
         try {
             const data = await redisClient.get(key);
             return data ? JSON.parse(data) : null;
@@ -74,7 +80,7 @@ export const cache = {
     },
 
     async set(key, value, ttl = 300) {
-        if (!redisClient) return false;
+        if (!REDIS_ENABLED || !redisClient) return false;
         try {
             await redisClient.setex(key, ttl, JSON.stringify(value));
             return true;
@@ -85,7 +91,7 @@ export const cache = {
     },
 
     async del(key) {
-        if (!redisClient) return false;
+        if (!REDIS_ENABLED || !redisClient) return false;
         try {
             await redisClient.del(key);
             return true;
@@ -96,7 +102,7 @@ export const cache = {
     },
 
     async invalidatePattern(pattern) {
-        if (!redisClient) return false;
+        if (!REDIS_ENABLED || !redisClient) return false;
         try {
             const keys = await redisClient.keys(pattern);
             if (keys.length > 0) {
