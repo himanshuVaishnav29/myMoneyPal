@@ -12,8 +12,14 @@ const TransactionForm = ({toggleModal}) => {
 			{query: GET_DASHBOARD_SUMMARY },
 			{query: GET_TRANSACTIONS_BY_USER_PAGINATED, variables: { page: 1, limit: 10 }},
 			{query: GET_STATS_BY_CATEGORY},
+			{query:GET_CURRENT_WEEK_STATS_BY_CATEGORY},
+			{query:GET_CURRENT_MONTH_STATS_BY_CATEGORY},
 			{query: GET_STATS_BY_PAYMENT_TYPE},
-			{query: GET_STATS_BY_TAG}
+			{query:GET_CURRENT_WEEK_STATS_BY_PAYMENT_TYPE},
+			{query:GET_CURRENT_MONTH_STATS_BY_PAYMENT_TYPE},
+			{query: GET_STATS_BY_TAG},
+			{query:GET_CURRENT_MONTH_STATS_BY_TAG},
+			{query:GET_CURRENT_WEEK_STATS_BY_TAG},
 		],
 		awaitRefetchQueries: true
 	});
