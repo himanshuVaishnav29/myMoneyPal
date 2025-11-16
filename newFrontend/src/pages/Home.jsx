@@ -14,6 +14,8 @@ import {
 } from 'chart.js';
 import { useQuery } from '@apollo/client';
 import { GET_DASHBOARD_SUMMARY } from '../graphql/queries/dashboard.query';
+import FinanceCarousel from '../components/FinanceCarousel';
+import Footer from '../components/Footer';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement,LogarithmicScale, Title, Tooltip, Legend);
 
@@ -310,20 +312,17 @@ const HomePage = ({ loggedInUser }) => {
 
         </div>
 
-        {/* TAG GRAPH Section */}
-        <div className="col-span-1 md:col-span-3 p-6 rounded-lg shadow text-white">
-           
-            <div className='hidden md:block' style={{height:'50vh', width:'100%'}}>
-            {barGraphData && barGraphData.labels.length > 0 && (
-              <Bar data={barGraphData} options={options} />
-            )}
-          </div>
+        {/* Finance Carousel Section */}
+        <div className="col-span-1 md:col-span-3">
+          <FinanceCarousel />
         </div>
+
+        {/* TAG GRAPH Section */}
+        
         
       </div>
 
-
-      
+      <Footer />
     </div>
   );
 };
