@@ -3,6 +3,7 @@ import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { useQuery } from '@apollo/client';
 import { GET_CURRENT_MONTH_STATS_BY_TAG } from '../../graphql/queries/transaction.query';
+import ComponentLoader from '../Skeletons/ComponentLoader';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -101,7 +102,7 @@ const CurrMonthStatsByTagBar = () => {
         },
     };
 
-    if (loading) return <div className="text-white text-center">Loading...</div>;
+    if (loading) return <ComponentLoader />;
     if (error) return <div className="text-white text-center">Something went wrong</div>;
 
     return (

@@ -6,6 +6,7 @@ import { GET_CURRENT_MONTH_STATS_BY_CATEGORY, GET_CURRENT_MONTH_STATS_BY_PAYMENT
 import { UPDATE_TRANSACTION } from "../graphql/mutations/transaction.mutation";
 import { GET_DASHBOARD_SUMMARY } from "../graphql/queries/dashboard.query";
 import toast from "react-hot-toast";
+import ComponentLoader from "../components/Skeletons/ComponentLoader";
 
 const TransactionUpdateForm = () => {
 
@@ -84,7 +85,7 @@ const TransactionUpdateForm = () => {
 
 	// if (loading) return <TransactionFormSkeleton />;
 	// return <TransactionFormSkeleton />;
-	if (loading) return <h1>Loading..</h1>;
+	if (loading) return <ComponentLoader/>;
 
 
 

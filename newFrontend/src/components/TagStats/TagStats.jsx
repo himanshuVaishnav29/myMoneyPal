@@ -5,6 +5,7 @@ import { useQuery } from "@apollo/client";
 // import { GET_STATS_BY_TAG } from "../graphql/queries/transaction.query";
 import { useEffect, useState } from "react";
 import { GET_STATS_BY_TAG } from '../../graphql/queries/transaction.query';
+import ComponentLoader from '../Skeletons/ComponentLoader';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -124,7 +125,7 @@ const TagStats = () => {
         },
     };
     if(tagStatsLoading){
-        return <h1>Loading..</h1>
+        return <ComponentLoader />
     }
     if(error){
         return <h1>Something went wrong</h1>

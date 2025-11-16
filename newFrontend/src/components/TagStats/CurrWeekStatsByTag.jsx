@@ -5,6 +5,7 @@ import { useQuery } from "@apollo/client";
 
 import { useEffect, useState } from "react";
 import { GET_CURRENT_WEEK_STATS_BY_TAG } from '../../graphql/queries/transaction.query';
+import ComponentLoader from '../Skeletons/ComponentLoader';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -115,7 +116,7 @@ const CurrWeekStatsByTag = () => {
         },
     };
     if(weekStatsLoading){
-        return <h1>Loading....</h1>
+        return <ComponentLoader />
     }
     if(error){
         return <h1>Something went wrong</h1>

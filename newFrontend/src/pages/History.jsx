@@ -7,6 +7,7 @@ import { GET_DASHBOARD_SUMMARY } from '../graphql/queries/dashboard.query';
 import { useNavigate } from 'react-router-dom';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import toast from 'react-hot-toast';
+import ComponentLoader from '../components/Skeletons/ComponentLoader';
 
 const History = () => {
     const [currentPage, setCurrentPage] = useState(1);
@@ -56,7 +57,7 @@ const History = () => {
 
 
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <ComponentLoader />;
     if (error) return <div>Error fetching transactions</div>;
 
     return (

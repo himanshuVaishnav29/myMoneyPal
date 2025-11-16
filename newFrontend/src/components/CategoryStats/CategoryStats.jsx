@@ -5,6 +5,7 @@ import { useMutation, useQuery } from "@apollo/client";
 
 import { useEffect, useState } from "react";
 import { GET_STATS_BY_CATEGORY } from '../../graphql/queries/transaction.query';
+import ComponentLoader from '../Skeletons/ComponentLoader';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const CategoryStats = () => {
@@ -87,7 +88,7 @@ const CategoryStats = () => {
         },
       };
   if (statsLoading) {
-    return <h1>Loading....</h1>;
+    return <ComponentLoader />;
   }
 
   if (error) {

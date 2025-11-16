@@ -5,6 +5,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { useQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
 import { GET_CURRENT_MONTH_STATS_BY_TAG } from '../../graphql/queries/transaction.query';
+import ComponentLoader from '../Skeletons/ComponentLoader';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -114,7 +115,7 @@ const CurrMonthStatsByTag = () => {
         },
     };
     if(monthStatsLoading){
-        return <h1>Loading....</h1>
+        return <ComponentLoader/>
     }
     if(error){
         return <h1>Something went wrong</h1>

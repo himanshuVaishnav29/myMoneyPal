@@ -5,6 +5,7 @@ import { useQuery } from "@apollo/client";
 
 import { useEffect, useState } from "react";
 import { GET_STATS_BY_PAYMENT_TYPE } from '../../graphql/queries/transaction.query';
+import ComponentLoader from '../Skeletons/ComponentLoader';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -83,7 +84,7 @@ const PaymentTypeStats = () => {
   };
 
   if(paymentTypeStatsLoading){
-    return <h1>Loading...</h1>
+    return <ComponentLoader />
   }
   if(error){
     return <h1>Something went wrong</h1>
