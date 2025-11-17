@@ -12,7 +12,7 @@ const Platforms = () => {
     // const [logout, { loading, client }] = useMutation(LOGOUT, {
     //   refetchQueries: ["GetAuthenticatedUser"],
     // });
-    const { data, laoding:categoryStatsLoading,error } = useQuery(GET_CURRENT_WEEK_STATS_BY_CATEGORY);
+    const { data, loading:categoryStatsLoading,error } = useQuery(GET_CURRENT_WEEK_STATS_BY_CATEGORY);
   // console.log(data,"GET_CURRENT_WEEK_STATS_BY_CATEGORY");
    
     const [chartData, setChartData] = useState({
@@ -87,9 +87,13 @@ const Platforms = () => {
           },
         },
       };
-     if(categoryStatsLoading){
-      return <ComponentLoader />
-    }
+      if(categoryStatsLoading){
+        return (
+          <div className="flex justify-center items-center h-full relative">
+            <ComponentLoader />
+          </div>
+        );
+      }
     if(error){
       return<h1>Something went wrong</h1>
     }

@@ -61,7 +61,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         // <div className='w-16 md:w-56 fixed left-0 top-0 z-10 min-h-full border-r pt-8 px-4 text-neutral-100'>
         // <div className='w-16 md:w-56 fixed left-0 top-0 z-10 min-h-full shadow-lg shadow-neutral-900/50 pt-8 px-4 text-neutral-100'>
         <div
-        className={`fixed left-0 top-0 z-10 md:w-56 min-h-full bg-gray-900 text-white shadow-lg pt-8 px-4 transition-transform transform duration-300 ease-in-out ${
+        className={`fixed left-0 top-0 z-50 md:w-56 min-h-full bg-gray-900 text-white shadow-lg pt-8 px-4 transition-transform transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0`}
         

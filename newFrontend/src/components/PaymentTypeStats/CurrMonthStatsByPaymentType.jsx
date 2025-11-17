@@ -84,7 +84,11 @@ const CurrMonthStatsByPaymentType = () => {
     },
   };
   if(paymentTypeStatsLoading){
-    return <ComponentLoader />
+    return (
+      <div className="flex justify-center items-center h-full relative">
+        <ComponentLoader />
+      </div>
+    );
   }
   if(error){
     return <h1>Something went wrong</h1>

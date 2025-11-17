@@ -16,6 +16,7 @@ import { useQuery } from '@apollo/client';
 import { GET_DASHBOARD_SUMMARY } from '../graphql/queries/dashboard.query';
 import FinanceCarousel from '../components/FinanceCarousel';
 import Footer from '../components/Footer';
+import ComponentLoader from '../components/ComponentLoader';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement,LogarithmicScale, Title, Tooltip, Legend);
 
@@ -264,7 +265,9 @@ const HomePage = ({ loggedInUser }) => {
               Recent Transactions
             </p>
 
-            {recentTransactions?.length > 0 ? (
+            {loading? (
+              <ComponentLoader />
+            ) : recentTransactions?.length > 0 ? (
               <div className="divide-y divide-gray-700/40">
                 {recentTransactions.map((transaction) => (
                   <div

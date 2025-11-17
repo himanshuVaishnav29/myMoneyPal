@@ -63,7 +63,7 @@ const Footer = () => {
         <div className="absolute top-1/2 right-0 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl" 
              style={{ animation: 'float-gentle 12s ease-in-out infinite' }} />
         
-        <div className="max-w-7xl mx-auto px-6 py-10 relative z-10">
+        <div className="max-w-7xl mx-auto px-6 py-10 relative z-0">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
             
             {/* Brand Section - 4 cols */}
@@ -162,8 +162,8 @@ const Footer = () => {
                 </a>
               </div>
             </div> */}
-            
-            <div className="col-span-1 md:col-span-2">
+            {/* INDIA BLOCK */}
+            <div className="col-span-1 md:col-span-2 md:hidden xl:block sm:block lg:block">
                 <div className="rounded-xl p-4 border border-white/10 bg-gradient-to-r from-[#FF9933] via-white to-[#138808] bg-[length:200%_200%] animate-flag-flow flex flex-col justify-center h-32">
                   <h4 className="text-black font-bold text-sm mb-1">
                     Standing tall in a nation of valor and vibrant culture     

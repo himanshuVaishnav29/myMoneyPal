@@ -88,7 +88,11 @@ const CategoryStats = () => {
         },
       };
   if (statsLoading) {
-    return <ComponentLoader />;
+    return (
+      <div className="flex justify-center items-center h-full relative">
+        <ComponentLoader />
+      </div>
+    );
   }
 
   if (error) {
@@ -108,13 +112,7 @@ const CategoryStats = () => {
     // </div>
 
     <div className="flex flex-col justify-center items-center gap-6 h-full">
-      {data?.getStatsByCategory.length>0 && !statsLoading ? (
-        <span className="font-semibold mt-5 text-pink-400">
-        </span>
-      ) : (
-        ""
-      )}
-      {data?.getStatsByCategory.length > 0 && !statsLoading ? (
+      {data?.getStatsByCategory.length > 0 ? (
         <Doughnut data={chartData} className="p-5" options={options} />
       ) : (
         <span className="font-semibold m-5">
