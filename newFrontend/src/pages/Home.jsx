@@ -276,8 +276,8 @@ const HomePage = ({ loggedInUser }) => {
                   >
                     <div>
                       <p className="font-medium text-white">
-                        {transaction.description.length > 15
-                          ? `${transaction.description.substring(0, 13).toUpperCase()}...`
+                        {transaction.description.length > 12
+                          ? `${transaction.description.substring(0,8).toUpperCase()}...`
                           : transaction.description.toUpperCase()}
                       </p>
                       <p className="text-gray-400 text-xs mt-0.5">

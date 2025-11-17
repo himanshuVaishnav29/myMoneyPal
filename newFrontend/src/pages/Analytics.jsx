@@ -51,14 +51,13 @@ const Analytics = () => {
   };
 
   return (
-    <div className='p-4 md:p-6 text-white min-h-screen'>
+    <div className='p-4 md:p-6 text-white min-h-screen w-full'>
       <div className='text-center mb-8'>
         <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-pink-600 via-indigo-500 to-pink-400 inline-block text-transparent bg-clip-text">Analytics Dashboard</h1>
       </div>
 
-
       {/* Second row - Bar chart for tags */}
-      <div className='bg-transparent rounded-xl p-6 shadow-lg border border-gray-700 mb-8'>
+      <div className='bg-transparent rounded-xl p-4 md:p-6 shadow-lg border border-gray-700 mb-8'>
         <div className='mb-4'>
           <h2 className='text-lg font-semibold text-white mb-3'>Tag-wise Spending Analysis</h2>
           <select
@@ -72,14 +71,14 @@ const Analytics = () => {
             <option className='bg-gray-800 text-white' value="This month">This month</option>
           </select>
         </div>
-        <div className='w-full' style={{height: '400px'}}>
+        <div className='w-full h-64 md:h-80 lg:h-96'>
           {renderTagComponent()}
         </div>
       </div>
 
       {/* First row - 2 pie charts */}
-      <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8'>
-        <div className='bg-transparent rounded-xl p-6 shadow-lg border border-gray-700'>
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-8'>
+        <div className='bg-transparent rounded-xl p-4 md:p-6 shadow-lg border border-gray-700'>
           <div className='mb-4'>
             <h2 className='text-lg font-semibold text-white mb-3'>Category Statistics</h2>
             <select
@@ -93,12 +92,12 @@ const Analytics = () => {
               <option className='bg-gray-800 text-white' value="This month">This month</option>
             </select>
           </div>
-          <div className='flex justify-center items-center' style={{height: '320px'}}>
+          <div className='flex justify-center items-center h-64 md:h-72 lg:h-80'>
             {renderCategoryComponent()}
           </div>
         </div>
 
-        <div className='bg-transparent rounded-xl p-6 shadow-lg border border-gray-700'>
+        <div className='bg-transparent rounded-xl p-4 md:p-6 shadow-lg border border-gray-700'>
           <div className='mb-4'>
             <h2 className='text-lg font-semibold text-white mb-3'>Payment Type Statistics</h2>
             <select
@@ -112,13 +111,11 @@ const Analytics = () => {
               <option className='bg-gray-800 text-white' value="This month">This month</option>
             </select>
           </div>
-          <div className='flex justify-center items-center' style={{height: '320px'}}>
+          <div className='flex justify-center items-center h-64 md:h-72 lg:h-80'>
             {renderPaymentTypeComponent()}
           </div>
         </div>
       </div>
-
-      
     </div>
   );
 };
