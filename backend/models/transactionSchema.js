@@ -40,6 +40,8 @@ const transactionSchema=new mongoose.Schema({
             "Healthcare & Medical",
             "Travel & Vacation",
             "Shopping & Personal Care",
+            "Investment & Assets",
+            "Savings & Deposits",
             "Others"
         ],
         required:true

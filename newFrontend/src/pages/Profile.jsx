@@ -90,13 +90,15 @@ const Profile = () => {
     if (loading) return <LoadingSkeleton />;
 
     return (
-        <div className="min-h-screen p-6">
+        <div className="min-h-screen p-4 md:p-6">
             <div className="max-w-4xl mx-auto">
-                <h1 className="text-3xl font-bold text-white mb-8">My Profile</h1>
+                <div className="text-center mb-8">
+                    <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-pink-600 via-indigo-500 to-pink-400 inline-block text-transparent bg-clip-text">My Profile</h1>
+                </div>
                 
                 <div className="max-w-2xl mx-auto">
                     {/* Profile Information Card */}
-                    <div className="form-Background p-6 rounded-lg mb-6">
+                    <div className="form-Background p-4 md:p-6 rounded-lg mb-6">
                         <div className="flex items-center mb-6">
                             <FaUser className="text-pink-500 mr-3" />
                             <h2 className="text-xl font-semibold text-white">Profile Information</h2>
@@ -130,49 +132,49 @@ const Profile = () => {
                                 <label className="block text-white text-sm font-medium mb-2">
                                     Full Name
                                 </label>
-                                <div className="flex items-center space-x-2">
-                                    {isEditingName ? (
-                                        <>
-                                            <input
-                                                type="text"
-                                                value={tempName}
-                                                onChange={(e) => setTempName(e.target.value)}
-                                                className="flex-1 px-4 py-3 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
-                                                autoFocus
-                                            />
+                                {isEditingName ? (
+                                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
+                                        <input
+                                            type="text"
+                                            value={tempName}
+                                            onChange={(e) => setTempName(e.target.value)}
+                                            className="flex-1 px-4 py-3 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                            autoFocus
+                                        />
+                                        <div className="flex space-x-2">
                                             <button
                                                 type="button"
                                                 onClick={handleNameSave}
-                                                className="p-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                                                className="flex-1 sm:flex-none p-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                                             >
                                                 <FaCheck />
                                             </button>
                                             <button
                                                 type="button"
                                                 onClick={handleNameCancel}
-                                                className="p-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                                                className="flex-1 sm:flex-none p-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
                                             >
                                                 <FaTimes />
                                             </button>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <input
-                                                type="text"
-                                                value={user?.fullName || ''}
-                                                className="flex-1 px-4 py-3 bg-gray-600 text-gray-300 rounded-lg cursor-not-allowed"
-                                                disabled
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={handleNameEdit}
-                                                className="p-3 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors"
-                                            >
-                                                <FaEdit />
-                                            </button>
-                                        </>
-                                    )}
-                                </div>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="relative">
+                                        <input
+                                            type="text"
+                                            value={user?.fullName || ''}
+                                            className="w-full px-4 py-3 pr-12 bg-gray-600 text-gray-300 rounded-lg cursor-not-allowed"
+                                            disabled
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={handleNameEdit}
+                                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-pink-500 hover:text-pink-400 transition-colors"
+                                        >
+                                            <FaEdit className="text-sm md:text-base" />
+                                        </button>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Email (Read-only) */}
@@ -205,7 +207,7 @@ const Profile = () => {
                     </div>
 
                     {/* Change Password Card */}
-                    <div className="form-Background p-6 rounded-lg">
+                    <div className="form-Background p-4 md:p-6 rounded-lg">
                         <div className="flex items-center mb-6">
                             <FaLock className="text-pink-500 mr-3" />
                             <h2 className="text-xl font-semibold text-white">Password Settings</h2>
@@ -217,7 +219,7 @@ const Profile = () => {
                         
                         <button
                             onClick={() => navigate('/change-password')}
-                            className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 px-4 rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all duration-300"
+                            className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 px-4 rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 text-sm sm:text-base"
                         >
                             Change Password
                         </button>

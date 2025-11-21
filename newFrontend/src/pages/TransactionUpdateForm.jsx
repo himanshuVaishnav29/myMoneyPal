@@ -119,11 +119,13 @@ const TransactionUpdateForm = () => {
 							<option value={"Entertainment & Leisure"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer" >Entertainment & Leisure</option>
 							<option value={"Utilities & Bills"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Utilities & Bills</option>
 							<option value={"Transportation & Fuel"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Transportation & Fuel</option>
-							<option value={"Groceries & Household"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Utilities & Bills</option>
+							<option value={"Groceries & Household"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Groceries & Household</option>
 							<option value={"Repairs & Maintenance"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Repairs & Maintenance</option>
 							<option value={"Healthcare & Medical"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Healthcare & Medical</option>
 							<option value={"Travel & Vacation"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Travel & Vacation</option>
 							<option value={"Shopping & Personal Care"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Shopping & Personal Care</option>
+							<option value={"Investment & Assets"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Investment & Assets</option>
+							<option value={"Savings & Deposits"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Savings & Deposits</option>
 							<option value={"Others"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Others</option>
 							{/* {
 								tagArray.map((opt, index) => (

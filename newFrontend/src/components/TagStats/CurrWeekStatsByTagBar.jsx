@@ -9,6 +9,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 const CurrWeekStatsByTagBar = () => {
     const { data, loading, error } = useQuery(GET_CURRENT_WEEK_STATS_BY_TAG);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 430);
     const [chartData, setChartData] = useState({
         labels: [],
         datasets: [{
@@ -19,6 +20,12 @@ const CurrWeekStatsByTagBar = () => {
             borderWidth: 2,
         }],
     });
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 430);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     useEffect(() => {
         if (data?.getCurrentWeekStatsByTag) {
@@ -34,9 +41,11 @@ const CurrWeekStatsByTagBar = () => {
                 'rgba(75, 192, 192, 0.7)',
                 'rgba(201, 203, 207, 0.7)',
                 'rgba(255, 99, 132, 0.7)',
-                'rgba(75, 192, 192, 0.7)',
-                'rgba(54, 162, 235, 0.7)',
-                'rgba(153, 102, 255, 0.7)',
+                'rgba(255, 87, 34, 0.7)',
+                'rgba(76, 175, 80, 0.7)',
+                'rgba(156, 39, 176, 0.7)',
+                'rgba(255, 193, 7, 0.7)',
+                'rgba(96, 125, 139, 0.7)',
             ];
 
             const borderColors = colors.map(color => color.replace('0.7', '1'));
@@ -94,8 +103,11 @@ const CurrWeekStatsByTagBar = () => {
             x: {
                 ticks: {
                     color: '#ffffff',
-                    maxRotation: 45,
-                    minRotation: 45,
+                    maxRotation: isMobile ? 90 : 45,
+                    minRotation: isMobile ? 90 : 45,
+                    font: {
+                        size: isMobile ? 10 : 12,
+                    },
                 },
                 grid: { color: '#444' },
             },
