@@ -17,6 +17,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
 
     const client = useApolloClient();
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     const [logout] = useMutation(LOGOUT, {
         update(cache) {
@@ -28,6 +29,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     });
 
     const handleLogout = async () => {
+        if (isLoggingOut) return;
+        setIsLoggingOut(true);
         try {
             await logout();
             // Clear Apollo client cache so other user-specific queries don't return stale data
@@ -39,8 +42,10 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
             toast.success("Logout Successful");
         } catch (error) {
-            console.log("Error in handleLogout");
+            console.log("Error in handleLogout", error);
             toast.error(error.message);
+        } finally {
+            setIsLoggingOut(false);
         }
     };
 
@@ -124,11 +129,12 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 }
                 <li className='font-medium rounded-md py-2 px-5 hover:text-red-500'>
                     <button
-                        className='flex sm:justify-center md:justify-start items-center space-x-2 sm:space-x-4 md:space-x-5 w-full text-left'
+                        className={`flex sm:justify-center md:justify-start items-center space-x-2 sm:space-x-4 md:space-x-5 w-full text-left ${isLoggingOut ? 'opacity-60 cursor-not-allowed' : ''}`}
                         onClick={handleLogout}
+                        disabled={isLoggingOut}
                     >
                         <span><LuLogOut /></span>
-                        <span className='text-sm md:flex'>Logout</span>
+                        <span className='text-sm md:flex'>{isLoggingOut ? 'Logging out...' : 'Logout'}</span>
                     </button>
                 </li>
             </ul>

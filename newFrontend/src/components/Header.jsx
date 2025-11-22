@@ -105,7 +105,7 @@ import { CreateTransactionModal } from './CreateTransactionModal';
 import { FaBars } from "react-icons/fa6";
 import { LuUser, LuLogOut } from 'react-icons/lu';
 import { FaChevronDown } from 'react-icons/fa';
-import { useMutation } from "@apollo/client";
+import { useMutation, useApolloClient } from "@apollo/client";
 import { LOGOUT } from "../graphql/mutations/user.mutations";
 import { GET_AUTHETICATED_USER } from "../graphql/queries/user.query";
 import { toast } from 'react-hot-toast';
@@ -125,6 +125,8 @@ const Header = ({ loggedInUser,toggleSidebar }) => {
       });
     }
   });
+  const client = useApolloClient();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
@@ -135,13 +137,22 @@ const Header = ({ loggedInUser,toggleSidebar }) => {
   };
 
   const handleLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
     try {
       await logout();
+      try {
+        await client.clearStore();
+      } catch (cacheErr) {
+        console.warn('Error clearing Apollo cache after logout', cacheErr);
+      }
       toast.success("Logout Successful");
       setIsDropdownOpen(false);
     } catch (error) {
-      console.log("Error in handleLogout");
+      console.log("Error in handleLogout", error);
       toast.error(error.message);
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 
@@ -228,10 +239,11 @@ const Header = ({ loggedInUser,toggleSidebar }) => {
                   </button>
                   <button
                     onClick={handleLogout}
-                    className='flex items-center w-full px-4 py-2 text-sm font-medium text-neutral-100 hover:text-red-500 transition-all duration-500 ease-in-out'
+                    className={`flex items-center w-full px-4 py-2 text-sm font-medium text-neutral-100 hover:text-red-500 transition-all duration-500 ease-in-out ${isLoggingOut ? 'opacity-60 cursor-not-allowed' : ''}`}
+                    disabled={isLoggingOut}
                   >
                     <LuLogOut className='mr-3' />
-                    Logout
+                    {isLoggingOut ? 'Logging out...' : 'Logout'}
                   </button>
                 </div>
               </div>

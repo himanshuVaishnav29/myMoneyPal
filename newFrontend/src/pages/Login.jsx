@@ -10,6 +10,7 @@ const Login = () => {
 
   const navigate=useNavigate();
   const client = useApolloClient();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [loginData, setLoginData] = useState({
 		email: "",
 		password: "",
@@ -48,34 +49,40 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
 		e.preventDefault();
-		if (!loginData.email || !loginData.password){
-			return toast.error("Please fill in all fields");
-		} 
-		try {
-			console.log("Login Data: ", loginData);
-			const response = await login({
-				 variables:{
-					input: loginData
-				}
-			});
-      if(response?.data?.login){
-          // Reset store so any previously cached user-specific queries are refetched
-          try {
-            await client.resetStore();
-          } catch (resetErr) {
-            console.warn('Error resetting Apollo store after login', resetErr);
-          }
+    if (isSubmitting) return;
+    if (!loginData.email || !loginData.password) {
+      return toast.error("Please fill in all fields");
+    }
 
-          navigate("/dashboard");
-          toast.success("Login successful!");
-      }else{
+    setIsSubmitting(true);
+    try {
+      console.log("Login Data: ", loginData);
+      const response = await login({
+        variables: {
+          input: loginData
+        }
+      });
+
+      if (response?.data?.login) {
+        // Reset store so any previously cached user-specific queries are refetched
+        try {
+          await client.resetStore();
+        } catch (resetErr) {
+          console.warn('Error resetting Apollo store after login', resetErr);
+        }
+
+        navigate("/dashboard");
+        toast.success("Login successful!");
+      } else {
         toast.error("Login failed - Invalid credentials");
       }
-
-		} catch (error) {
-			console.log("error  in handleSubmit login",error);
-			toast.error(error.message);
-		}
+    } catch (error) {
+      console.log("error  in handleSubmit login", error);
+      toast.error(error.message);
+    } finally {
+      // If component unmounts after navigate, setting state is harmless; keep to ensure button is enabled on failure
+      setIsSubmitting(false);
+    }
 	};
 
   const handleForgotPasswordChange = (e) => {
@@ -247,9 +254,9 @@ const Login = () => {
               <button
                 type="submit"
                 className="w-full btn"
-                disabled={loading}
+                disabled={loading || isSubmitting}
               >
-                {loading?"Loading...":"Login"}
+                {(loading || isSubmitting) ? "Loading..." : "Login"}
               </button>
               <p className="text-sm font-light text-neutral-100 ">
                 Don’t have an account yet? {" "}
