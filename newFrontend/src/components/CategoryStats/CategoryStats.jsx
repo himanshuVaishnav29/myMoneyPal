@@ -28,7 +28,7 @@ const CategoryStats = () => {
             borderWidth: 1,
             borderRadius: 0,
             spacing: 5,
-            cutout: 130,
+            cutout: 60,
           },
         ],
       });

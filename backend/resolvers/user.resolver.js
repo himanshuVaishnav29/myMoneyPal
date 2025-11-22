@@ -85,11 +85,16 @@ const userResolver={
             try{
                 const{email,password}=input;
                 if (!email || !password){
-                    return new Error("Please fill in all fields");
+                    throw new Error("Please fill in all fields");
                 } 
                 const user=await USER.findOne({email});
                 if(!user){
-                    throw new Error("User Not found );");
+                    throw new Error("User not found");
+                }
+                
+                // Check if user has salt (for users created with hashed passwords)
+                if (!user.salt) {
+                    throw new Error("User account needs to be recreated. Please contact support.");
                 }
                 const salt=user.salt;
                 const hashedPassword=user.password;

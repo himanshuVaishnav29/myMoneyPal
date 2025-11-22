@@ -60,7 +60,7 @@ const ChangePassword = () => {
                 }
             });
             toast.success('Password changed successfully!');
-            navigate('/profile');
+            navigate('/dashboard/profile');
         } catch (error) {
             toast.error(error.message);
         } finally {
@@ -73,7 +73,7 @@ const ChangePassword = () => {
             <div className="max-w-md mx-auto">
                 <div className="flex items-center mb-6">
                     <button
-                        onClick={() => navigate('/profile')}
+                        onClick={() => navigate('/dashboard/profile')}
                         className="text-pink-500 hover:text-pink-400 mr-4"
                     >
                         <FaArrowLeft size={20} />

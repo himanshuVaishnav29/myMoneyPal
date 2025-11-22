@@ -146,7 +146,7 @@ const Header = ({ loggedInUser,toggleSidebar }) => {
   };
 
   const handleProfile = () => {
-    navigate('/profile');
+    navigate('/dashboard/profile');
     setIsDropdownOpen(false);
   };
 
@@ -186,10 +186,10 @@ const Header = ({ loggedInUser,toggleSidebar }) => {
           </button> */}
            <button
               onClick={toggleModal}
-              // className="bg-indigo-500 text-white text-base sm:text-sm md:text-base px-4 py-2 rounded-lg focus:outline-none hover:bg-indigo-700"
-              className='btn px-4 py-2'
+              className='btn px-2 py-2 text-xs sm:px-4 sm:text-sm md:text-base'
             >
-              Add Transaction
+              <span className='hidden sm:inline'>Add Transaction</span>
+              <span className='sm:hidden'>New txn</span>
             </button>
           
         </div>
@@ -221,7 +221,7 @@ const Header = ({ loggedInUser,toggleSidebar }) => {
                 <div className='py-1'>
                   <button
                     onClick={handleProfile}
-                    className='flex items-center w-full px-4 py-2 text-sm font-medium text-neutral-100 hover:font-bold hover:text-blue-500 transition-all duration-500 ease-in-out'
+                    className='flex items-center w-full px-4 py-2 text-sm font-medium text-neutral-100 hover:font-bold hover:text-purple-500 transition-all duration-500 ease-in-out'
                   >
                     <LuUser className='mr-3' />
                     My Profile

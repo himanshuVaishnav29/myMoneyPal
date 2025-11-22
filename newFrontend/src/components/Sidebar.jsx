@@ -15,7 +15,6 @@ import { FcMoneyTransfer } from "react-icons/fc";
 const Sidebar = ({ isOpen, toggleSidebar }) => {
 // const Sidebar = forwardRef(({ isOpen, toggleSidebar }, ref) => {
 
-    const [activeLink, setActiveLink] = useState(0);
 
     const [logout] = useMutation(LOGOUT, {
         update(cache) {
@@ -36,24 +35,26 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         }
     };
 
-    const handleLinkClick = (index) => {
-        setActiveLink(index);
+    const handleLinkClick = () => {
         toggleSidebar();
     };
 
     const SIDEBAR_LINKS = [
-        { id: 1, path: "/", name: "Dashboard", icon: LuBox },
-        { id: 2, path: "/analytics", name: "Analytics", icon: GrAnalytics },
-        { id: 3, path: "/history", name: "Transactions", icon: LuHistory },
-        { id: 4, path: "/statement", name: "Statement", icon: FaSuitcase },
-        { id: 5, path: "/profile", name: "My Profile", icon: LuUser },
+        { id: 1, path: "/dashboard", name: "Dashboard", icon: LuBox },
+        { id: 2, path: "/dashboard/analytics", name: "Analytics", icon: GrAnalytics },
+        { id: 3, path: "/dashboard/history", name: "Transactions", icon: LuHistory },
+        { id: 4, path: "/dashboard/statement", name: "Statement", icon: FaSuitcase },
+        { id: 5, path: "/dashboard/profile", name: "My Profile", icon: LuUser },
     ];
 
     const location = useLocation();
     const currentPath = location.pathname;
 
-    // Function to check if the current path matches a base path (e.g., /history)
+    // Function to check if the current path matches a base path
     const isActiveLink = (linkPath) => {
+        if (linkPath === "/dashboard") {
+            return currentPath === "/dashboard";
+        }
         return currentPath === linkPath || currentPath.startsWith(`${linkPath}/`);
     };
 
@@ -78,10 +79,10 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                     alt='My moneyPal'
                     className='w-40  h-13 hidden md:flex'
                 /> */}
-                <a className='w-40 cursor:pointer h-13 hidden md:flex' href='/'>
+                <Link to='/dashboard' className='w-40 cursor:pointer h-13 hidden md:flex'>
                     <FcMoneyTransfer className='text-2xl' />
                     <span className='ml-2 font-bold text-pink-500'>My MoneyPal</span>
-                </a>
+                </Link>
                 <img
                     src='https://img.freepik.com/premium-vector/savings-icon-logo-vector-design-template_827767-3198.jpg'
                     alt='logo'
@@ -92,7 +93,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             <ul className='mt-6 space-y-6'>
                 {
                     SIDEBAR_LINKS.map((link, index) => (
-                        <li key={index} className={`font-medium  rounded-md py-2 px-5 hover:font-bold hover:text-blue-500 transition-all duration-500 ease-in-out ${isActiveLink(link.path) ? "form-Background text-neutral-200 font-thin" : ""}`}>
+                        <li key={index} className={`font-medium rounded-md py-2 px-5 hover:font-bold hover:text-purple-500 transition-all duration-500 ease-in-out ${isActiveLink(link.path) ? "form-Background text-neutral-200 font-thin" : ""}`}>
                             
 
                         {/* // <li 
@@ -104,7 +105,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                                 to={link.path}
                                 className='flex sm:justify-center md:justify-start items-center space-x-2 sm:space-x-4 md:space-x-5'
                                 // className='flex items-center space-x-2 sm:space-x-4 md:space-x-5 w-full justify-center sm:justify-start'
-                                onClick={() => handleLinkClick(index)}
+                                onClick={handleLinkClick}
                             >
                                 <span>{link.icon()}</span>
                                 <span className='text-sm   md:flex '>{link.name}</span>
@@ -112,16 +113,14 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                         </li>
                     ))
                 }
-                <li className='font-medium rounded-md py-2 px-5  hover:text-red-500'>
-                    <Link
-                        to='login'
-                        className='flex sm:justify-center md:justify-start items-center space-x-2 sm:space-x-4 md:space-x-5'
-                        // className='flex items-center space-x-2 sm:space-x-4 md:space-x-5 w-full justify-center sm:justify-start'
-                        onClick={() => handleLogout()}
+                <li className='font-medium rounded-md py-2 px-5 hover:text-red-500'>
+                    <button
+                        className='flex sm:justify-center md:justify-start items-center space-x-2 sm:space-x-4 md:space-x-5 w-full text-left'
+                        onClick={handleLogout}
                     >
                         <span><LuLogOut /></span>
-                        <span className='text-sm  md:flex'>Logout</span>
-                    </Link>
+                        <span className='text-sm md:flex'>Logout</span>
+                    </button>
                 </li>
             </ul>
         </div>

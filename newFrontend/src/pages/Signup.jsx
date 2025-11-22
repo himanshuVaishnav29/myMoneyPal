@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
+import { FaHome } from "react-icons/fa";
 import { SIGN_UP } from '../graphql/mutations/user.mutations';
 import { GET_AUTHETICATED_USER } from '../graphql/queries/user.query';
 import { useMutation } from '@apollo/client';
@@ -85,6 +86,15 @@ const Signup = () => {
 
   return (
     <section className="">
+      <Link
+        to="/"
+        className="fixed top-4 left-4 z-10 p-2 sm:p-3 text-neutral-200 hover:text-white 
+        border border-neutral-600 rounded-xl hover:border-indigo-500 
+        transition-all duration-300 bg-white/5 backdrop-blur-sm"
+        title="Back to Home"
+      >
+        <FaHome size={16} className="sm:w-5 sm:h-5" />
+      </Link>
     <div className="flex flex-col items-center justify-center mt-4 px-6 py-8 mx-auto md:h-full lg:py-0">
         <a
           href=""

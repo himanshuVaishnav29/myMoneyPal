@@ -218,7 +218,7 @@ const Profile = () => {
                         </p>
                         
                         <button
-                            onClick={() => navigate('/change-password')}
+                            onClick={() => navigate('/dashboard/change-password')}
                             className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 px-4 rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 text-sm sm:text-base"
                         >
                             Change Password

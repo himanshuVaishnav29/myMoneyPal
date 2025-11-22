@@ -52,7 +52,7 @@ const History = () => {
     };
 
     const handleUpdate = (transactionId) => {
-        navigate(`/history/${transactionId}`);
+        navigate(`/dashboard/history/${transactionId}`);
     };
 
 

@@ -69,7 +69,7 @@ const TransactionUpdateForm = () => {
 				}
 			})
 			toast.success("Transaction Updated successfully");
-			navigate("/history");
+			navigate("/dashboard/history");
 		} catch (error) {
 			console.log("Error in handle submit of update transaction",error)
 			toast.error(error.message);

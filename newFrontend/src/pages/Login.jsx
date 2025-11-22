@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link ,useNavigate} from 'react-router-dom';
 import { useMutation } from "@apollo/client";
 import toast from "react-hot-toast";
+import { FaHome } from "react-icons/fa";
 import { LOGIN, REQUEST_PASSWORD_RESET, VERIFY_OTP_AND_RESET_PASSWORD } from "../graphql/mutations/user.mutations";
 import { GET_AUTHETICATED_USER } from "../graphql/queries/user.query";
 
@@ -56,15 +57,12 @@ const Login = () => {
 					input: loginData
 				}
 			});
-      if(response){
-        navigate("/");
+      if(response?.data?.login){
+        navigate("/dashboard");
 			  toast.success("Login successful!");
       }else{
-        toast.error("Login failed!");
+        toast.error("Login failed - Invalid credentials");
       }
-			// console.log("Login Response: ", response);
-      // navigate("/");
-			// toast.success("Login successful!");
 
 		} catch (error) {
 			console.log("error  in handleSubmit login",error);
@@ -125,7 +123,7 @@ const Login = () => {
       });
       if (response.data.verifyOTPAndResetPassword) {
         toast.success("Password reset successful!");
-        navigate("/");
+        navigate("/dashboard");
       }
     } catch (error) {
       toast.error(error.message);
@@ -145,6 +143,15 @@ const Login = () => {
 
   return (
     <section className="">
+      <Link
+        to="/"
+        className="fixed top-4 left-4 z-10 p-2 sm:p-3 text-neutral-200 hover:text-white 
+        border border-neutral-600 rounded-xl hover:border-indigo-500 
+        transition-all duration-300 bg-white/5 backdrop-blur-sm"
+        title="Back to Home"
+      >
+        <FaHome size={16} className="sm:w-5 sm:h-5" />
+      </Link>
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0 ">
         <a
           href=""

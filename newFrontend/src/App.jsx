@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import History from './pages/History'
 import NotFoundPage from './pages/NotFoundPage';
+import LandingPage from './pages/LandingPage';
 import { BrowserRouter, Navigate, Route, Routes} from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { useQuery } from '@apollo/client';
@@ -32,10 +33,11 @@ function App() {
   return (
     <UserProvider>
         <Routes>
+          {/* Landing Page Route */}
+          <Route path='/' element={!data?.authUser ? <LandingPage /> : <Navigate to="/dashboard" />} />
           
-
-          <Route path='/' element={data?.authUser ? <Layout loggedInUser={data?.authUser}/> : <Navigate to="/login" />}>
-
+          {/* Protected Dashboard Routes */}
+          <Route path='/dashboard' element={data?.authUser ? <Layout loggedInUser={data?.authUser}/> : <Navigate to="/" />}>
             <Route index element={<Home loggedInUser={data?.authUser} />} />
             <Route path='analytics' element={<Analytics/>}/>
             <Route path='history' element={<History/>} />
@@ -43,15 +45,14 @@ function App() {
             <Route path="statement" element={<Statement/>} />
             <Route path="profile" element={<Profile/>} />
             <Route path="change-password" element={<ChangePassword/>} />
-            <Route path="*" element={<NotFoundPage />} />
-
-
           </Route>
 
-          <Route path='/signup' element={<Signup/>} />
-          <Route path='/login' element={!data.authUser ? <Login/> : <Navigate to="/" />}/>
-          {/* <Route path="*" element={<NotFoundPage />} /> */}
+          {/* Auth Routes */}
+          <Route path='/signup' element={!data?.authUser ? <Signup/> : <Navigate to="/dashboard" />} />
+          <Route path='/login' element={!data?.authUser ? <Login/> : <Navigate to="/dashboard" />}/>
           
+          {/* 404 Route */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
         <Toaster />
     </UserProvider>
