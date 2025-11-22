@@ -41,8 +41,8 @@ export const UPDATE_PROFILE = gql`
 `;
 
 export const REQUEST_PASSWORD_RESET = gql`
-    mutation RequestPasswordReset($email: String!) {
-        requestPasswordReset(email: $email) {
+    mutation RequestPasswordReset($email: String!, $timezone: String) {
+        requestPasswordReset(email: $email, timezone: $timezone) {
             message
             success
         }

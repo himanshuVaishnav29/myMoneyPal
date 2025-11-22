@@ -230,7 +230,7 @@ const userResolver={
                 throw new Error(error.message);
             }
         },
-        requestPasswordReset: async (_, { email }) => {
+        requestPasswordReset: async (_, { email, timezone }) => {
             try {
                 const user = await USER.findOne({ email });
                 if (!user) {
@@ -244,7 +244,7 @@ const userResolver={
                     resetOTPExpiry: otpExpiry
                 });
                 
-                await sendOTPEmail(email, otp);
+                await sendOTPEmail(email, otp, timezone);
                 return { message: "OTP sent to your email", success: true };
             } catch (error) {
                 console.log("Error in requestPasswordReset", error);

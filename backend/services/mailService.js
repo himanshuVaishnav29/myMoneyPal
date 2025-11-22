@@ -249,11 +249,12 @@ export async function sendMailAtFirstDayOfMonth() {
 
 }
 
-export async function sendOTPEmail(email, otp) {
+export async function sendOTPEmail(email, otp, timezone = 'UTC') {
   try {
     const now = new Date();
     const formattedDate = now.toLocaleString('en-US', { 
-      month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
+      month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
+      timeZone: timezone
     });
     
     await transporter.sendMail({

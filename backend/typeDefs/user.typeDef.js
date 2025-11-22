@@ -22,7 +22,7 @@ const userTypeDef=`#graphql
         logout:LogoutResponse
         updateProfile(input:UpdateProfileInput!):User
         uploadProfileImage(file:Upload!):ImageUploadResponse
-        requestPasswordReset(email:String!):OTPResponse
+        requestPasswordReset(email:String!, timezone:String):OTPResponse
         verifyOTPAndResetPassword(input:ResetPasswordInput!):User
     }
 
