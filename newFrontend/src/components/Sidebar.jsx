@@ -5,7 +5,7 @@ import { LuBox, LuUser, LuHistory, LuMessageSquare, LuCalendar, LuLogOut } from 
 import { FaSuitcase,FaTimes } from 'react-icons/fa';
 import { GrAnalytics } from "react-icons/gr";
 import { Link, useLocation } from 'react-router-dom';
-import { useMutation } from "@apollo/client";
+import { useMutation, useApolloClient } from "@apollo/client";
 import { LOGOUT } from "../graphql/mutations/user.mutations";
 import { GET_AUTHETICATED_USER } from "../graphql/queries/user.query";
 import { toast } from 'react-hot-toast';
@@ -15,6 +15,8 @@ import { FcMoneyTransfer } from "react-icons/fc";
 const Sidebar = ({ isOpen, toggleSidebar }) => {
 // const Sidebar = forwardRef(({ isOpen, toggleSidebar }, ref) => {
 
+
+    const client = useApolloClient();
 
     const [logout] = useMutation(LOGOUT, {
         update(cache) {
@@ -28,6 +30,13 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     const handleLogout = async () => {
         try {
             await logout();
+            // Clear Apollo client cache so other user-specific queries don't return stale data
+            try {
+                await client.clearStore();
+            } catch (cacheErr) {
+                console.warn('Error clearing Apollo cache after logout', cacheErr);
+            }
+
             toast.success("Logout Successful");
         } catch (error) {
             console.log("Error in handleLogout");

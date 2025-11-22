@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link ,useNavigate} from 'react-router-dom';
-import { useMutation } from "@apollo/client";
+import { useMutation, useApolloClient } from "@apollo/client";
 import toast from "react-hot-toast";
 import { FaHome } from "react-icons/fa";
 import { LOGIN, REQUEST_PASSWORD_RESET, VERIFY_OTP_AND_RESET_PASSWORD } from "../graphql/mutations/user.mutations";
@@ -9,6 +9,7 @@ import { GET_AUTHETICATED_USER } from "../graphql/queries/user.query";
 const Login = () => {
 
   const navigate=useNavigate();
+  const client = useApolloClient();
   const [loginData, setLoginData] = useState({
 		email: "",
 		password: "",
@@ -58,8 +59,15 @@ const Login = () => {
 				}
 			});
       if(response?.data?.login){
-        navigate("/dashboard");
-			  toast.success("Login successful!");
+          // Reset store so any previously cached user-specific queries are refetched
+          try {
+            await client.resetStore();
+          } catch (resetErr) {
+            console.warn('Error resetting Apollo store after login', resetErr);
+          }
+
+          navigate("/dashboard");
+          toast.success("Login successful!");
       }else{
         toast.error("Login failed - Invalid credentials");
       }
