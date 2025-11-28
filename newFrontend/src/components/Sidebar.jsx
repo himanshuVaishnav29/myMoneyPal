@@ -1,6 +1,6 @@
 
 
-import React, { forwardRef, useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { LuBox, LuUser, LuHistory, LuMessageSquare, LuCalendar, LuLogOut } from 'react-icons/lu';
 import { FaSuitcase,FaTimes } from 'react-icons/fa';
 import { GrAnalytics } from "react-icons/gr";
@@ -13,8 +13,8 @@ import { FcMoneyTransfer } from "react-icons/fc";
 
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
-// const Sidebar = forwardRef(({ isOpen, toggleSidebar }, ref) => {
-
+    const sidebarRef = useRef(null);
+    const myLogo = './myMoneyPalLogo.png'; // Path to your logo image
 
     const client = useApolloClient();
     const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -78,42 +78,63 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         return currentPath === linkPath || currentPath.startsWith(`${linkPath}/`);
     };
 
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleOutsideClick = (e) => {
+            // Only auto-close on small screens (Tailwind 'md' breakpoint = 768px)
+            if (window.innerWidth >= 768) return;
+            if (sidebarRef.current && !sidebarRef.current.contains(e.target)) {
+                toggleSidebar();
+            }
+        };
+
+        document.addEventListener('mousedown', handleOutsideClick);
+        document.addEventListener('touchstart', handleOutsideClick);
+
+        return () => {
+            document.removeEventListener('mousedown', handleOutsideClick);
+            document.removeEventListener('touchstart', handleOutsideClick);
+        };
+    }, [isOpen, toggleSidebar]);
+
     return (
-        // <div className='w-16 md:w-56 fixed left-0 top-0 z-10 min-h-full border-r pt-8 px-4 text-neutral-100'>
-        // <div className='w-16 md:w-56 fixed left-0 top-0 z-10 min-h-full shadow-lg shadow-neutral-900/50 pt-8 px-4 text-neutral-100'>
-        <div
-        className={`fixed left-0 top-0 z-50 md:w-56 min-h-full bg-gray-900 text-white shadow-lg pt-8 px-4 transition-transform transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        } md:translate-x-0`}
-        
-      >
+        <>
+            {/* Overlay for small screens */}
+            <div
+                className={`fixed inset-0 z-40 md:hidden pointer-events-none transition-opacity duration-300 ease-in-out ${isOpen ? 'opacity-60 pointer-events-auto' : 'opacity-0'}`}
+                style={{ backgroundColor: 'rgba(0,0,0,0.6)' }}
+                onClick={() => {
+                    if (window.innerWidth < 768) toggleSidebar();
+                }}
+            />
+
+            {/* Sidebar container */}
+            <div
+                ref={sidebarRef}
+                className={`fixed left-0 top-0 z-50 md:w-56 min-h-full bg-gray-900 text-white shadow-lg pt-8 px-4 transition-transform transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
+            >
             <div className="flex justify-end mb-4 md:hidden">
                 <button onClick={toggleSidebar}>
                     <FaTimes size={24} className="text-white" />
                 </button>
             </div>
-           <div className='flex justify-center items-center mb-8 space-x-2 pb-6'>
-                {/* <img
-                    // src={moneyPalLogo}
-                    src='./moneyPalImg.jpg'
-                    alt='My moneyPal'
-                    className='w-40  h-13 hidden md:flex'
-                /> */}
-                <Link to='/dashboard' className='w-40 cursor:pointer h-13 hidden md:flex'>
-                    <FcMoneyTransfer className='text-2xl' />
-                    <span className='ml-2 font-bold text-pink-500'>My MoneyPal</span>
+           <div className='flex justify-center md:justify-start items-center mb-8 space-x-2 pb-6 px-2 md:px-0'>
+                {/* Branding - visible on all sizes, responsive */}
+                <Link to='/dashboard' className='flex items-center space-x-2 w-auto cursor-pointer'>
+                    <img src={myLogo} alt='My MoneyPal logo' className='w-6 h-6 sm:w-7 sm:h-7 md:w-10 md:h-10 object-contain' />
+                    <span className='font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent leading-none tracking-tight text-sm sm:text-sm md:text-lg'>My MoneyPal</span>
                 </Link>
-                <img
-                    src='https://img.freepik.com/premium-vector/savings-icon-logo-vector-design-template_827767-3198.jpg'
-                    alt='logo'
-                    className='w-8 flex md:hidden'
-                />
             </div>
 
             <ul className='mt-6 space-y-6'>
                 {
                     SIDEBAR_LINKS.map((link, index) => (
-                        <li key={index} className={`font-medium rounded-md py-2 px-5 hover:font-bold hover:text-purple-500 transition-all duration-500 ease-in-out ${isActiveLink(link.path) ? "form-Background text-neutral-200 font-thin" : ""}`}>
+                        <li
+                            key={index}
+                            style={{ transitionDelay: `${index * 50}ms` }}
+                            className={`font-medium rounded-md py-2 px-5 hover:font-bold hover:text-purple-500 transition-all duration-300 ease-in-out transform ${isActiveLink(link.path) ? "form-Background text-neutral-200 font-thin" : ""} ${isOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-3 md:opacity-100 md:translate-x-0'}`}
+                        >
                             
 
                         {/* // <li 
@@ -123,8 +144,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                         // >     */}
                             <Link
                                 to={link.path}
-                                className='flex sm:justify-center md:justify-start items-center space-x-2 sm:space-x-4 md:space-x-5'
-                                // className='flex items-center space-x-2 sm:space-x-4 md:space-x-5 w-full justify-center sm:justify-start'
+                                className='flex items-center space-x-2 sm:space-x-4 md:space-x-5 justify-start w-full'
                                 onClick={handleLinkClick}
                             >
                                 <span>{link.icon()}</span>
@@ -133,9 +153,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                         </li>
                     ))
                 }
-                <li className='font-medium rounded-md py-2 px-5 hover:text-red-500'>
+                <li className='font-medium rounded-md py-2 px-5 hover:text-red-500' style={{ transitionDelay: `${SIDEBAR_LINKS.length * 50}ms` }}>
                     <button
-                        className={`flex sm:justify-center md:justify-start items-center space-x-2 sm:space-x-4 md:space-x-5 w-full text-left ${isLoggingOut ? 'opacity-60 cursor-not-allowed' : ''}`}
+                        className={`flex justify-start items-center space-x-2 sm:space-x-4 md:space-x-5 w-full text-left ${isLoggingOut ? 'opacity-60 cursor-not-allowed' : ''}`}
                         onClick={handleLogout}
                         disabled={isLoggingOut}
                     >
@@ -145,6 +165,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 </li>
             </ul>
         </div>
+        </>
     );
 };
 
