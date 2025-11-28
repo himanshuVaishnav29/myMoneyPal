@@ -21,7 +21,9 @@ import { UserProvider } from './context/UserContext';
 
 function App() {
 
-  const { loading, data } = useQuery(GET_AUTHETICATED_USER);
+  const { loading, data } = useQuery(GET_AUTHETICATED_USER, {
+    fetchPolicy: 'network-only'
+  });
   // console.log(data,"getting user");
   if (loading) {
     return <LoadingSkeleton />;

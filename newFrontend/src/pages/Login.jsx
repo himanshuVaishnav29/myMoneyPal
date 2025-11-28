@@ -74,12 +74,20 @@ const Login = () => {
           }
         }
 
-        // If server returned user object inside login response, update Apollo cache via resetStore
-        // Reset store so any previously cached user-specific queries are refetched
+        // Reset store so Apollo uses the new auth context (with token in Authorization header)
         try {
           await client.resetStore();
         } catch (resetErr) {
           console.warn('Error resetting Apollo store after login', resetErr);
+        }
+
+        // Explicitly refetch authUser with the new token to ensure iOS gets the authenticated user
+        try {
+          await client.refetchQueries({
+            include: [GET_AUTHETICATED_USER]
+          });
+        } catch (refetchErr) {
+          console.warn('Error refetching authUser after login', refetchErr);
         }
 
         navigate("/dashboard");

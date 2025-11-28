@@ -32,8 +32,13 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         if (isLoggingOut) return;
         setIsLoggingOut(true);
         try {
+            // Remove token from localStorage FIRST so middleware won't find it during subsequent queries
+            try { localStorage.removeItem('token'); } catch(e) { /* ignore */ }
+
+            // Then logout on server
             await logout();
-            // Clear Apollo client cache so other user-specific queries don't return stale data
+
+            // Finally clear Apollo cache
             try {
                 await client.clearStore();
             } catch (cacheErr) {
@@ -41,6 +46,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             }
 
             toast.success("Logout Successful");
+            toggleSidebar(); // Close sidebar after logout
         } catch (error) {
             console.log("Error in handleLogout", error);
             toast.error(error.message);

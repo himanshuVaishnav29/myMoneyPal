@@ -140,14 +140,19 @@ const Header = ({ loggedInUser,toggleSidebar }) => {
     if (isLoggingOut) return;
     setIsLoggingOut(true);
     try {
+      // Remove token from localStorage FIRST so middleware won't find it during subsequent queries
+      try { localStorage.removeItem('token'); } catch(e) { /* ignore */ }
+
+      // Then logout on server
       await logout();
+
+      // Finally clear Apollo cache
       try {
         await client.clearStore();
-        // Remove any stored fallback token
-        try { localStorage.removeItem('token'); } catch(e) { /* ignore */ }
       } catch (cacheErr) {
         console.warn('Error clearing Apollo cache after logout', cacheErr);
       }
+
       toast.success("Logout Successful");
       setIsDropdownOpen(false);
     } catch (error) {
