@@ -18,12 +18,17 @@ const userTypeDef=`#graphql
     type Mutation{
         signUp(input:SignUpInput!):User
         # signUp(email:String!,name:String!,password:String!,gender:String!):User
-        login(input:LogInInput!):User
+        login(input:LogInInput!):LoginResponse
         logout:LogoutResponse
         updateProfile(input:UpdateProfileInput!):User
         uploadProfileImage(file:Upload!):ImageUploadResponse
         requestPasswordReset(email:String!, timezone:String):OTPResponse
         verifyOTPAndResetPassword(input:ResetPasswordInput!):User
+    }
+
+    type LoginResponse{
+        user: User
+        token: String
     }
 
     input SignUpInput{

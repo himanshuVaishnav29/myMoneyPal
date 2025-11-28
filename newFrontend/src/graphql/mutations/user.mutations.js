@@ -14,8 +14,14 @@ export const SIGN_UP=gql`
 export const LOGIN=gql`
     mutation Login($input:LogInInput!){
         login(input:$input){
-           email
-           password
+           token
+           user{
+               _id
+               email
+               fullName
+               profilePicture
+               gender
+           }
         }
     }
 `;

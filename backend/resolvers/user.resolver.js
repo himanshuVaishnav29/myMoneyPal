@@ -40,8 +40,8 @@ const userResolver={
                 const user=await USER.findById(userId);
                 return user;
             } catch (error) {
-                console.log("Error in getUser",err);
-                throw new Error(err,":",err.message);
+                console.log("Error in getUser",error);
+                throw new Error(error,":",error.message);
             }
         }
         
@@ -124,7 +124,7 @@ const userResolver={
                 // console.log("cookieNow",req.cookies['token']);
 
                 const { password: _, salt: __, ...userWithoutPassword } = user.toObject();
-                return userWithoutPassword;
+                return { user: userWithoutPassword, token };
             }catch(err){
                 console.log("Error in login",err);
                 throw new Error(err,":",err.message);

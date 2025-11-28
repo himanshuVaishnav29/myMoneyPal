@@ -143,6 +143,8 @@ const Header = ({ loggedInUser,toggleSidebar }) => {
       await logout();
       try {
         await client.clearStore();
+        // Remove any stored fallback token
+        try { localStorage.removeItem('token'); } catch(e) { /* ignore */ }
       } catch (cacheErr) {
         console.warn('Error clearing Apollo cache after logout', cacheErr);
       }

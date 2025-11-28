@@ -38,7 +38,7 @@ const Login = () => {
 
 	
 	const [login, { loading }] = useMutation(LOGIN, {
-		refetchQueries: [{ query: GET_AUTHETICATED_USER }],
+    refetchQueries: [{ query: GET_AUTHETICATED_USER }],
 	});
 
   const [requestPasswordReset, { loading: resetLoading }] = useMutation(REQUEST_PASSWORD_RESET);
@@ -64,6 +64,17 @@ const Login = () => {
       });
 
       if (response?.data?.login) {
+        // If server returned a token, store it as a fallback for clients that couldn't accept httpOnly cookies
+        const returnedToken = response.data.login.token;
+        if (returnedToken) {
+          try {
+            localStorage.setItem('token', returnedToken);
+          } catch (storageErr) {
+            console.warn('Could not store token in localStorage', storageErr);
+          }
+        }
+
+        // If server returned user object inside login response, update Apollo cache via resetStore
         // Reset store so any previously cached user-specific queries are refetched
         try {
           await client.resetStore();
