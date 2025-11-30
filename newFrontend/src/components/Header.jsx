@@ -207,7 +207,7 @@ const Header = ({ loggedInUser,toggleSidebar }) => {
               className='btn px-2 py-2 text-xs sm:px-4 sm:text-sm md:text-base'
             >
               <span className='hidden sm:inline'>Add Transaction</span>
-              <span className='sm:hidden'>New txn</span>
+              <span className='sm:hidden'>+ Add</span>
             </button>
           
         </div>

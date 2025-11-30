@@ -94,11 +94,11 @@ const TransactionUpdateForm = () => {
 			<p className='md:text-4xl text-2xl lg:text-4xl font-bold text-center relative mt-4 mb-7 mr-4 bg-gradient-to-r from-pink-600 via-indigo-500 to-pink-400 inline-block text-transparent bg-clip-text'>
 				Update this transaction
 			</p>
-			<form className='w-full max-w-lg flex flex-col gap-5 px-3' onSubmit={handleSubmit}>
+			<form className='w-full max-w-lg flex flex-col gap-4 sm:gap-5 px-3 sm:px-4' onSubmit={handleSubmit}>
 				{/* TRANSACTION */}
-				<div className='flex flex-wrap'>
+				<div className='flex flex-col sm:flex-row gap-3 sm:gap-0'>
 
-				<div className='w-1/2 pr-5'>
+				<div className='w-full sm:w-1/2 sm:pr-3 md:pr-5'>
 					<label
 						className='block uppercase tracking-wide  text-xs font-bold mb-2'
 						htmlFor='tag'
@@ -149,7 +149,7 @@ const TransactionUpdateForm = () => {
 
 
 
-					<div className='w-1/2'>
+					<div className='w-full sm:w-1/2'>
 						<label
 							className='block uppercase tracking-wide  text-xs font-bold mb-2'
 							htmlFor='description'
@@ -168,8 +168,8 @@ const TransactionUpdateForm = () => {
 					</div>
 				</div>
 				{/* PAYMENT TYPE */}
-				<div className='flex flex-wrap gap-3'>
-					<div className='w-full flex-1 mb-6 md:mb-0'>
+				<div className='flex flex-col sm:flex-row gap-3'>
+					<div className='w-full sm:flex-1 mb-4 sm:mb-0'>
 						<label
 							className='block uppercase tracking-wide  text-xs font-bold mb-2'
 							htmlFor='paymentType'
@@ -201,7 +201,7 @@ const TransactionUpdateForm = () => {
 					</div>
 
 					{/* CATEGORY */}
-					<div className='w-full flex-1 mb-6 md:mb-0'>
+					<div className='w-full sm:flex-1 mb-4 sm:mb-0'>
 						<label
 							className='block uppercase tracking-wide  text-xs font-bold mb-2'
 							htmlFor='category'
@@ -233,7 +233,7 @@ const TransactionUpdateForm = () => {
 					</div>
 
 					{/* AMOUNT */}
-					<div className='w-full flex-1 mb-6 md:mb-0'>
+					<div className='w-full sm:flex-1 mb-4 sm:mb-0'>
 						<label className='block uppercase  text-xs font-bold mb-2' htmlFor='amount'>
 							Amount (INR)
 						</label>
@@ -250,8 +250,8 @@ const TransactionUpdateForm = () => {
 				</div>
 
 				{/* LOCATION */}
-				<div className='flex flex-wrap gap-3'>
-					<div className='w-full flex-1 mb-6 md:mb-0'>
+				<div className='flex flex-col sm:flex-row gap-3'>
+					<div className='w-full sm:flex-1 mb-4 sm:mb-0'>
 						<label
 							className='block uppercase tracking-wide  text-xs font-bold mb-2'
 							htmlFor='location'
@@ -271,7 +271,7 @@ const TransactionUpdateForm = () => {
 					</div>
 
 					{/* DATE */}
-					<div className='w-full flex-1'>
+					<div className='w-full sm:flex-1'>
 						<label
 							className='block uppercase tracking-wide  text-xs font-bold mb-2'
 							htmlFor='date'
@@ -291,8 +291,8 @@ const TransactionUpdateForm = () => {
 				</div>
 				{/* SUBMIT BUTTON */}
 				<button
-					className='text-white font-bold w-full rounded px-4 py-2 bg-gradient-to-br
-          from-pink-500 to-pink-500 hover:from-pink-600 hover:to-pink-600'
+					className='text-white font-bold w-full rounded px-4 py-3 mt-2 bg-gradient-to-br
+          from-pink-500 to-pink-500 hover:from-pink-600 hover:to-pink-600 disabled:opacity-70 disabled:cursor-not-allowed'
 					type='submit'
 					disabled={loadingUpdate}
 				>

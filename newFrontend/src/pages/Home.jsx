@@ -300,7 +300,9 @@ const HomePage = ({ loggedInUser }) => {
                     <div className="flex flex-col sm:items-end mt-2 sm:mt-0">
                       <p
                         className={`text-sm font-semibold ${
-                          transaction.amount < 0 ? "text-red-400" : "text-green-400"
+                          transaction.category.toLowerCase().includes('investment') ? "text-blue-400" :
+                          transaction.category.toLowerCase().includes('saving') ? "text-green-400" :
+                          "text-red-400"
                         }`}
                       >
                         ₹ {transaction.amount.toFixed(2)}
