@@ -17,6 +17,7 @@ import { GET_DASHBOARD_SUMMARY } from '../graphql/queries/dashboard.query';
 import FinanceCarousel from '../components/FinanceCarousel';
 import Footer from '../components/Footer';
 import ComponentLoader from '../components/ComponentLoader';
+import SkeletonCard from '../components/SkeletonCard';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement,LogarithmicScale, Title, Tooltip, Legend);
 
@@ -230,36 +231,46 @@ const HomePage = ({ loggedInUser }) => {
 
         {/* Financial Summary Row */}
         <div className="col-span-1 md:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Earnings Section */}
-          <div className="bg-gradient-to-br from-red-500 via-red-500 to-red-700 text-white p-6 rounded-lg shadow">
-            <p className="text-lg">Monthly Expense</p>
-            <h2 className="text-3xl font-bold">
-             ₹ {
-                totalExpenses.toFixed(2)
-              }
-            </h2>
-            <img src="./pngwing.com.png" alt="Graph" className="mt-4" />
-          </div>
+          {loading ? (
+            <>
+              <SkeletonCard gradient="bg-gradient-to-br from-red-500 via-red-500 to-red-700" />
+              <SkeletonCard gradient="bg-gradient-to-br from-green-500 via-green-600 to-green-700" />
+              <SkeletonCard gradient="bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700" />
+            </>
+          ) : (
+            <>
+              {/* Monthly Expense Card */}
+              <div className="bg-gradient-to-br from-red-500 via-red-500 to-red-700 text-white p-6 rounded-lg shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-red-500/25 cursor-pointer">
+                <p className="text-lg opacity-90">Monthly Expense</p>
+                <h2 className="text-3xl font-bold transition-all duration-300 hover:text-red-100">
+                  ₹ {totalExpenses.toFixed(2)}
+                </h2>
+                <img src="./pngwing.com.png" alt="Graph" className="mt-4 transition-transform duration-300 hover:scale-110" />
+              </div>
 
-          
+              {/* Monthly Savings Card */}
+              <div className="bg-gradient-to-br from-green-500 via-green-600 to-green-700 text-white p-6 rounded-lg shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 cursor-pointer">
+                <p className="text-lg opacity-90">Monthly Savings</p>
+                <h2 className="text-3xl font-bold transition-all duration-300 hover:text-green-100">
+                  ₹ {totalSavings.toFixed(2)}
+                </h2>
+                <img src="./pngegg.png" alt="Graph" className="mt-4 transition-transform duration-300 hover:scale-110" />
+              </div>
 
-          {/* Savings This Month Section */}
-          <div className="bg-gradient-to-br from-green-500 via-green-600 to-green-700 text-white p-6 rounded-lg shadow">
-            <p className="text-lg">Monthly Savings</p>
-            <h2 className="text-3xl font-bold">₹ {totalSavings.toFixed(2)}</h2>
-            <img src="./pngegg.png" alt="Graph" className="mt-4" />
-          </div>
-
-          {/* Invested Amount This Month Section */}
-          <div className="bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 text-white p-6 rounded-lg shadow">
-            <p className="text-lg">Monthly Investment</p>
-            <h2 className="text-3xl font-bold">₹ {totalInvestment.toFixed(2)}</h2>
-            <img src="./growingGraph.png" alt="Graph" className="mt-4" />
-          </div>
+              {/* Monthly Investment Card */}
+              <div className="bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 text-white p-6 rounded-lg shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25 cursor-pointer">
+                <p className="text-lg opacity-90">Monthly Investment</p>
+                <h2 className="text-3xl font-bold transition-all duration-300 hover:text-blue-100">
+                  ₹ {totalInvestment.toFixed(2)}
+                </h2>
+                <img src="./growingGraph.png" alt="Graph" className="mt-4 transition-transform duration-300 hover:scale-110" />
+              </div>
+            </>
+          )}
 
 
           {/* RECENT TRANSACTIONS CARD */}
-          <div className="bg-gradient-to-br from-cyan-900 to-slate-900 p-6 rounded-2xl shadow-xl border border-cyan-800/40 text-sm backdrop-blur-md">
+          <div className="bg-gradient-to-br from-cyan-900 to-slate-900 p-6 rounded-2xl shadow-xl border border-cyan-800/40 text-sm backdrop-blur-md transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/25 cursor-pointer">
             <p className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
               <span className="inline-block w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></span>
               Recent Transactions

@@ -207,7 +207,7 @@ export default function FinanceCarousel() {
       <div
         onMouseEnter={() => setIsAutoPlaying(false)}
         onMouseLeave={() => setIsAutoPlaying(true)}
-        className="relative w-full h-80 sm:h-96 md:h-[28rem] lg:h-96 rounded-2xl sm:rounded-3xl overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-black shadow-2xl"
+        className="relative w-full h-72 sm:h-80 md:h-96 lg:h-[28rem] xl:h-96 rounded-xl sm:rounded-2xl lg:rounded-3xl overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-black shadow-2xl"
       >
         {/* Animated Background */}
         <FloatingOrbs color1={currentSlide.orb1} color2={currentSlide.orb2} />
@@ -217,7 +217,7 @@ export default function FinanceCarousel() {
         <div className={`absolute inset-0 bg-gradient-to-br ${currentSlide.gradient} opacity-20 transition-all duration-1000`} />
         
         {/* Content Container */}
-        <div className="relative h-full flex items-center justify-center px-4 sm:px-8 md:px-12 lg:px-16 z-10">
+        <div className="relative h-full flex items-center justify-center px-3 sm:px-6 md:px-8 lg:px-12 xl:px-16 z-10">
           
           {/* Left Section - Icon (Hidden on mobile and tablet) */}
           <div className="hidden lg:flex items-center justify-center mr-8">
@@ -244,17 +244,17 @@ export default function FinanceCarousel() {
             </div>
             
             {/* Title */}
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white mb-2 leading-tight px-2 sm:px-0">
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black text-white mb-2 leading-tight px-1 sm:px-0">
               <span className="text-shimmer">{currentSlide.title}</span>
             </h2>
             
             {/* Subtitle */}
-            <p className="text-base sm:text-lg md:text-xl font-medium text-white/70 mb-3 sm:mb-4 md:mb-6 px-2 sm:px-0">
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl font-medium text-white/70 mb-2 sm:mb-3 md:mb-4 lg:mb-6 px-1 sm:px-0">
               {currentSlide.subtitle}
             </p>
             
             {/* Description */}
-            <p className="text-sm sm:text-base text-white/60 leading-relaxed mb-4 sm:mb-6 max-w-xl mx-auto lg:mx-0 px-2 sm:px-0">
+            <p className="text-xs sm:text-sm md:text-base text-white/60 leading-relaxed mb-3 sm:mb-4 md:mb-6 max-w-lg lg:max-w-xl mx-auto lg:mx-0 px-1 sm:px-0">
               {currentSlide.content}
             </p>
             
@@ -267,16 +267,16 @@ export default function FinanceCarousel() {
         </div>
         
         {/* Progress Indicators */}
-        <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-1/2 transform -translate-x-1/2 flex items-center gap-2 sm:gap-3 z-20">
+        <div className="absolute bottom-3 sm:bottom-4 md:bottom-6 lg:bottom-8 left-1/2 transform -translate-x-1/2 flex items-center gap-1.5 sm:gap-2 md:gap-3 z-20">
           {slides.map((_, idx) => (
             <button
               key={idx}
               onClick={() => goToSlide(idx)}
               aria-label={`Go to slide ${idx + 1}`}
-              className={`dot-indicator h-1.5 sm:h-2 rounded-full transition-all ${
+              className={`dot-indicator h-1 sm:h-1.5 md:h-2 rounded-full transition-all ${
                 idx === current 
-                  ? 'w-8 sm:w-12 bg-white shadow-lg shadow-white/50' 
-                  : 'w-1.5 sm:w-2 bg-white/30 hover:bg-white/50'
+                  ? 'w-6 sm:w-8 md:w-12 bg-white shadow-lg shadow-white/50' 
+                  : 'w-1 sm:w-1.5 md:w-2 bg-white/30 hover:bg-white/50'
               }`}
             />
           ))}

@@ -143,25 +143,25 @@ const Signup = () => {
       >
         <FaHome size={16} className="sm:w-5 sm:h-5" />
       </Link>
-    <div className="flex flex-col items-center justify-center mt-4 px-6 py-8 mx-auto md:h-full lg:py-0">
+    <div className="flex flex-col items-center justify-center px-4 sm:px-6 py-4 sm:py-8 mx-auto min-h-screen lg:py-0">
         <a
           href=""
-          className="flex items-center mb-6 text-3xl font-thin tracking-wide text-neutral-200 hover:text-neutral-100 transition duration-200 ease-in-out "
+          className="flex items-center mb-4 sm:mb-6 text-2xl sm:text-3xl font-thin tracking-wide text-neutral-200 hover:text-neutral-100 transition duration-200 ease-in-out bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent"
           style={{ letterSpacing: '0.05em', padding: '10px' }}
         >
           My MoneyPal
         </a>
 
-        <div className='relative mb-10 w-1/2 mx-auto hidden md:block'>
+        <div className='relative mb-6 sm:mb-10 w-1/2 mx-auto hidden md:block'>
           <div className='absolute inset-x-20 top-0 bg-gradient-to-r from-transparent via-indigo-500 to-transparent h-[2px] w-3/4 blur-sm' />
           <div className='absolute inset-x-20 top-0 bg-gradient-to-r from-transparent via-indigo-500 to-transparent h-px w-3/4' />
           <div className='absolute inset-x-60 top-0 bg-gradient-to-r from-transparent via-sky-500 to-transparent h-[5px] w-1/4 blur-sm' />
           <div className='absolute inset-x-60 top-0 bg-gradient-to-r from-transparent via-sky-500 to-transparent h-px w-1/4' />
         </div> 
 
-      <div className="w-full form-Background rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0  dark:border-gray-700">
-        <div className="p-6 space-y-4 md:space-y-3 sm:p-8">
-          <h1 className="text-xl font-thin leading-tight tracking-tight text-neutral-100 md:text-2xl mb-6">
+      <div className="w-full max-w-sm sm:max-w-md form-Background rounded-lg shadow dark:border xl:p-0 dark:border-gray-700">
+        <div className="p-4 sm:p-6 lg:p-8 space-y-3 sm:space-y-4 md:space-y-3">
+          <h1 className="text-lg sm:text-xl md:text-2xl font-thin leading-tight tracking-tight text-neutral-100 mb-4 sm:mb-6 text-center sm:text-left">
             {step === 1 ? "Register Now !" : "Verify Your Email"}
           </h1>
           
@@ -320,7 +320,7 @@ const Signup = () => {
 
             <button
               type="submit"
-              className='w-full btn'
+              className='w-full btn py-3 text-sm sm:text-base'
               disabled={otpLoading}
             >
               {otpLoading ? "Let's verify you...." : "Register"}
@@ -337,15 +337,15 @@ const Signup = () => {
           </form>
           ) : (
           <form className="space-y-4 md:space-y-3" onSubmit={handleVerifyOTP}>
-            <div className="text-center mb-6">
-              <p className="text-neutral-300 text-sm mb-4">
+            <div className="text-center mb-4 sm:mb-6">
+              <p className="text-neutral-300 text-xs sm:text-sm mb-2 sm:mb-4 px-2">
                 We've sent a 6-digit verification code to
               </p>
-              <p className="text-white font-medium">{signUpData.email}</p>
+              <p className="text-white font-medium text-sm sm:text-base break-all px-2">{signUpData.email}</p>
             </div>
             
             <div>
-              <label htmlFor="otp" className="block mb-2 text-sm font-medium text-neutral-100">
+              <label htmlFor="otp" className="block mb-2 text-xs sm:text-sm font-medium text-neutral-100">
                 Verification Code
               </label>
               <input
@@ -355,7 +355,7 @@ const Signup = () => {
                 maxLength="6"
                 value={otp}
                 onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                className="form-Background border bg-transparent text-neutral-200 border-gray-300 rounded-lg focus:text-neutral-100 focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 text-center text-2xl tracking-widest"
+                className="form-Background border bg-transparent text-neutral-200 border-gray-300 rounded-lg focus:text-neutral-100 focus:ring-primary-600 focus:border-primary-600 block w-full p-3 sm:p-2.5 text-center text-xl sm:text-2xl tracking-widest"
                 placeholder="000000"
                 required
               />
@@ -364,14 +364,14 @@ const Signup = () => {
             <button
               type="submit"
               disabled={verifyLoading}
-              className="w-full btn disabled:opacity-50"
+              className="w-full btn disabled:opacity-50 py-3 text-sm sm:text-base"
             >
               {verifyLoading ? "Verifying..." : "Verify & Create Account"}
             </button>
             
             <div className="text-center">
               {countdown > 0 ? (
-                <p className="text-neutral-400 text-sm">
+                <p className="text-neutral-400 text-xs sm:text-sm">
                   Resend code in {countdown}s
                 </p>
               ) : (
@@ -379,7 +379,7 @@ const Signup = () => {
                   type="button"
                   onClick={handleResendOTP}
                   disabled={otpLoading}
-                  className="text-primary-600 hover:underline text-sm disabled:opacity-50"
+                  className="px-4 py-2 text-xs sm:text-sm text-indigo-400 hover:text-indigo-300 border border-indigo-400 hover:border-indigo-300 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {otpLoading ? "Sending..." : "Resend Code"}
                 </button>
@@ -389,7 +389,7 @@ const Signup = () => {
             <button
               type="button"
               onClick={() => setStep(1)}
-              className="w-full text-neutral-400 hover:text-white text-sm underline"
+              className="w-full text-neutral-400 hover:text-white text-xs sm:text-sm underline py-2"
             >
               ← Back to registration
             </button>
