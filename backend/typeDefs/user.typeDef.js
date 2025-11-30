@@ -8,6 +8,9 @@ const userTypeDef=`#graphql
         gender:String!
         salt:String
         profilePicture:String
+        signupOTP:String
+        signupOTPExpiry:String
+        isVerified:Boolean
     }
 
     type Query {
@@ -24,6 +27,10 @@ const userTypeDef=`#graphql
         uploadProfileImage(file:Upload!):ImageUploadResponse
         requestPasswordReset(email:String!, timezone:String):OTPResponse
         verifyOTPAndResetPassword(input:ResetPasswordInput!):User
+        sendSignupOTP(input:SignUpInput!):OTPResponse
+        verifySignupOTP(input:SignupOTPInput!):User
+        resendVerificationOTP(email:String!, password:String):OTPResponse
+        verifyEmailOTP(input:EmailOTPInput!):OTPResponse
     }
 
     type LoginResponse{
@@ -35,6 +42,7 @@ const userTypeDef=`#graphql
         email:String!
         fullName:String!
         password:String!
+        confirmPassword:String!
         gender:String!
     }
 
@@ -68,6 +76,18 @@ const userTypeDef=`#graphql
         email:String!
         otp:String!
         newPassword:String!
+    }
+    
+    input SignupOTPInput{
+        email:String!
+        otp:String!
+        password:String!
+    }
+    
+    input EmailOTPInput{
+        email:String!
+        otp:String!
+        password:String
     }
 `;
 

@@ -3,7 +3,7 @@ import { Link ,useNavigate} from 'react-router-dom';
 import { useMutation, useApolloClient } from "@apollo/client";
 import toast from "react-hot-toast";
 import { FaHome } from "react-icons/fa";
-import { LOGIN, REQUEST_PASSWORD_RESET, VERIFY_OTP_AND_RESET_PASSWORD } from "../graphql/mutations/user.mutations";
+import { LOGIN, REQUEST_PASSWORD_RESET, VERIFY_OTP_AND_RESET_PASSWORD, RESEND_VERIFICATION_OTP, VERIFY_EMAIL_OTP } from "../graphql/mutations/user.mutations";
 import { GET_AUTHETICATED_USER } from "../graphql/queries/user.query";
 
 const Login = () => {
@@ -18,6 +18,9 @@ const Login = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [showEmailVerification, setShowEmailVerification] = useState(false);
+  const [verificationEmail, setVerificationEmail] = useState("");
+  const [verificationOTP, setVerificationOTP] = useState("");
   const [forgotPasswordStep, setForgotPasswordStep] = useState(1);
   const [forgotPasswordData, setForgotPasswordData] = useState({
     email: "",
@@ -45,6 +48,8 @@ const Login = () => {
   const [verifyOTPAndResetPassword, { loading: verifyLoading }] = useMutation(VERIFY_OTP_AND_RESET_PASSWORD, {
     refetchQueries: [{ query: GET_AUTHETICATED_USER }],
   });
+  const [resendVerificationOTP, { loading: resendLoading }] = useMutation(RESEND_VERIFICATION_OTP);
+  const [verifyEmailOTP, { loading: verifyEmailLoading }] = useMutation(VERIFY_EMAIL_OTP);
 
 
   const handleSubmit = async (e) => {
@@ -97,7 +102,25 @@ const Login = () => {
       }
     } catch (error) {
       console.log("error  in handleSubmit login", error);
-      toast.error(error.message);
+      if (error.message.includes("Please verify your email before logging in")) {
+        setVerificationEmail(loginData.email);
+        setShowEmailVerification(true);
+        // Automatically send verification OTP with current password
+        toast.success("Let's verify your email to continue");
+        try {
+          await resendVerificationOTP({ 
+            variables: { 
+              email: loginData.email, 
+              password: loginData.password 
+            } 
+          });
+          toast.success("Verification OTP sent to your email!");
+        } catch (otpError) {
+          toast.error("Please verify your email to continue");
+        }
+      } else {
+        toast.error(error.message);
+      }
     } finally {
       // If component unmounts after navigate, setting state is harmless; keep to ensure button is enabled on failure
       setIsSubmitting(false);
@@ -175,6 +198,49 @@ const Login = () => {
     });
   };
 
+  const handleResendVerificationOTP = async () => {
+    try {
+      await resendVerificationOTP({ 
+        variables: { 
+          email: verificationEmail, 
+          password: loginData.password 
+        } 
+      });
+      toast.success("Verification OTP sent to your email!");
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const handleVerifyEmail = async (e) => {
+    e.preventDefault();
+    if (!verificationOTP || verificationOTP.length !== 6) {
+      return toast.error("Please enter a valid 6-digit OTP");
+    }
+    try {
+      await verifyEmailOTP({
+        variables: {
+          input: {
+            email: verificationEmail,
+            otp: verificationOTP,
+            password: loginData.password
+          }
+        }
+      });
+      toast.success("Email verified successfully! You can now login.");
+      setShowEmailVerification(false);
+      setVerificationOTP("");
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const resetEmailVerification = () => {
+    setShowEmailVerification(false);
+    setVerificationEmail("");
+    setVerificationOTP("");
+  };
+
   return (
     <section className="">
       <Link
@@ -204,9 +270,61 @@ const Login = () => {
         <div className="w-full form-Background rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-thin leading-tight tracking-tight text-neutral-100 md:text-2xl dark:text-white">
-              {showForgotPassword ? "Reset Password" : "Sign in to your account"}
+              {showEmailVerification ? "Verify Your Email" : showForgotPassword ? "Reset Password" : "Sign in to your account"}
             </h1>
-            {!showForgotPassword ? (
+            {showEmailVerification ? (
+            <form className="space-y-4 md:space-y-6" onSubmit={handleVerifyEmail}>
+              <div className="text-center mb-6">
+                <p className="text-neutral-300 text-sm mb-4">
+                  We've sent a 6-digit verification code to
+                </p>
+                <p className="text-white font-medium">{verificationEmail}</p>
+              </div>
+              
+              <div>
+                <label htmlFor="verificationOTP" className="block mb-2 text-sm font-medium text-neutral-100">
+                  Verification Code
+                </label>
+                <input
+                  id="verificationOTP"
+                  type="text"
+                  maxLength="6"
+                  value={verificationOTP}
+                  onChange={(e) => setVerificationOTP(e.target.value.replace(/\D/g, ''))}
+                  className="form-Background border bg-transparent text-neutral-200 border-gray-300 rounded-lg focus:text-neutral-100 focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 text-center text-2xl tracking-widest"
+                  placeholder="000000"
+                  required
+                />
+              </div>
+              
+              <button
+                type="submit"
+                disabled={verifyEmailLoading}
+                className="w-full btn disabled:opacity-50"
+              >
+                {verifyEmailLoading ? "Verifying..." : "Verify Email"}
+              </button>
+              
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={handleResendVerificationOTP}
+                  disabled={resendLoading}
+                  className="text-primary-600 hover:underline text-sm disabled:opacity-50"
+                >
+                  {resendLoading ? "Sending..." : "Resend Code"}
+                </button>
+              </div>
+              
+              <button
+                type="button"
+                onClick={resetEmailVerification}
+                className="w-full text-neutral-400 hover:text-white text-sm underline"
+              >
+                ← Back to login
+              </button>
+            </form>
+            ) : !showForgotPassword ? (
             <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label

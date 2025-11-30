@@ -65,6 +65,45 @@ export const VERIFY_OTP_AND_RESET_PASSWORD = gql`
     }
 `;
 
+export const SEND_SIGNUP_OTP = gql`
+    mutation SendSignupOTP($input: SignUpInput!) {
+        sendSignupOTP(input: $input) {
+            message
+            success
+        }
+    }
+`;
+
+export const VERIFY_SIGNUP_OTP = gql`
+    mutation VerifySignupOTP($input: SignupOTPInput!) {
+        verifySignupOTP(input: $input) {
+            _id
+            email
+            fullName
+            gender
+            profilePicture
+        }
+    }
+`;
+
+export const RESEND_VERIFICATION_OTP = gql`
+    mutation ResendVerificationOTP($email: String!, $password: String) {
+        resendVerificationOTP(email: $email, password: $password) {
+            message
+            success
+        }
+    }
+`;
+
+export const VERIFY_EMAIL_OTP = gql`
+    mutation VerifyEmailOTP($input: EmailOTPInput!) {
+        verifyEmailOTP(input: $input) {
+            message
+            success
+        }
+    }
+`;
+
 export const UPLOAD_PROFILE_IMAGE = gql`
     mutation UploadProfileImage($file: Upload!) {
         uploadProfileImage(file: $file) {

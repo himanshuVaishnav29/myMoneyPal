@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import { FaHome } from "react-icons/fa";
-import { SIGN_UP } from '../graphql/mutations/user.mutations';
+import { SIGN_UP, SEND_SIGNUP_OTP, VERIFY_SIGNUP_OTP } from '../graphql/mutations/user.mutations';
 import { GET_AUTHETICATED_USER } from '../graphql/queries/user.query';
 import { useMutation } from '@apollo/client';
 import toast from 'react-hot-toast';
-const Signup = () => {
 
+const Signup = () => {
   const [signUpData, setSignUpData] = useState({
 		email: "",
 		fullName: "",
@@ -14,14 +14,18 @@ const Signup = () => {
 		confirmPassword: "",
 		gender: "",
 	});
-
+  const [otp, setOtp] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [step, setStep] = useState(1); // 1: form, 2: OTP verification
+  const [countdown, setCountdown] = useState(0);
 
 	const navigate = useNavigate(); 
 	const [signUp,{loading,error}]= useMutation(SIGN_UP, {
 		refetchQueries: [{ query: GET_AUTHETICATED_USER }],
 	});
+  const [sendOTP, { loading: otpLoading }] = useMutation(SEND_SIGNUP_OTP);
+  const [verifyOTP, { loading: verifyLoading }] = useMutation(VERIFY_SIGNUP_OTP);
 
   const validateForm = () => {
 		const { email, fullName, password, confirmPassword, gender } = signUpData;
@@ -45,23 +49,69 @@ const Signup = () => {
 		return true;
 	};
 
-
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		try{
-			// console.log("signdata",signUpData);
-      if (!validateForm()) return;
+		try {
+			await sendOTP({
+				variables: { input: signUpData }
+			});
+			
+			toast.success("OTP sent to your email!");
+			setStep(2);
+			startCountdown();
+		} catch (error) {
+			console.log("Error sending OTP:", error);
+			toast.error(error.message);
+		}
+	};
 
-			const { confirmPassword, ...submitData } = signUpData;
-			await signUp({
-				variables:{
-					input:submitData
+  const handleVerifyOTP = async (e) => {
+		e.preventDefault();
+		try {
+			if (!otp || otp.length !== 6) {
+				toast.error("Please enter a valid 6-digit OTP");
+				return;
+			}
+			
+			await verifyOTP({
+				variables: {
+					input: { 
+						email: signUpData.email, 
+						otp, 
+						password: signUpData.password 
+					}
 				}
-			})
-			toast.success("Sign up successful!");
+			});
+			
+			toast.success("Account created successfully!");
 			navigate("/login");
-		}catch(error){
-			console.log("error in handleSubmit in signUp",error);
+		} catch (error) {
+			console.log("Error verifying OTP:", error);
+			toast.error(error.message);
+		}
+	};
+
+	const startCountdown = () => {
+		setCountdown(60);
+		const timer = setInterval(() => {
+			setCountdown(prev => {
+				if (prev <= 1) {
+					clearInterval(timer);
+					return 0;
+				}
+				return prev - 1;
+			});
+		}, 1000);
+	};
+
+	const handleResendOTP = async () => {
+		try {
+			await sendOTP({
+				variables: { input: signUpData }
+			});
+			toast.success("OTP resent!");
+			startCountdown();
+		} catch (error) {
 			toast.error(error.message);
 		}
 	};
@@ -81,8 +131,6 @@ const Signup = () => {
 			}));
 		}
 	};
-
-
 
   return (
     <section className="">
@@ -114,8 +162,10 @@ const Signup = () => {
       <div className="w-full form-Background rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0  dark:border-gray-700">
         <div className="p-6 space-y-4 md:space-y-3 sm:p-8">
           <h1 className="text-xl font-thin leading-tight tracking-tight text-neutral-100 md:text-2xl mb-6">
-            Register Now !
+            {step === 1 ? "Register Now !" : "Verify Your Email"}
           </h1>
+          
+          {step === 1 ? (
           <form className="space-y-4 md:space-y-3" onSubmit={handleSubmit}>
           <div>
               <label
@@ -226,8 +276,6 @@ const Signup = () => {
               </div>
             </div>
 
-
-
             <div>
                 <span className="block mb-2 text-sm font-medium text-neutral-100 ">
                   Gender
@@ -270,15 +318,12 @@ const Signup = () => {
                 </div>
               </div>
 
-
-
             <button
               type="submit"
-              // className="w-full text-white bg-blue-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               className='w-full btn'
-              disabled={loading}
+              disabled={otpLoading}
             >
-              {loading?"Loading...":"Register"}
+              {otpLoading ? "Let's verify you...." : "Register"}
             </button>
             <p className="text-sm font-light text-neutral-100 ">
               Already have an account?{" "}
@@ -290,6 +335,66 @@ const Signup = () => {
               </Link>
             </p>
           </form>
+          ) : (
+          <form className="space-y-4 md:space-y-3" onSubmit={handleVerifyOTP}>
+            <div className="text-center mb-6">
+              <p className="text-neutral-300 text-sm mb-4">
+                We've sent a 6-digit verification code to
+              </p>
+              <p className="text-white font-medium">{signUpData.email}</p>
+            </div>
+            
+            <div>
+              <label htmlFor="otp" className="block mb-2 text-sm font-medium text-neutral-100">
+                Verification Code
+              </label>
+              <input
+                id="otp"
+                name="otp"
+                type="text"
+                maxLength="6"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                className="form-Background border bg-transparent text-neutral-200 border-gray-300 rounded-lg focus:text-neutral-100 focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 text-center text-2xl tracking-widest"
+                placeholder="000000"
+                required
+              />
+            </div>
+            
+            <button
+              type="submit"
+              disabled={verifyLoading}
+              className="w-full btn disabled:opacity-50"
+            >
+              {verifyLoading ? "Verifying..." : "Verify & Create Account"}
+            </button>
+            
+            <div className="text-center">
+              {countdown > 0 ? (
+                <p className="text-neutral-400 text-sm">
+                  Resend code in {countdown}s
+                </p>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleResendOTP}
+                  disabled={otpLoading}
+                  className="text-primary-600 hover:underline text-sm disabled:opacity-50"
+                >
+                  {otpLoading ? "Sending..." : "Resend Code"}
+                </button>
+              )}
+            </div>
+            
+            <button
+              type="button"
+              onClick={() => setStep(1)}
+              className="w-full text-neutral-400 hover:text-white text-sm underline"
+            >
+              ← Back to registration
+            </button>
+          </form>
+          )}
         </div>
       </div>
     </div>

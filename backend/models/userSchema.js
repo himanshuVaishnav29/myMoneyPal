@@ -32,6 +32,16 @@ const userSchema=new mongoose.Schema({
     },
     resetOTPExpiry: {
         type: Date
+    },
+    signupOTP: {
+        type: String
+    },
+    signupOTPExpiry: {
+        type: Date
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
     }
 },{timestamps:true});
 

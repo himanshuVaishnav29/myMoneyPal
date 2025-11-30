@@ -1,7 +1,7 @@
 import USER from '../models/userSchema.js'; 
 import {createToken} from '../services/authentication.js';
 import {createHmac, randomBytes } from "crypto";
-import { sendOTPEmail } from '../services/mailService.js';
+import { sendOTPEmail, sendSignupOTPEmail } from '../services/mailService.js';
 import cloudinary from '../services/cloudinaryService.js';
 import { cache } from '../services/redisService.js';
 
@@ -91,6 +91,10 @@ const userResolver={
                 if(!user){
                     throw new Error("User not found");
                 }
+                if(user.isVerified===false){
+                    throw new Error("Please verify your email before logging in");
+                }
+                
                 
                 // Check if user has salt (for users created with hashed passwords)
                 if (!user.salt) {
@@ -127,7 +131,7 @@ const userResolver={
                 return { user: userWithoutPassword, token };
             }catch(err){
                 console.log("Error in login",err);
-                throw new Error(err,":",err.message);
+                throw new Error(err.message);
             }
         },
         logout:async(parent, args, { req, res })=>{
@@ -278,6 +282,219 @@ const userResolver={
                 return userWithoutPassword;
             } catch (error) {
                 console.log("Error in verifyOTPAndResetPassword", error);
+                throw new Error(error.message);
+            }
+        },
+        sendSignupOTP: async (_, { input }) => {
+            try {
+                const { email, fullName, password, confirmPassword, gender } = input;
+                
+                // Comprehensive validation before sending OTP
+                if (!email || !fullName || !password || !confirmPassword || !gender) {
+                    throw new Error("All fields are required");
+                }
+                
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                if (!emailRegex.test(email)) {
+                    throw new Error("Please enter a valid email address");
+                }
+                
+                // Check for disposable/fake email domains
+                const disposableDomains = ['10minutemail.com', 'tempmail.org', 'guerrillamail.com', 'mailinator.com', 'throwaway.email'];
+                const emailDomain = email.split('@')[1]?.toLowerCase();
+                if (disposableDomains.includes(emailDomain)) {
+                    throw new Error("Please use a valid email address");
+                }
+                
+                if (fullName.trim().length < 2) {
+                    throw new Error("Full name must be at least 2 characters long");
+                }
+                
+                if (password.length < 5 || password.length > 15) {
+                    throw new Error("Password must be between 5 and 15 characters long");
+                }
+                
+                if (password !== confirmPassword) {
+                    throw new Error("Passwords do not match");
+                }
+                
+                if (!['Male', 'Female'].includes(gender)) {
+                    throw new Error("Please select a valid gender");
+                }
+                
+                const existingUser = await USER.findOne({ email });
+                if (existingUser && existingUser.isVerified) {
+                    throw new Error("User already exists with this email");
+                }
+                
+                const otp = Math.floor(100000 + Math.random() * 900000).toString();
+                const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+                
+                if (existingUser && !existingUser.isVerified) {
+                    // Update existing unverified user using findByIdAndUpdate to avoid password hashing
+                    await USER.findByIdAndUpdate(existingUser._id, {
+                        fullName: fullName.trim(),
+                        gender,
+                        profilePicture: gender === 'Male' 
+                            ? `https://avatar.iran.liara.run/public/boy?username=${email}`
+                            : `https://avatar.iran.liara.run/public/girl?username=${email}`,
+                        signupOTP: otp,
+                        signupOTPExpiry: otpExpiry
+                    });
+                } else {
+                    // Create new user
+                    await USER.create({
+                        email,
+                        fullName: fullName.trim(),
+                        password: 'temp_password',
+                        gender,
+                        profilePicture: gender === 'Male' 
+                            ? `https://avatar.iran.liara.run/public/boy?username=${email}`
+                            : `https://avatar.iran.liara.run/public/girl?username=${email}`,
+                        signupOTP: otp,
+                        signupOTPExpiry: otpExpiry,
+                        isVerified: false
+                    });
+                }
+                
+                try {
+                    await sendSignupOTPEmail(email, otp);
+                    return { message: "OTP sent to your email", success: true };
+                } catch (emailError) {
+                    // Clean up temp user if email fails
+                    await USER.deleteOne({ email, isVerified: false });
+                    console.log("Email sending failed:", emailError);
+                    throw new Error("Unable to send verification email. Please check your email address and try again.");
+                }
+            } catch (error) {
+                console.log("Error in sendSignupOTP", error);
+                throw new Error(error.message);
+            }
+        },
+        verifySignupOTP: async (_, { input }, { req, res }) => {
+            try {
+                const { email, otp, password } = input;
+                
+                if (!email || !otp || !password) {
+                    throw new Error("Email, OTP, and password are required");
+                }
+                
+                if (otp.length !== 6) {
+                    throw new Error("Please enter a valid 6-digit OTP");
+                }
+                
+                const tempUser = await USER.findOne({ 
+                    email, 
+                    signupOTP: otp,
+                    signupOTPExpiry: { $gt: new Date() },
+                    isVerified: false
+                });
+                
+                if (!tempUser) {
+                    throw new Error("Invalid or expired OTP");
+                }
+                
+                // Update user with actual password and verify
+                tempUser.password = password;
+                tempUser.signupOTP = undefined;
+                tempUser.signupOTPExpiry = undefined;
+                tempUser.isVerified = true;
+                await tempUser.save();
+                
+                const { password: _, salt: __, signupOTP: ___, signupOTPExpiry: ____, ...userWithoutPassword } = tempUser.toObject();
+                return userWithoutPassword;
+            } catch (error) {
+                console.log("Error in verifySignupOTP", error);
+                throw new Error(error.message);
+            }
+        },
+        resendVerificationOTP: async (_, { email, password }) => {
+            try {
+                const user = await USER.findOne({ email, isVerified: false });
+                if (!user) {
+                    throw new Error("User not found or already verified");
+                }
+                
+                const otp = Math.floor(100000 + Math.random() * 900000).toString();
+                const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+                
+                const updateData = {
+                    signupOTP: otp,
+                    signupOTPExpiry: otpExpiry
+                };
+                
+                // If new password provided, update it (will be hashed by middleware)
+                if (password && password.length >= 5) {
+                    updateData.password = password;
+                }
+                
+                if (password && password.length >= 5) {
+                    // Use save() to trigger password hashing for new password
+                    user.signupOTP = otp;
+                    user.signupOTPExpiry = otpExpiry;
+                    user.password = password;
+                    await user.save();
+                } else {
+                    // Use findByIdAndUpdate to avoid password hashing
+                    await USER.findByIdAndUpdate(user._id, {
+                        signupOTP: otp,
+                        signupOTPExpiry: otpExpiry
+                    });
+                }
+                
+                try {
+                    await sendSignupOTPEmail(email, otp);
+                    return { message: "Verification OTP sent to your email", success: true };
+                } catch (emailError) {
+                    throw new Error("Failed to send verification email. Please try again.");
+                }
+            } catch (error) {
+                console.log("Error in resendVerificationOTP", error);
+                throw new Error(error.message);
+            }
+        },
+        verifyEmailOTP: async (_, { input }) => {
+            try {
+                const { email, otp, password } = input;
+                
+                if (!email || !otp) {
+                    throw new Error("Email and OTP are required");
+                }
+                
+                if (otp.length !== 6) {
+                    throw new Error("Please enter a valid 6-digit OTP");
+                }
+                
+                const user = await USER.findOne({ 
+                    email, 
+                    signupOTP: otp,
+                    signupOTPExpiry: { $gt: new Date() },
+                    isVerified: false
+                });
+                
+                if (!user) {
+                    throw new Error("Invalid or expired OTP");
+                }
+                
+                if (password && password.length >= 5) {
+                    // Update password and verify using save() to trigger hashing
+                    user.password = password;
+                    user.signupOTP = undefined;
+                    user.signupOTPExpiry = undefined;
+                    user.isVerified = true;
+                    await user.save();
+                } else {
+                    // Just verify without password change
+                    await USER.findByIdAndUpdate(user._id, {
+                        signupOTP: undefined,
+                        signupOTPExpiry: undefined,
+                        isVerified: true
+                    });
+                }
+                
+                return { message: "Email verified successfully", success: true };
+            } catch (error) {
+                console.log("Error in verifyEmailOTP", error);
                 throw new Error(error.message);
             }
         }

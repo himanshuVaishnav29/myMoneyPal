@@ -249,6 +249,58 @@ export async function sendMailAtFirstDayOfMonth() {
 
 }
 
+export async function sendSignupOTPEmail(email, otp) {
+  try {
+    const now = new Date();
+    const formattedDate = now.toLocaleString('en-US', { 
+      month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+    
+    const info = await transporter.sendMail({
+      from: process.env.EMAIL,
+      to: email,
+      subject: `Welcome to My MoneyPal! Verify Your Email (${formattedDate})`,
+      html: `
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+          <div style="background: white; margin: 3px; border-radius: 12px; padding: 40px 30px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+              <h1 style="color: #e91e63; font-size: 28px; margin: 0; font-weight: 700;">🎉 Welcome to My MoneyPal!</h1>
+              <p style="color: #666; margin: 5px 0 0 0; font-size: 14px;">Let's verify your email to get started</p>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 2px; border-radius: 12px; margin: 25px 0;">
+              <div style="background: white; padding: 25px; border-radius: 10px; text-align: center;">
+                <p style="margin: 0 0 15px 0; color: #555; font-size: 16px;">Your verification code is:</p>
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 8px; margin: 15px 0;">
+                  <h1 style="color: white; font-size: 36px; margin: 0; letter-spacing: 8px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">${otp}</h1>
+                </div>
+                <p style="margin: 15px 0 0 0; color: #e91e63; font-weight: 600; font-size: 14px;">⏰ Valid for 10 minutes only</p>
+              </div>
+            </div>
+            
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #28a745; margin: 25px 0;">
+              <p style="margin: 0; color: #555; font-size: 14px;">💰 <strong>Ready to master your finances?</strong> Complete your registration and start tracking your expenses, savings, and investments!</p>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+              <p style="margin: 0; color: #999; font-size: 12px;">Welcome aboard!</p>
+              <p style="margin: 5px 0 0 0; color: #e91e63; font-weight: 600;">My MoneyPal Team</p>
+              <p style="margin: 10px 0 0 0; color: #ccc; font-size: 11px;">Master Your Finances 💰</p>
+            </div>
+          </div>
+        </div>
+      `
+    });
+    if (!info.accepted || info.accepted.length === 0) {
+      throw new Error("Email server rejected this email. Address may be invalid.");
+    }
+    console.log("Signup OTP email sent successfully");
+  } catch (error) {
+    console.log("Error sending signup OTP email:", error);
+    throw new Error("Failed to send verification email");
+  }
+}
+
 export async function sendOTPEmail(email, otp, timezone = 'UTC') {
   try {
     const now = new Date();
