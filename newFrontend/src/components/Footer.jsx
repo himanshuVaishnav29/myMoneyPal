@@ -172,7 +172,7 @@ const Footer = () => {
                     A land of unity in diversity—where every heart beats for the tricolor.
                   </p> */}
                   <a
-                    href="https://www.makeinindia.com/"
+                    href="/tribute-to-our-nation"
                     target="_blank"
                     className="inline-flex items-center gap-1.5 text-black text-xs font-semibold hover:gap-2 transition-all group"
                   >

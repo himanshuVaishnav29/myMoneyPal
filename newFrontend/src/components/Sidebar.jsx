@@ -1,7 +1,7 @@
 
 
 import React, { useState, useRef, useEffect } from 'react';
-import { LuBox, LuUser, LuHistory, LuMessageSquare, LuCalendar, LuLogOut } from 'react-icons/lu';
+import { LuBox, LuUser, LuHistory, LuMessageSquare, LuCalendar, LuLogOut, LuBrain } from 'react-icons/lu';
 import { FaSuitcase,FaTimes } from 'react-icons/fa';
 import { GrAnalytics } from "react-icons/gr";
 import { Link, useLocation } from 'react-router-dom';
@@ -62,9 +62,10 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     const SIDEBAR_LINKS = [
         { id: 1, path: "/dashboard", name: "Dashboard", icon: LuBox },
         { id: 2, path: "/dashboard/analytics", name: "Analytics", icon: GrAnalytics },
-        { id: 3, path: "/dashboard/history", name: "Transactions", icon: LuHistory },
-        { id: 4, path: "/dashboard/statement", name: "Statement", icon: FaSuitcase },
-        { id: 5, path: "/dashboard/profile", name: "My Profile", icon: LuUser },
+        { id: 3, path: "/dashboard/ai-suggestions", name: "AI Suggestions", icon: LuBrain },
+        { id: 4, path: "/dashboard/history", name: "Transactions", icon: LuHistory },
+        { id: 5, path: "/dashboard/statement", name: "Statement", icon: FaSuitcase },
+        { id: 6, path: "/dashboard/profile", name: "My Profile", icon: LuUser },
     ];
 
     const location = useLocation();
@@ -112,7 +113,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             {/* Sidebar container */}
             <div
                 ref={sidebarRef}
-                className={`fixed left-0 top-0 z-50 md:w-56 min-h-full bg-gray-900 text-white shadow-lg pt-8 px-4 transition-transform transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
+                className={`fixed left-0 top-0 z-50 md:w-56 h-full bg-gray-900 text-white shadow-lg pt-8 px-4 transition-transform transform duration-300 ease-in-out overflow-y-auto ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
             >
             <div className="flex justify-end mb-4 md:hidden">
                 <button onClick={toggleSidebar}>
@@ -127,7 +128,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 </Link>
             </div>
 
-            <ul className='mt-6 space-y-6'>
+            <ul className='mt-6 space-y-6 pb-8'>
                 {
                     SIDEBAR_LINKS.map((link, index) => (
                         <li

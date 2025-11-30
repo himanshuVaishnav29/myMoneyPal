@@ -12,10 +12,12 @@ import { Toaster } from 'react-hot-toast';
 import { useQuery } from '@apollo/client';
 import { GET_AUTHETICATED_USER } from './graphql/queries/user.query';
 import Analytics from './pages/Analytics';
+import AISuggestions from './pages/AISuggestions';
 import TransactionUpdateForm from './pages/TransactionUpdateForm';
 import Statement from './pages/Statement';
 import Profile from './pages/Profile';
 import ChangePassword from './pages/ChangePassword';
+import TributeToOurNation from './pages/TributeToOurNation';
 import { UserProvider } from './context/UserContext';
  
 
@@ -42,6 +44,7 @@ function App() {
           <Route path='/dashboard' element={data?.authUser ? <Layout loggedInUser={data?.authUser}/> : <Navigate to="/" />}>
             <Route index element={<Home loggedInUser={data?.authUser} />} />
             <Route path='analytics' element={<Analytics/>}/>
+            <Route path='ai-suggestions' element={<AISuggestions/>}/>
             <Route path='history' element={<History/>} />
             <Route path="history/:id" element={<TransactionUpdateForm/>} />
             <Route path="statement" element={<Statement/>} />
@@ -52,6 +55,9 @@ function App() {
           {/* Auth Routes */}
           <Route path='/signup' element={!data?.authUser ? <Signup/> : <Navigate to="/dashboard" />} />
           <Route path='/login' element={!data?.authUser ? <Login/> : <Navigate to="/dashboard" />}/>
+          
+          {/* Tribute Page */}
+          <Route path='/tribute-to-our-nation' element={<TributeToOurNation />} />
           
           {/* 404 Route */}
           <Route path="*" element={<NotFoundPage />} />
