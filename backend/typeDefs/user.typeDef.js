@@ -11,6 +11,7 @@ const userTypeDef=`#graphql
         signupOTP:String
         signupOTPExpiry:String
         isVerified:Boolean
+        timezone:String
     }
 
     type Query {
@@ -49,6 +50,7 @@ const userTypeDef=`#graphql
     input LogInInput{
         email:String!
         password:String!
+        timezone:String
     }
 
     type LogoutResponse{
@@ -63,6 +65,7 @@ const userTypeDef=`#graphql
     input UpdateProfileInput{
         fullName:String
         profilePicture:String
+        timezone:String
     }
 
     scalar Upload

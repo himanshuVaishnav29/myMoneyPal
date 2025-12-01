@@ -8,6 +8,7 @@ export const GET_AUTHETICATED_USER=gql`
             fullName
             gender
             profilePicture
+            timezone
         }
     }
 `;

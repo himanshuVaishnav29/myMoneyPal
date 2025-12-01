@@ -2,6 +2,7 @@ import TRANSACTION from "../models/transactionSchema.js";
 import { transactions } from "../testData/testData.js";
 import { Parser } from 'json2csv';
 import { cache } from '../services/redisService.js';
+import { getCurrentMonthRange, getCurrentWeekRange } from '../helpers/timezoneUtils.js';
 
 const transactionResolver={
     Query:{
@@ -80,10 +81,9 @@ const transactionResolver={
                     return cachedSummary;
                 }
                 
-                // Get current month date range
-                const now = new Date();
-                const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-                const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+                // Get current month date range in user's timezone
+                const userTimezone = user.timezone || 'UTC';
+                const { startOfMonth, endOfMonth } = getCurrentMonthRange(userTimezone);
                 
                 // Use simple find instead of aggregation to avoid ObjectId issues
                 const [monthlyTransactions, recentTransactions, tagStats] = await Promise.all([
@@ -173,19 +173,9 @@ const transactionResolver={
           
               const userId = user._id;
           
-              // Get the current date
-              const now = new Date();
-              const dayOfWeek = now.getDay(); // 0 is Sunday, 6 is Saturday
-          
-              // Calculate the start of the current week (assuming week starts on Sunday)
-              const startOfWeek = new Date(now);
-              startOfWeek.setHours(0, 0, 0, 0); // Set time to 00:00:00
-              startOfWeek.setDate(now.getDate() - dayOfWeek);
-          
-              // Calculate the end of the current week
-              const endOfWeek = new Date(startOfWeek);
-              endOfWeek.setDate(startOfWeek.getDate() + 6);
-              endOfWeek.setHours(23, 59, 59, 999); 
+              // Get current week date range in user's timezone
+              const userTimezone = user.timezone || 'UTC';
+              const { startOfWeek, endOfWeek } = getCurrentWeekRange(userTimezone); 
           
               // Query transactions created or updated during the current week
               const transactions = await TRANSACTION.find({
@@ -224,16 +214,9 @@ const transactionResolver={
           
               const userId = user._id;
           
-              // Get the current date
-              const now = new Date();
-          
-              // Calculate the start of the current month
-              const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-              startOfMonth.setHours(0, 0, 0, 0); // Set time to 00:00:00
-          
-              // Calculate the end of the current month
-              const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-              endOfMonth.setHours(23, 59, 59, 999); // Set time to 23:59:59 on the last day
+              // Get current month date range in user's timezone
+              const userTimezone = user.timezone || 'UTC';
+              const { startOfMonth, endOfMonth } = getCurrentMonthRange(userTimezone);
           
               // Query transactions created or updated during the current month
               const transactions = await TRANSACTION.find({
@@ -312,17 +295,9 @@ const transactionResolver={
             
                 const userId = user._id;
             
-                const now = new Date();
-                const dayOfWeek = now.getDay(); 
-            
-               
-                const startOfWeek = new Date(now);
-                startOfWeek.setHours(0, 0, 0, 0); 
-                startOfWeek.setDate(now.getDate() - dayOfWeek);
-            
-                const endOfWeek = new Date(startOfWeek);
-                endOfWeek.setDate(startOfWeek.getDate() + 6);
-                endOfWeek.setHours(23, 59, 59, 999); 
+                // Get current week date range in user's timezone
+                const userTimezone = user.timezone || 'UTC';
+                const { startOfWeek, endOfWeek } = getCurrentWeekRange(userTimezone); 
             
                 const transactions = await TRANSACTION.find({
                   userId,
@@ -439,17 +414,9 @@ const transactionResolver={
           
               const userId = user._id;
           
-              const now = new Date();
-              const dayOfWeek = now.getDay(); 
-          
-             
-              const startOfWeek = new Date(now);
-              startOfWeek.setHours(0, 0, 0, 0); 
-              startOfWeek.setDate(now.getDate() - dayOfWeek);
-          
-              const endOfWeek = new Date(startOfWeek);
-              endOfWeek.setDate(startOfWeek.getDate() + 6);
-              endOfWeek.setHours(23, 59, 59, 999); 
+              // Get current week date range in user's timezone
+              const userTimezone = user.timezone || 'UTC';
+              const { startOfWeek, endOfWeek } = getCurrentWeekRange(userTimezone); 
           
               const transactions = await TRANSACTION.find({
                 userId,
@@ -485,13 +452,9 @@ const transactionResolver={
 
              const userId = user._id;
 
-             const now = new Date();
-
-             const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-             startOfMonth.setHours(0, 0, 0, 0);
-         
-             const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-             endOfMonth.setHours(23, 59, 59, 999); 
+             // Get current month date range in user's timezone
+             const userTimezone = user.timezone || 'UTC';
+             const { startOfMonth, endOfMonth } = getCurrentMonthRange(userTimezone); 
 
              const transactions = await TRANSACTION.find({
              userId,
@@ -625,6 +588,21 @@ const transactionResolver={
             filterCriteria.tag = tag;
           }
           try {
+            // Convert date filters to user's timezone if provided
+            if (filterCriteria.date) {
+              const userTimezone = req.user.timezone || 'UTC';
+              
+              if (filterCriteria.date.$gte) {
+                const userDate = new Date(filterCriteria.date.$gte.toLocaleString("en-US", {timeZone: userTimezone}));
+                filterCriteria.date.$gte = new Date(userDate.getFullYear(), userDate.getMonth(), userDate.getDate());
+              }
+              
+              if (filterCriteria.date.$lte) {
+                const userDate = new Date(filterCriteria.date.$lte.toLocaleString("en-US", {timeZone: userTimezone}));
+                filterCriteria.date.$lte = new Date(userDate.getFullYear(), userDate.getMonth(), userDate.getDate(), 23, 59, 59, 999);
+              }
+            }
+            
             const transactions = await TRANSACTION.find(filterCriteria);
             return transactions || [];
           } catch (error) {

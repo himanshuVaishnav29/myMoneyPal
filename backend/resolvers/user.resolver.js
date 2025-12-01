@@ -83,7 +83,7 @@ const userResolver={
         },
         login:async(_,{input},{ req, res })=>{
             try{
-                const{email,password}=input;
+                const{email,password,timezone}=input;
                 if (!email || !password){
                     throw new Error("Please fill in all fields");
                 } 
@@ -93,6 +93,12 @@ const userResolver={
                 }
                 if(user.isVerified===false){
                     throw new Error("Please verify your email before logging in");
+                }
+                
+                // Update user's timezone if provided
+                if (timezone && timezone !== user.timezone) {
+                    await USER.findByIdAndUpdate(user._id, { timezone });
+                    user.timezone = timezone;
                 }
                 
                 

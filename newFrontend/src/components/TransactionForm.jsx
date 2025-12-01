@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { GET_CURRENT_MONTH_STATS_BY_CATEGORY, GET_CURRENT_MONTH_STATS_BY_PAYMENT_TYPE, GET_CURRENT_MONTH_STATS_BY_TAG, GET_CURRENT_WEEK_STATS_BY_CATEGORY, GET_CURRENT_WEEK_STATS_BY_PAYMENT_TYPE, GET_CURRENT_WEEK_STATS_BY_TAG, GET_STATS_BY_CATEGORY, GET_STATS_BY_PAYMENT_TYPE, GET_STATS_BY_TAG, GET_TRANSACTIONS_BY_USER, GET_TRANSACTIONS_BY_USER_PAGINATED } from "../graphql/queries/transaction.query";
 import { GET_DASHBOARD_SUMMARY } from "../graphql/queries/dashboard.query";
 import {FaRupeeSign} from "react-icons/fa";
+import { getCurrentDateInTimezone } from "../helpers/timezoneHelper";
 
 const TransactionForm = ({toggleModal}) => {
 
@@ -254,6 +255,7 @@ const TransactionForm = ({toggleModal}) => {
 						type='date'
 						name='date'
 						id='date'
+						defaultValue={getCurrentDateInTimezone()}
 						className='appearance-none block w-full bg-transparent  border  rounded py-[11px] px-4 mb-3 leading-tight focus:outline-none focus:border-gray-500'
 						placeholder='Select date'
 						required

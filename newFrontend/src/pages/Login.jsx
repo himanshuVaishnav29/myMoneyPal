@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { FaHome } from "react-icons/fa";
 import { LOGIN, REQUEST_PASSWORD_RESET, VERIFY_OTP_AND_RESET_PASSWORD, RESEND_VERIFICATION_OTP, VERIFY_EMAIL_OTP } from "../graphql/mutations/user.mutations";
 import { GET_AUTHETICATED_USER } from "../graphql/queries/user.query";
+import { getUserTimezone } from "../helpers/timezoneHelper";
 
 const Login = () => {
 
@@ -65,7 +66,10 @@ const Login = () => {
       console.log("Login Data: ", loginData);
       const response = await login({
         variables: {
-          input: loginData
+          input: {
+            ...loginData,
+            timezone: getUserTimezone()
+          }
         }
       });
 
