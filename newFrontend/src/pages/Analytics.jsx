@@ -13,40 +13,40 @@ import TagStatsBar from '../components/TagStats/TagStatsBar';
 
 
 const Analytics = () => {
-  const [categoryTimeframe, setCategoryTimeframe] = useState('All time');
-  const [paymentTimeframe, setPaymentTimeframe] = useState('All time');
-  const [tagTimeframe,setTagTimeframe] = useState('All time');
+  const [categoryTimeframe, setCategoryTimeframe] = useState('This week');
+  const [paymentTimeframe, setPaymentTimeframe] = useState('This week');
+  const [tagTimeframe,setTagTimeframe] = useState('This week');
 
   const renderCategoryComponent = () => {
     switch (categoryTimeframe) {
-      case 'This week':
-        return <CurrWeekStatsByCategory />;
+      case 'All time':
+        return <CategoryStats />;
       case 'This month':
         return <CurrMonthStatsByCategory />;
       default:
-        return <CategoryStats />;
+        return <CurrWeekStatsByCategory />;
     }
   };
 
   const renderPaymentTypeComponent = () => {
     switch (paymentTimeframe) {
-      case 'This week':
-        return <CurrWeekStatsByPaymentType />;
+      case 'All time':
+        return <PaymentTypeStats />;
       case 'This month':
         return <CurrMonthStatsByPaymentType />;
       default:
-        return <PaymentTypeStats />;
+        return <CurrWeekStatsByPaymentType />;
     }
   };
 
   const renderTagComponent = () => {
     switch (tagTimeframe) {
-      case 'This week':
-        return <CurrWeekStatsByTagBar />;
+      case 'All time':
+        return <TagStatsBar />;
       case 'This month':
         return <CurrMonthStatsByTagBar />;
       default:
-        return <TagStatsBar />;
+        return <CurrWeekStatsByTagBar />;
     }
   };
 
@@ -66,9 +66,9 @@ const Analytics = () => {
             value={tagTimeframe}
             onChange={(e) => setTagTimeframe(e.target.value)}
           >
-            <option className='bg-gray-800 text-white' value="All time">All time</option>
             <option className='bg-gray-800 text-white' value="This week">This week</option>
             <option className='bg-gray-800 text-white' value="This month">This month</option>
+            <option className='bg-gray-800 text-white' value="All time">All time</option>
           </select>
         </div>
         <div className='w-full h-64 md:h-80 lg:h-96'>
@@ -87,9 +87,10 @@ const Analytics = () => {
               value={categoryTimeframe}
               onChange={(e) => setCategoryTimeframe(e.target.value)}
             >
-              <option className='bg-gray-800 text-white' value="All time">All time</option>
               <option className='bg-gray-800 text-white' value="This week">This week</option>
               <option className='bg-gray-800 text-white' value="This month">This month</option>
+              <option className='bg-gray-800 text-white' value="All time">All time</option>
+
             </select>
           </div>
           <div className='flex justify-center items-center h-64 md:h-72 lg:h-80'>
@@ -106,9 +107,9 @@ const Analytics = () => {
               value={paymentTimeframe}
               onChange={(e) => setPaymentTimeframe(e.target.value)}
             >
-              <option className='bg-gray-800 text-white' value="All time">All time</option>
               <option className='bg-gray-800 text-white' value="This week">This week</option>
               <option className='bg-gray-800 text-white' value="This month">This month</option>
+              <option className='bg-gray-800 text-white' value="All time">All time</option>
             </select>
           </div>
           <div className='flex justify-center items-center h-64 md:h-72 lg:h-80'>
