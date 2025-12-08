@@ -46,6 +46,22 @@ const userSchema=new mongoose.Schema({
     timezone: {
         type: String,
         default: "UTC"
+    },
+    lastAIRecommendations: {
+        type: Object,
+        default: null
+    },
+    lastAIRecommendationsDate: {
+        type: String,
+        default: null
+    },
+    aiRefreshCount: {
+        type: Number,
+        default: 0
+    },
+    lastAIRefreshDate: {
+        type: String,
+        default: null
     }
 },{timestamps:true});
 

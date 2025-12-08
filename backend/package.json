@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "@apollo/server": "^4.10.5",
+    "@google/generative-ai": "^0.24.1",
     "@graphql-tools/merge": "^9.0.4",
     "cloudinary": "^2.7.0",
     "cookie-parser": "^1.4.6",
@@ -20,6 +21,7 @@
     "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-rate-limit": "^8.2.1",
     "fs": "^0.0.1-security",
     "graphql": "^16.9.0",
     "graphql-upload": "^17.0.0",

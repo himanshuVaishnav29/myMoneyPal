@@ -68,3 +68,39 @@ export const getUserTimezone = () => {
         return 'UTC';
     }
 };
+
+export const convertToUTC = (date, timezone) => {
+  return new Date(
+    new Date(date.toLocaleString("en-US", { timeZone: timezone }))
+      .toISOString()
+  );
+};
+
+/**
+ * Get today's date in YYYY-MM-DD format in user's timezone
+ * @param {string} timezone - User's timezone
+ * @returns {string} - Date string in YYYY-MM-DD format
+ */
+export const getTodayDateString = (timezone = 'UTC') => {
+    const now = new Date();
+    const userDate = new Date(now.toLocaleString("en-US", {timeZone: timezone}));
+    const year = userDate.getFullYear();
+    const month = String(userDate.getMonth() + 1).padStart(2, '0');
+    const day = String(userDate.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
+
+/**
+ * Get hours until tomorrow in user's timezone
+ * @param {string} timezone - User's timezone
+ * @returns {number} - Hours remaining until tomorrow
+ */
+export const getHoursUntilTomorrow = (timezone = 'UTC') => {
+    const now = new Date();
+    const userDate = new Date(now.toLocaleString("en-US", {timeZone: timezone}));
+    const tomorrow = new Date(userDate);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    const msUntilTomorrow = tomorrow - userDate;
+    return Math.ceil(msUntilTomorrow / (1000 * 60 * 60));
+};

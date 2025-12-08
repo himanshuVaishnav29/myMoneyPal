@@ -30,6 +30,8 @@ const transactionTypeDef=`#graphql
         getStatsByTag:[tagStatistics!]
         getCurrentWeekStatsByTag:[tagStatistics!]
         getCurrentMonthStatsByTag:[tagStatistics!]
+        
+        getAIRecommendations(forceRefresh:Boolean):AIRecommendations!
 
     }
     type CategoryStatistics {
@@ -64,6 +66,19 @@ const transactionTypeDef=`#graphql
     type TagStat{
         tag:String!
         totalAmount:Float!
+    }
+    
+    type AIRecommendations{
+        headline:String!
+        mood:String!
+        sarcastic_tips:[String!]!
+        unusual_spending_alerts:[String!]!
+        currentMonthTotal:Float!
+        lastMonthTotal:Float!
+        difference:Float!
+        transactionCount:Int!
+        isRateLimited:Boolean
+        hoursRemaining:Int
     }
     type Mutation{
         createTransaction(input:CreateTransactionInput!):Transaction!

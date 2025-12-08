@@ -14,7 +14,7 @@ import { FcMoneyTransfer } from "react-icons/fc";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
     const sidebarRef = useRef(null);
-    const myLogo = './myMoneyPalLogo.png'; // Path to your logo image
+    const myLogo = '/myMoneyPalLogo.png'; // Path to your logo image
 
     const client = useApolloClient();
     const [isLoggingOut, setIsLoggingOut] = useState(false);

@@ -2,7 +2,8 @@ import TRANSACTION from "../models/transactionSchema.js";
 import { transactions } from "../testData/testData.js";
 import { Parser } from 'json2csv';
 import { cache } from '../services/redisService.js';
-import { getCurrentMonthRange, getCurrentWeekRange } from '../helpers/timezoneUtils.js';
+import { getCurrentMonthRange, getCurrentWeekRange, getTodayDateString, getHoursUntilTomorrow } from '../helpers/timezoneUtils.js';
+import { getFinancialAnalysis, generateAIRecommendations } from '../services/aiService.js';
 
 const transactionResolver={
     Query:{
@@ -482,6 +483,107 @@ const transactionResolver={
               throw new Error(error.message);
           }
         },
+        getAIRecommendations: async (_, { forceRefresh }, { req, res, user }) => {
+          try {
+            if (!user) {
+              throw new Error("Unauthorized");
+            }
+
+            const userId = user._id;
+            const userTimezone = user.timezone || 'UTC';
+            const USER = (await import('../models/userSchema.js')).default;
+            const userDoc = await USER.findById(userId);
+            
+            const todayDate = getTodayDateString(userTimezone);
+            const isRateLimitEnabled = process.env.IS_GEMINI_AI_SUGGESTION_RATE_LIMIT_ENABLED === 'true';
+
+            // Check if we have recommendations for today
+            const hasRecommendationsForToday = userDoc.lastAIRecommendationsDate === todayDate;
+
+            // Initial load (not forcing refresh)
+            if (!forceRefresh) {
+              if (hasRecommendationsForToday && userDoc.lastAIRecommendations) {
+                // Return cached recommendations for today
+                return { ...userDoc.lastAIRecommendations, isRateLimited: false, hoursRemaining: 0 };
+              }
+              // No recommendations for today, generate new ones (doesn't count as refresh)
+              const result = await generateAndStoreRecommendations(userId, userTimezone, todayDate, USER);
+              return { ...result, isRateLimited: false, hoursRemaining: 0 };
+            }
+
+            // Explicit refresh requested
+            if (isRateLimitEnabled) {
+              // Reset refresh count if it's a new day
+              if (userDoc.lastAIRefreshDate !== todayDate) {
+                await USER.findByIdAndUpdate(userId, { 
+                  aiRefreshCount: 0,
+                  lastAIRefreshDate: todayDate
+                });
+                userDoc.aiRefreshCount = 0;
+              }
+
+              // Check if user has already refreshed today
+              if (userDoc.aiRefreshCount >= 1) {
+                const hoursRemaining = getHoursUntilTomorrow(userTimezone);
+                
+                return { 
+                  ...userDoc.lastAIRecommendations, 
+                  isRateLimited: true, 
+                  hoursRemaining 
+                };
+              }
+            }
+
+            // Generate new recommendations
+            const result = await generateAndStoreRecommendations(userId, userTimezone, todayDate, USER);
+            
+            // Increment refresh count
+            await USER.findByIdAndUpdate(userId, { 
+              aiRefreshCount: (userDoc.aiRefreshCount || 0) + 1,
+              lastAIRefreshDate: todayDate
+            });
+            
+            return { ...result, isRateLimited: false, hoursRemaining: 0 };
+          } catch (error) {
+            console.log("Error in getAIRecommendations", error);
+            
+            if (error.message === 'NO_TRANSACTIONS') {
+              return {
+                headline: "No transactions found for this month!",
+                mood: "warning",
+                sarcastic_tips: [
+                  "Start spending money to get roasted by me!",
+                  "Add some transactions so I can judge your choices",
+                  "Your wallet is either empty or you're too lazy to track"
+                ],
+                unusual_spending_alerts: [],
+                currentMonthTotal: 0,
+                lastMonthTotal: 0,
+                difference: 0,
+                transactionCount: 0
+              };
+            }
+            
+            if (error.message === 'AI_GENERATION_FAILED') {
+              return {
+                headline: "AI is having a bad day, just like your spending habits!",
+                mood: "warning",
+                sarcastic_tips: [
+                  "Try again later when the AI recovers",
+                  "Maybe your spending is too shocking for AI to process",
+                  "Even artificial intelligence can't handle your financial choices"
+                ],
+                unusual_spending_alerts: [],
+                currentMonthTotal: 0,
+                lastMonthTotal: 0,
+                difference: 0,
+                transactionCount: 0
+              };
+            }
+            
+            throw new Error(error.message);
+          }
+        },
 
     },
     Mutation:{
@@ -641,5 +743,26 @@ const transactionResolver={
         }
       }
     }
+
+// Helper function to generate and store AI recommendations
+async function generateAndStoreRecommendations(userId, userTimezone, todayDate, USER) {
+  const financialData = await getFinancialAnalysis(userId, userTimezone);
+  const aiResponse = await generateAIRecommendations(financialData);
+  
+  const result = {
+    ...aiResponse,
+    currentMonthTotal: financialData.currentExpenses,
+    lastMonthTotal: financialData.lastExpenses,
+    difference: financialData.expenseDifference,
+    transactionCount: financialData.transactionCount
+  };
+
+  await USER.findByIdAndUpdate(userId, { 
+    lastAIRecommendations: result,
+    lastAIRecommendationsDate: todayDate
+  });
+  
+  return result;
+}
 
 export default transactionResolver;
