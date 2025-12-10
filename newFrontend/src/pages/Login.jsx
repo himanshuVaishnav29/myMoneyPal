@@ -74,7 +74,7 @@ const Login = () => {
       });
 
       if (response?.data?.login) {
-        // If server returned a token, store it as a fallback for clients that couldn't accept httpOnly cookies
+        // If server returned a token, store it as a fallback
         const returnedToken = response.data.login.token;
         if (returnedToken) {
           try {
@@ -84,14 +84,14 @@ const Login = () => {
           }
         }
 
-        // Reset store so Apollo uses the new auth context (with token in Authorization header)
+        // Reset store so Apollo uses the new auth context
         try {
           await client.resetStore();
         } catch (resetErr) {
           console.warn('Error resetting Apollo store after login', resetErr);
         }
 
-        // Explicitly refetch authUser with the new token to ensure iOS gets the authenticated user
+        // Explicitly refetch authUser
         try {
           await client.refetchQueries({
             include: [GET_AUTHETICATED_USER]
@@ -102,15 +102,17 @@ const Login = () => {
 
         navigate("/dashboard");
         toast.success("Login successful!");
-      } else {
-        toast.error("Login failed - Invalid credentials");
-      }
+      } 
+      // Note: We don't need an 'else toast.error' here because GraphQL errors are thrown and caught below
     } catch (error) {
-      console.log("error  in handleSubmit login", error);
+      console.log("error in handleSubmit login", error);
+      
+      // Specific logic for unverified users needs to stay, 
+      // but we let the global handler show the error message.
       if (error.message.includes("Please verify your email before logging in")) {
         setVerificationEmail(loginData.email);
         setShowEmailVerification(true);
-        // Automatically send verification OTP with current password
+        // Automatically send verification OTP
         try {
           await resendVerificationOTP({ 
             variables: { 
@@ -121,13 +123,12 @@ const Login = () => {
           toast.success("Verification OTP sent to your email!");
           startVerificationCountdown();
         } catch (otpError) {
-          toast.error("Please verify your email to continue");
+           console.error("Error sending OTP automatically", otpError);
+           // No toast here, Global Handler catches it
         }
-      } else {
-        toast.error(error.message);
-      }
+      } 
+      // Removed: 'else { toast.error(error.message) }' -> Global handler does this now.
     } finally {
-      // If component unmounts after navigate, setting state is harmless; keep to ensure button is enabled on failure
       setIsSubmitting(false);
     }
 	};
@@ -158,7 +159,8 @@ const Login = () => {
         setForgotPasswordStep(2);
       }
     } catch (error) {
-      toast.error(error.message);
+      // Removed toast.error -> Global Handler
+      console.error("Forgot Password Request Error:", error);
     }
   };
 
@@ -188,7 +190,8 @@ const Login = () => {
         navigate("/dashboard");
       }
     } catch (error) {
-      toast.error(error.message);
+      // Removed toast.error -> Global Handler
+      console.error("Reset Password Error:", error);
     }
   };
 
@@ -227,7 +230,8 @@ const Login = () => {
       toast.success("Verification OTP sent to your email!");
       startVerificationCountdown();
     } catch (error) {
-      toast.error(error.message);
+      // Removed toast.error -> Global Handler
+      console.error("Resend OTP Error:", error);
     }
   };
 
@@ -250,7 +254,8 @@ const Login = () => {
       setShowEmailVerification(false);
       setVerificationOTP("");
     } catch (error) {
-      toast.error(error.message);
+      // Removed toast.error -> Global Handler
+      console.error("Verify Email Error:", error);
     }
   };
 

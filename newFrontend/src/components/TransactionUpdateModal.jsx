@@ -8,6 +8,8 @@ import toast from "react-hot-toast";
 import ComponentLoader from "../components/Skeletons/ComponentLoader";
 
 const TransactionUpdateModal = ({ isOpen, toggleModal, transactionId, onSuccess }) => {
+	
+	// Global Error Handler catches loading errors here
 	const { loading, data, error } = useQuery(GET_TRANSACTION, {
 		variables: { id: transactionId },
 		skip: !transactionId
@@ -65,8 +67,8 @@ const TransactionUpdateModal = ({ isOpen, toggleModal, transactionId, onSuccess 
 			toggleModal();
 			if (onSuccess) onSuccess();
 		} catch (error) {
+			// Removed manual toast.error -> Global Handler in main.jsx catches this
 			console.log("Error in handle submit of update transaction", error);
-			toast.error(error.message);
 		}
 	};
 

@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/client';
 import { GET_AI_RECOMMENDATIONS } from '../graphql/queries/ai.query';
 import { FaBrain, FaChartLine, FaExclamationTriangle, FaLightbulb, FaRedo, FaSpinner } from 'react-icons/fa';
 import ComponentLoader from '../components/ComponentLoader';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 
 const AISuggestions = () => {
@@ -14,6 +14,8 @@ const AISuggestions = () => {
 		try {
 			const result = await refetch({ forceRefresh: true });
 			
+			// This is business logic (successful 200 response, but data says limit reached)
+			// So we keep this specific toast here.
 			if (result.data?.getAIRecommendations?.isRateLimited) {
 				const hours = result.data.getAIRecommendations.hoursRemaining;
 				toast.error(
@@ -24,16 +26,9 @@ const AISuggestions = () => {
 				toast.success('AI recommendations refreshed!');
 			}
 		} catch (err) {
-			const isRateLimitError = err.message?.includes('Too many requests') || 
-									 err.graphQLErrors?.[0]?.extensions?.code === 'RATE_LIMIT_EXCEEDED';
-			const resetIn = err.graphQLErrors?.[0]?.extensions?.resetIn || 
-							(err.message?.match(/(\d+) minutes?/)?.[1]);
-			
-			if (isRateLimitError) {
-				toast.error(`Too many requests. Try again in ${resetIn || '15'} minutes. ⏰`, { duration: 5000 });
-			} else {
-				toast.error('Failed to refresh recommendations');
-			}
+			// Removed manual toast.error calls.
+			// Global Handler in main.jsx catches Network 429 and other GraphQL errors.
+			console.error("Error refreshing AI suggestions:", err);
 		} finally {
 			setIsRefreshing(false);
 		}
@@ -66,37 +61,23 @@ const AISuggestions = () => {
 	}
 
 	if (error) {
-		const errorCode = error.graphQLErrors?.[0]?.extensions?.code;
+		// We can still display a nice error UI for persistent page-load errors
+		// independent of the toast notifications.
 		const errorMessage = error.graphQLErrors?.[0]?.message || error.message;
-		const isRateLimitError = errorCode === 'RATE_LIMIT_EXCEEDED' || errorMessage?.includes('Too many requests');
-		const resetIn = error.graphQLErrors?.[0]?.extensions?.resetIn || 
-						(errorMessage?.match(/(\d+) minutes?/)?.[1]);
 		
 		return (
 			<div className="min-h-screen p-6 text-white">
 				<div className="max-w-4xl mx-auto">
-					<div className={`bg-gradient-to-br ${isRateLimitError ? 'from-yellow-900/40 to-orange-800/40 border-yellow-700/50' : 'from-red-900/40 to-red-800/40 border-red-700/50'} backdrop-blur-md border rounded-2xl p-8 text-center`}>
-						{isRateLimitError ? (
-							<>
-								<span className="text-6xl mb-4 block">⏰</span>
-								<h2 className="text-2xl font-bold mb-2">Slow down there!</h2>
-								<p className="text-gray-300 mb-6">
-									Too many requests. {resetIn ? `Try again in ${resetIn} minutes.` : 'Please try again later.'}
-								</p>
-							</>
-						) : (
-							<>
-								<FaExclamationTriangle className="text-6xl text-red-400 mx-auto mb-4" />
-								<h2 className="text-2xl font-bold mb-2">Oops! Something went wrong</h2>
-								<p className="text-gray-300 mb-6">{errorMessage}</p>
-								<button
-									onClick={() => refetch()}
-									className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition-all duration-300 flex items-center gap-2 mx-auto"
-								>
-									<FaRedo /> Try Again
-								</button>
-							</>
-						)}
+					<div className="bg-gradient-to-br from-red-900/40 to-red-800/40 border-red-700/50 backdrop-blur-md border rounded-2xl p-8 text-center">
+						<FaExclamationTriangle className="text-6xl text-red-400 mx-auto mb-4" />
+						<h2 className="text-2xl font-bold mb-2">Oops! Something went wrong</h2>
+						<p className="text-gray-300 mb-6">{errorMessage}</p>
+						<button
+							onClick={() => refetch()}
+							className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition-all duration-300 flex items-center gap-2 mx-auto"
+						>
+							<FaRedo /> Try Again
+						</button>
 					</div>
 				</div>
 			</div>

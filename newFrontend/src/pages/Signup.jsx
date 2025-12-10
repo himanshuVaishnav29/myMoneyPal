@@ -21,9 +21,13 @@ const Signup = () => {
   const [countdown, setCountdown] = useState(0);
 
 	const navigate = useNavigate(); 
+    
+    // Note: The SIGN_UP mutation seems unused here as you are using the OTP flow, 
+    // but I'll leave it in case you need it later.
 	const [signUp,{loading,error}]= useMutation(SIGN_UP, {
 		refetchQueries: [{ query: GET_AUTHETICATED_USER }],
 	});
+    
   const [sendOTP, { loading: otpLoading }] = useMutation(SEND_SIGNUP_OTP);
   const [verifyOTP, { loading: verifyLoading }] = useMutation(VERIFY_SIGNUP_OTP);
 
@@ -51,6 +55,8 @@ const Signup = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+        if (!validateForm()) return; // Local validation still needs local toasts
+
 		try {
 			await sendOTP({
 				variables: { input: signUpData }
@@ -60,8 +66,8 @@ const Signup = () => {
 			setStep(2);
 			startCountdown();
 		} catch (error) {
+			// Removed toast.error -> Global Handler in main.jsx catches this
 			console.log("Error sending OTP:", error);
-			toast.error(error.message);
 		}
 	};
 
@@ -86,8 +92,8 @@ const Signup = () => {
 			toast.success("Account created successfully!");
 			navigate("/login");
 		} catch (error) {
+			// Removed toast.error -> Global Handler in main.jsx catches this
 			console.log("Error verifying OTP:", error);
-			toast.error(error.message);
 		}
 	};
 
@@ -112,7 +118,8 @@ const Signup = () => {
 			toast.success("OTP resent!");
 			startCountdown();
 		} catch (error) {
-			toast.error(error.message);
+            // Removed toast.error -> Global Handler in main.jsx catches this
+            console.error("Error resending OTP", error);
 		}
 	};
 

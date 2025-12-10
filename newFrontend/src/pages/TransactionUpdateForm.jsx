@@ -11,12 +11,12 @@ import ComponentLoader from "../components/Skeletons/ComponentLoader";
 const TransactionUpdateForm = () => {
 
 	const {id}=useParams();
-	// console.log(id);
 	const navigate = useNavigate(); 
-	const {loading,data,error}=useQuery(GET_TRANSACTION,{
+	
+    // Global Error Handler catches query errors here
+    const {loading,data,error}=useQuery(GET_TRANSACTION,{
 		variables:{id:id}
 	});
-	// console.log("data",data);
 
 	const [formData, setFormData] = useState({
 		description:data?.getTransaction.description || "",
@@ -57,7 +57,7 @@ const TransactionUpdateForm = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		const amount=parseFloat(formData.amount); //string to number, by default it's string 
+		const amount=parseFloat(formData.amount); //string to number
 		try {
 			await updateTransaction({
 				variables:{
@@ -71,8 +71,8 @@ const TransactionUpdateForm = () => {
 			toast.success("Transaction Updated successfully");
 			navigate("/dashboard/history");
 		} catch (error) {
-			console.log("Error in handle submit of update transaction",error)
-			toast.error(error.message);
+			// Removed manual toast.error -> Global Handler in main.jsx catches this
+			console.log("Error in handle submit of update transaction", error)
 		}
 	};
 	const handleInputChange = (e) => {
@@ -83,11 +83,7 @@ const TransactionUpdateForm = () => {
 		}));
 	};
 
-	// if (loading) return <TransactionFormSkeleton />;
-	// return <TransactionFormSkeleton />;
 	if (loading) return <ComponentLoader/>;
-
-
 
 	return (
 		<div className='h-screen max-w-4xl mx-auto flex flex-col items-center pt-5 text-white'>
@@ -127,13 +123,6 @@ const TransactionUpdateForm = () => {
 							<option value={"Investment & Assets"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Investment & Assets</option>
 							<option value={"Savings & Deposits"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Savings & Deposits</option>
 							<option value={"Others"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Others</option>
-							{/* {
-								tagArray.map((opt, index) => (
-								<option key={index} value={opt} className="bg-gray-800 text-white hover:bg-gray-700 cursor-pointer">
-									{opt}
-								</option>
-							))} */}
-
 						</select>
 						<div className='pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white'>
 							<svg

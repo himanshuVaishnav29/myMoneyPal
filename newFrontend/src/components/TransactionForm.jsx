@@ -53,10 +53,7 @@ const TransactionForm = ({toggleModal}) => {
 			date: formData.get("date"),
 			tag:formData.get("tag")
 		};
-		// if(!description || !paymentType || !category || !amount || !date){
-		// 	toast.error("Please fill out necessary fields for creating transaction");
-		// 	return;
-		// }
+
 		try {
 			await createTransaction({
 				variables:{
@@ -67,9 +64,8 @@ const TransactionForm = ({toggleModal}) => {
 			toast.success("Transaction added successfully");
 			toggleModal();
 		} catch (error) {
-			console.log("Error in handleSubmit transaction");
-			toast.error(error.message);
-
+			// Removed manual toast.error -> Global Handler in main.jsx catches this
+			console.log("Error in handleSubmit transaction", error);
 		}
 		console.log("transactionData", transactionData);
 	};
@@ -106,13 +102,6 @@ const TransactionForm = ({toggleModal}) => {
 							<option value={"Investment & Assets"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Investment & Assets</option>
 							<option value={"Savings & Deposits"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Savings & Deposits</option>
 							<option value={"Others"} className="bg-gray-800 text-white hover:bg-gray-700 hover:cursor-pointer">Others</option>
-							{/* {
-								tagArray.map((opt, index) => (
-								<option key={index} value={opt} className="bg-gray-800 text-white hover:bg-gray-700 cursor-pointer">
-									{opt}
-								</option>
-							))} */}
-
 						</select>
 						<div className='pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white'>
 							<svg

@@ -35,6 +35,7 @@ const Profile = () => {
 
         console.log('File selected:', file);
 
+        // Local Validation: Keep toasts here
         if (!file.type.startsWith('image/')) {
             toast.error('Please select a valid image file');
             return;
@@ -56,7 +57,7 @@ const Profile = () => {
             toast.success(data.uploadProfileImage.message);
         } catch (error) {
             console.error('Upload error:', error);
-            toast.error('Failed to upload image: ' + error.message);
+            // Removed manual toast.error -> Global Handler in main.jsx catches this
         } finally {
             setUploading(false);
         }
@@ -76,7 +77,8 @@ const Profile = () => {
             setIsEditingName(false);
             toast.success('Name updated successfully!');
         } catch (error) {
-            toast.error(error.message);
+            // Removed manual toast.error -> Global Handler in main.jsx catches this
+            console.error("Error updating profile:", error);
         }
     };
 

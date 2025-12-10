@@ -31,7 +31,8 @@ const ChangePassword = () => {
             setStep(2);
             toast.success('OTP sent to your email!');
         } catch (error) {
-            toast.error(error.message);
+            // Removed manual toast.error -> Global Handler in main.jsx catches this
+            console.error("Error requesting OTP:", error);
         } finally {
             setLoading(false);
         }
@@ -39,6 +40,8 @@ const ChangePassword = () => {
 
     const handlePasswordReset = async (e) => {
         e.preventDefault();
+        
+        // Keep these local validation toasts as they don't hit the server
         if (formData.newPassword !== formData.confirmPassword) {
             toast.error('Passwords do not match');
             return;
@@ -62,7 +65,8 @@ const ChangePassword = () => {
             toast.success('Password changed successfully!');
             navigate('/dashboard/profile');
         } catch (error) {
-            toast.error(error.message);
+             // Removed manual toast.error -> Global Handler in main.jsx catches this
+            console.error("Error resetting password:", error);
         } finally {
             setLoading(false);
         }

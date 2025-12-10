@@ -12,6 +12,7 @@ import cookieParser from 'cookie-parser';
 import checkForAuthenticationCookie from './middlewares/checkForAuthentication.js';
 import { sendMailAtFirstDayOfMonth } from './services/mailService.js';
 import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';
+import { graphQLRateLimiter } from './middlewares/rateLimiter.js';
 
 dotenv.config(); 
 const app=express();
@@ -86,6 +87,7 @@ app.use(
     '/graphql',
     graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
     checkForAuthenticationCookie('token'),
+    graphQLRateLimiter, 
     expressMiddleware(GQLServer,{
         context: ({ req, res }) => ({
             req,

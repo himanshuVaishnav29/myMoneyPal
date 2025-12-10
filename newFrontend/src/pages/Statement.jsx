@@ -15,6 +15,7 @@ const Statement = () => {
   const categories = ["expense", "saving", "investment"];
   const paymentTypes = ["upi", "cash", "card"];
 
+  // Errors here will be caught by main.jsx Global Handler
   const [filterTransactions, { data, loading, error }] = useMutation(USER_FILTER_REQUEST, {
     fetchPolicy: "network-only",
   });
@@ -29,6 +30,7 @@ const Statement = () => {
   }, [data]);
 
   const handleSearch = () => {
+    // No try/catch needed here, Apollo handles the promise rejection via the Global Error Link
     filterTransactions({
       variables: {
         input: {
@@ -41,25 +43,7 @@ const Statement = () => {
     });
   };
 
-  // const handleDownload = async () => {
-  //   try {
-  //     const result = await exportCsv({
-  //       variables: {
-  //         input: filteredTransactions, // Passing filtered data for CSV generation
-  //       },
-  //     });
-
-  //     // Assuming the server returns the CSV content as a string
-  //     const blob = new Blob([result.data.exportCsv], { type: "text/csv;charset=utf-8;" });
-  //     saveAs(blob, "transactions.csv"); // Triggering download
-  //   } catch (err) {
-  //     console.error("Error downloading CSV:", err);
-  //   }
-  // };
-
-  //removing typename, modifying date and other fields for csv
   function cleanInput(transactions) {
-
     return transactions.map(transaction => {
       const {__typename, date, paymentType, category, ...cleanTransaction } = transaction;
       cleanTransaction.date = new Date(parseInt(date)).toLocaleDateString();
@@ -82,6 +66,8 @@ const Statement = () => {
       const blob = new Blob([result.data.exportCsv], { type: "text/csv;charset=utf-8;" });
       saveAs(blob, `${new Date().toLocaleDateString().replace(/\//g, '-')}-Transactionstatement.csv`);
     } catch (err) {
+      // Network errors are caught globally.
+      // This catch block will primarily catch file-saver errors or logic errors.
       console.error("Error downloading CSV:", err);
     }
   };
@@ -144,18 +130,6 @@ const Statement = () => {
         </div>
       </div>
       <div className="flex justify-between">
-        
-          {/* <button
-            onClick={handleSearch}
-            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-          >
-            Search
-          </button> */}
-
-
-
-
-
           
   <div className="relative group">
     <button
@@ -196,7 +170,7 @@ const Statement = () => {
               onClick={handleDownload}
               className="ml-4 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
             >
-              Download as Excel
+              {exportLoading ? "Generating..." : "Download as Excel"}
             </button>
           )}
       </div>
@@ -234,7 +208,7 @@ const Statement = () => {
             </tbody>
           </table>
         ) : (
-          searchPerformed && <p className="text-center text-gray-500">No transactions found.</p>
+          searchPerformed && !loading && <p className="text-center text-gray-500">No transactions found.</p>
         )}
       </div>
     </div>

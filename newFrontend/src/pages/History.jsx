@@ -33,7 +33,7 @@ const History = () => {
             setShowDeleteModal(false);
             refetch();
         },
-        onError: (err) => toast.error(err.message),
+        // Removed onError callback -> Global Handler in main.jsx catches this
     });
 
     const paginationData = data?.getTransactionsByUserPaginated;
@@ -64,7 +64,7 @@ const History = () => {
 
 
     if (loading) return <ComponentLoader />;
-    if (error) return <div>Error fetching transactions</div>;
+    if (error) return <div className="text-center text-red-400 mt-10">Error fetching transactions</div>;
 
     return (
         <div className="min-h-screen w-full flex flex-col items-center py-3 px-4 text-white">
