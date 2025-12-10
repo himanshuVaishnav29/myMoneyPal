@@ -1,106 +1,4 @@
-// import React from 'react';
-// import {GoBell} from 'react-icons/go';
-
-
-// const Header = ({loggedInUser}) => {
-
-//   return (
-//     <div className='flex justify-between items-center p-4'>
-//         <div>
-//             <h1 className='text-xs'>Welcome Back!</h1>
-//             <p className='text-xl font-semibold'>{loggedInUser?.fullName}</p>
-//         </div>
-//         <div className='flex items-center space-x-5 '>
-//             <div className='hidden md:flex'>
-//                 <input
-//                   type='text'
-//                   placeholder='Search...' 
-//                   className='bg-indigo-100/30 px-4 py-2 rounded-lg focus:outline-0 focus:ring-2 focus:ring-indigo-600' 
-//                 />
-//             </div>
-//             <div className='flex items-center space-x-5'>
-//               <button className='relative text-2xl text-gray-600'>
-//                   <GoBell size={28}/>
-//                   <span className='absolute top-0 right-0 mt-1 flex justify-center items-center bg-indigo-600 text-white font-semibold text-[10px] w-5 h-4 rounded-full border-2 border-white '>
-//                      9
-//                   </span>
-//               </button>
-//               <img 
-//                 src={loggedInUser?.profilePicture} 
-//                 alt='profilePictuer'
-//                 className='w-8 g-8 rounded-full border-2 border-indigo-400' />
-//             </div>
-//         </div>
-//     </div>
-//   )
-// }
-
-// export default Header
-
-
-
-
-
-// import React, { useState } from 'react';
-// import { GoBell } from 'react-icons/go';
-// import { CreateTransactionModal } from './CreateTransactionModal'; 
-
-// const Header = ({ loggedInUser }) => {
-//   const [isModalOpen, setIsModalOpen] = useState(false);
-
-//   const toggleModal = () => {
-//     setIsModalOpen(!isModalOpen);
-//   };
-
-//   return (
-//     <div className='flex justify-between items-center p-4 text-neutral-100 '>
-//       <div>
-//         <h1 className='text-xs'>Welcome Back!</h1>
-//         <p className='text-xl font-semibold'>{loggedInUser?.fullName}</p>
-//       </div>
-//       <div className='flex items-center space-x-5'>
-//         <div>
-//           {/* <button
-//             onClick={toggleModal}
-//             className='bg-indigo-500 text-white px-4 py-2 rounded-lg focus:outline-none hover:bg-indigo-700'
-//           >
-//             Add Transaction
-//           </button> */}
-//            <button
-//               onClick={toggleModal}
-//               // className="bg-indigo-500 text-white text-base sm:text-sm md:text-base px-4 py-2 rounded-lg focus:outline-none hover:bg-indigo-700"
-//               className='btn px-4 py-2'
-//             >
-//               Add Transaction
-//             </button>
-          
-//         </div>
-//         <div className='flex items-center space-x-5 p-r-3'>
-//           {/* <button className='relative text-2xl text-gray-600'>
-//             <GoBell size={28} />
-//             <span className='absolute top-0 right-0 mt-1 flex justify-center items-center bg-indigo-600 text-white font-semibold text-[10px] w-5 h-4 rounded-full border-2 border-white'>
-//               9
-//             </span>
-//           </button> */}
-//           <img
-//             src={loggedInUser?.profilePicture}
-//             alt='profilePicture'
-//             className='w-8 h-8 rounded-full border-2 border-indigo-400'
-//           />
-//         </div>
-//       </div>
-//       {isModalOpen && <CreateTransactionModal isOpen={isModalOpen} toggleModal={toggleModal} />}
-//     </div>
-//   );
-// };
-
-// export default Header;
-
-
-
-
 import React, { useState, useRef, useEffect } from 'react';
-import { GoBell} from 'react-icons/go';
 import { CreateTransactionModal } from './CreateTransactionModal'; 
 import { FaBars } from "react-icons/fa6";
 import { LuUser, LuLogOut } from 'react-icons/lu';
@@ -111,7 +9,10 @@ import { GET_AUTHETICATED_USER } from "../graphql/queries/user.query";
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { formatName } from '../helpers/helperFunctions';
-const Header = ({ loggedInUser,toggleSidebar }) => {
+
+const myLogo = "/myMoneyPalLogo.png"; 
+
+const Header = ({ loggedInUser, toggleSidebar, isOpen }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -128,35 +29,19 @@ const Header = ({ loggedInUser,toggleSidebar }) => {
   const client = useApolloClient();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
-  };
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
+  const toggleModal = () => setIsModalOpen(!isModalOpen);
+  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
   const handleLogout = async () => {
     if (isLoggingOut) return;
     setIsLoggingOut(true);
     try {
-      // Remove token from localStorage FIRST so middleware won't find it during subsequent queries
-      try { localStorage.removeItem('token'); } catch(e) { /* ignore */ }
-
-      // Then logout on server
+      localStorage.removeItem('token');
       await logout();
-
-      // Finally clear Apollo cache
-      try {
-        await client.clearStore();
-      } catch (cacheErr) {
-        console.warn('Error clearing Apollo cache after logout', cacheErr);
-      }
-
+      await client.clearStore();
       toast.success("Logout Successful");
       setIsDropdownOpen(false);
     } catch (error) {
-      console.log("Error in handleLogout", error);
       toast.error(error.message);
     } finally {
       setIsLoggingOut(false);
@@ -168,99 +53,157 @@ const Header = ({ loggedInUser,toggleSidebar }) => {
     setIsDropdownOpen(false);
   };
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  
-
   return (
-    <div className='flex justify-between items-center p-4  text-neutral-100'>
-        <button className='md:hidden text-white' onClick={toggleSidebar}>
-          <FaBars size={20} />
-        </button>
-      <div>
-        <h1 className='hidden md:block md:text-xs'>Welcome Back!</h1>
-        <p className=' hidden md:block text-xl md:font-semibold'>{formatName(loggedInUser?.fullName)}</p>
-      </div>
+    <>
+      {/* Local Fonts */}
+      <style>
+        {`
+          @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Outfit:wght@400;600&display=swap');
+          .font-brand { font-family: 'Orbitron', sans-serif; }
+          .font-user { font-family: 'Outfit', sans-serif; }
+        `}
+      </style>
 
-      <div className='flex items-center space-x-5'>
-        <div>
-          {/* <button
-            onClick={toggleModal}
-            className='bg-indigo-500 text-white px-4 py-2 rounded-lg focus:outline-none hover:bg-indigo-700'
-          >
-            Add Transaction
-          </button> */}
-           <button
-              onClick={toggleModal}
-              className='btn px-2 py-2 text-xs sm:px-4 sm:text-sm md:text-base'
-            >
-              <span className='hidden sm:inline'>Add Transaction</span>
-              <span className='sm:hidden'>+ Add</span>
-            </button>
+      <div className={`
+        sticky top-0 w-full z-30 flex justify-between items-center 
+        p-4 md:px-8 text-neutral-100 transition-all duration-300
+        backdrop-blur-xl bg-[#0B0F19]/80 header-glow
+        md:${isOpen ? "backdrop-blur-xl bg-[#0B0F19]/80" : "bg-transparent backdrop-blur-none"}
+      `}>
+        
+        {/* LEFT SECTION */}
+        <div className="flex items-center gap-3 min-w-0 flex-1">
           
-        </div>
-        <div className='flex items-center space-x-5 p-r-3'>
-          {/* <button className='relative text-2xl text-gray-600'>
-            <GoBell size={28} />
-            <span className='absolute top-0 right-0 mt-1 flex justify-center items-center bg-indigo-600 text-white font-semibold text-[10px] w-5 h-4 rounded-full border-2 border-white'>
-              9
+          {/* Mobile Toggle */}
+          <button 
+            className='md:hidden text-gray-300 hover:text-white transition-colors p-1' 
+            onClick={toggleSidebar}
+          >
+            <FaBars size={22} />
+          </button>
+
+          {/* Desktop Welcome Text */}
+          <div className="hidden md:block">
+            <h1 className='text-[10px] text-gray-400 font-medium uppercase tracking-widest mb-0.5 font-user'>
+              Welcome Back
+            </h1>
+            <p className='text-base font-bold text-white tracking-wide font-brand'>
+              {formatName(loggedInUser?.fullName)}
+            </p>
+          </div>
+
+          {/* MOBILE BRANDING FIX — TEXT → LOGO SWITCH */}
+          <div className="md:hidden flex items-center flex-1 min-w-0">
+            
+            {/* Full Text — visible only when enough width */}
+            <span
+              className="
+                font-bold text-base truncate 
+                bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 
+                bg-clip-text text-transparent leading-none font-brand tracking-wider
+                max-[370px]:hidden    /* 🔥 Hide text if screen < 370px */
+              "
+            >
+              MoneyPal
             </span>
-          </button> */}
+
+            {/* Logo — shown only when text is hidden */}
+            <img 
+              src={myLogo}
+              alt="MoneyPal Logo"
+              className="hidden max-[370px]:block h-6 w-auto ml-1"
+            />
+          </div>
+
+        </div>
+
+        {/* RIGHT SECTION */}
+        <div className='flex items-center space-x-3 sm:space-x-6 flex-shrink-0'>
+          
+          {/* Add Transaction */}
+          <button
+            onClick={toggleModal}
+            className='btn px-3 py-2 text-xs sm:px-5 sm:py-2.5 sm:text-sm md:text-base'
+          >
+            <span className='hidden sm:inline'>Add Transaction</span>
+            <span className='sm:hidden'>+ Add</span>
+          </button>
+
+          {/* Profile Dropdown */}
           <div className='relative' ref={dropdownRef}>
             <button
               onClick={toggleDropdown}
-              className='flex items-center space-x-2 hover:bg-indigo-600/20 rounded-lg p-2 transition-colors duration-200'
+              className='flex items-center space-x-2 p-1 rounded-full hover:bg-white/5'
             >
-              <img
-                src={loggedInUser?.profilePicture}
-                alt='profilePicture'
-                className='w-8 h-8 rounded-full border-2 border-indigo-400 hover:border-indigo-300 transition-colors duration-200'
-                loading='lazy'
-              />
+              <div className="relative">
+                <img
+                  src={loggedInUser?.profilePicture}
+                  className='w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover border-2 border-indigo-500/50 shadow-[0_0_12px_rgba(99,102,241,0.5)]'
+                />
+                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-[#0B0F19] rounded-full"></span>
+              </div>
+
               <FaChevronDown 
-                className={`text-indigo-400 text-xs transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} 
+                className={`text-gray-400 text-[10px] sm:text-xs transition-transform duration-300 ${isDropdownOpen ? 'rotate-180 text-white' : ''}`}
               />
             </button>
-            
-            {isDropdownOpen && (
-              <div className='absolute right-0 mt-2 w-48 bg-gray-900 border border-gray-700 rounded-lg shadow-lg z-50'>
-                <div className='py-1'>
-                  <button
-                    onClick={handleProfile}
-                    className='flex items-center w-full px-4 py-2 text-sm font-medium text-neutral-100 hover:font-bold hover:text-purple-500 transition-all duration-500 ease-in-out'
-                  >
-                    <LuUser className='mr-3' />
-                    My Profile
-                  </button>
-                  <button
-                    onClick={handleLogout}
-                    className={`flex items-center w-full px-4 py-2 text-sm font-medium text-neutral-100 hover:text-red-500 transition-all duration-500 ease-in-out ${isLoggingOut ? 'opacity-60 cursor-not-allowed' : ''}`}
-                    disabled={isLoggingOut}
-                  >
-                    <LuLogOut className='mr-3' />
-                    {isLoggingOut ? 'Logging out...' : 'Logout'}
-                  </button>
+
+            {/* Dropdown */}
+            <div 
+              className={`
+                absolute right-0 mt-4 w-60 
+                bg-[#111827]/95 backdrop-blur-2xl 
+                border border-indigo-500/20 rounded-2xl shadow-xl
+                transform transition-all duration-200 origin-top-right z-50
+                ${isDropdownOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}
+              `}
+            >
+              <div className="p-2 space-y-1">
+
+                <div className="px-3 py-3 mb-2 border-b border-white/5 sm:hidden">
+                  <p className="text-sm font-bold text-white">{formatName(loggedInUser?.fullName)}</p>
+                  <p className="text-[10px] text-gray-400 truncate">{loggedInUser?.email}</p>
                 </div>
+
+                <button
+                  onClick={handleProfile}
+                  className='flex items-center w-full px-3 py-3 text-sm font-medium text-gray-300 rounded-xl hover:bg-indigo-500/10'
+                >
+                  <LuUser className='mr-3 text-lg text-gray-500' />
+                  <span className="font-user">My Profile</span>
+                </button>
+                
+                <button
+                  onClick={handleLogout}
+                  disabled={isLoggingOut}
+                  className='flex items-center w-full px-3 py-3 text-sm font-medium text-gray-300 rounded-xl hover:bg-red-500/10'
+                >
+                  <LuLogOut className='mr-3 text-lg text-gray-500' />
+                  <span className="font-user">{isLoggingOut ? 'Logging out...' : 'Logout'}</span>
+                </button>
+
               </div>
-            )}
+            </div>
           </div>
         </div>
-      </div>
 
-      {isModalOpen && <CreateTransactionModal isOpen={isModalOpen} toggleModal={toggleModal} />}
-    </div>
+        {isModalOpen && (
+          <div className="fixed inset-0 z-[99999]">
+            <CreateTransactionModal isOpen={isModalOpen} toggleModal={toggleModal} />
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

@@ -13,6 +13,7 @@ import { useQuery } from '@apollo/client';
 import { GET_AUTHETICATED_USER } from './graphql/queries/user.query';
 import Analytics from './pages/Analytics';
 import AISuggestions from './pages/AISuggestions';
+import FutureInsights from './pages/FutureInsights';
 import TransactionUpdateForm from './pages/TransactionUpdateForm';
 import Statement from './pages/Statement';
 import Profile from './pages/Profile';
@@ -45,6 +46,7 @@ function App() {
             <Route index element={<Home loggedInUser={data?.authUser} />} />
             <Route path='analytics' element={<Analytics/>}/>
             <Route path='ai-suggestions' element={<AISuggestions/>}/>
+            <Route path='future-insights' element={<FutureInsights/>}/>
             <Route path='history' element={<History/>} />
             <Route path="history/:id" element={<TransactionUpdateForm/>} />
             <Route path="statement" element={<Statement/>} />

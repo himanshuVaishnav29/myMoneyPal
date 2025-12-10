@@ -52,7 +52,7 @@ const Layout = ({loggedInUser}) => {
                 <Outlet/>
             </div> */}
             <div className={`flex-1 ml-0 md:ml-56 transition-all duration-300 ${isSidebarOpen ? 'ml-0' : 'ml-0'} overflow-x-hidden`}>
-              <Header loggedInUser={loggedInUser} toggleSidebar={toggleSidebar} />
+              <Header loggedInUser={loggedInUser} toggleSidebar={toggleSidebar}  isOpen={isSidebarOpen} />
               <div className="overflow-x-hidden">
                 <Outlet />
               </div>
