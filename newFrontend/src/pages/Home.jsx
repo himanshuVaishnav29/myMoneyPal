@@ -1,37 +1,28 @@
-
 import React, { useEffect, useState } from 'react';
-import { Bar } from 'react-chartjs-2';
-import {formatName } from '../helpers/helperFunctions';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  LogarithmicScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
+import { formatName } from '../helpers/helperFunctions';
 import { useQuery } from '@apollo/client';
 import { GET_DASHBOARD_SUMMARY } from '../graphql/queries/dashboard.query';
 import FinanceCarousel from '../components/FinanceCarousel';
 import Footer from '../components/Footer';
 import ComponentLoader from '../components/ComponentLoader';
 import SkeletonCard from '../components/SkeletonCard';
-
-ChartJS.register(CategoryScale, LinearScale, BarElement,LogarithmicScale, Title, Tooltip, Legend);
+import { 
+  FaFire, 
+  FaShieldAlt, 
+  FaRocket, 
+  FaClock, 
+  FaPiggyBank, 
+  FaChartLine, 
+  FaChartArea 
+} from 'react-icons/fa';
 
 const HomePage = ({ loggedInUser }) => {
-  const [quote, setQuote] = useState('');
-  const [author, setAuthor] = useState(''); 
-  const [quoteLoading,setQuoteLoading]=useState(true);
   const [recentTransactions, setRecentTransactions] = useState([]);
   const [totalExpenses, setTotalExpenses] = useState(0);
   const [totalInvestment, setTotalInvestment] = useState(0);
   const [totalSavings, setTotalSavings] = useState(0);
 
-  const {data,loading,error}=useQuery(GET_DASHBOARD_SUMMARY);
-
+  const { data, loading, error } = useQuery(GET_DASHBOARD_SUMMARY);
 
   useEffect(() => {
     if (!loading && data?.getDashboardSummary) {
@@ -42,195 +33,21 @@ const HomePage = ({ loggedInUser }) => {
       setRecentTransactions(summary.recentTransactions.slice(0, 4));
     }
   }, [data, loading]);
-  
-  
 
-  // useEffect(() => {
-  //   const fetchQuote = async () => {
-  //     try { 
-  //       setQuoteLoading(true);
-  //       const response = await fetch('https://api.api-ninjas.com/v1/quotes?category=money', {
-  //         headers: { 'X-Api-Key': import.meta.env.VITE_QUOTE_API_KEY}, 
-  //       });
-  //       // const response = await fetch('https://api.api-ninjas.com/v1/quotes?category=money', {
-  //       //   headers: { 'X-Api-Key': ''}, 
-  //       // });
-  //       const data = await response.json();
-  //       if (data && data.length > 0) {
-  //         setQuote(data[0].quote);
-  //         setAuthor(data[0].author);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching the quote:', error);
-  //     }finally{
-  //       setQuoteLoading(false);
-  //     }
-  //   };
-
-  //   fetchQuote();
-  // },[]);
- 
-
-  
-
-  const [barGraphData, setBarGraphData] = useState({
-    labels: [],
-    datasets: [
-      {
-        label: '', 
-        data: [],
-        backgroundColor: [],
-        borderColor: [],
-        borderWidth: 1,
-      },
-    ],
-  });
-  
-  useEffect(() => {
-    if (!loading && data?.getDashboardSummary) {
-      const tagAmounts = {
-        'Food & Dining': 0,
-        'Entertainment & Leisure': 0,
-        'Utilities & Bills': 0,
-        'Transportation & Fuel': 0,
-        'Groceries & Household': 0,
-        'Repairs & Maintenance': 0,
-        'Healthcare & Medical': 0,
-        'Travel & Vacation': 0,
-        'Shopping & Personal Care': 0,
-        'Others': 0,
-      };
-  
-      data.getDashboardSummary.tagStats.forEach((tagStat) => {
-        if (tagAmounts[tagStat.tag] !== undefined) {
-          tagAmounts[tagStat.tag] = tagStat.totalAmount;
-        }
-      });
-  
-      const filteredTags = Object.keys(tagAmounts).filter(tag => tagAmounts[tag] > 0);
-      const filteredAmounts = filteredTags.map(tag => tagAmounts[tag]);
-      const scaledAmounts = filteredAmounts.map(amount => Math.sqrt(amount));
-  
-      setBarGraphData({
-        labels: filteredTags,
-        datasets: [{
-          label: 'INR', 
-          data: scaledAmounts,
-          originalData: filteredAmounts,
-          backgroundColor: [
-            'rgba(54, 162, 235, 0.7)',
-            'rgba(255, 99, 132, 0.7)',
-            'rgba(255, 206, 86, 0.7)',
-            'rgba(75, 192, 192, 0.7)',
-            'rgba(153, 102, 255, 0.7)',
-            'rgba(255, 159, 64, 0.7)',
-            'rgba(201, 203, 207, 0.7)',
-            'rgba(255, 205, 86, 0.7)',
-            'rgba(75, 192, 192, 0.7)',
-            'rgba(153, 102, 255, 0.7)',
-          ].slice(0, filteredTags.length), 
-          borderColor: [
-            'rgba(54, 162, 235, 1)',
-            'rgba(255, 99, 132, 1)',
-            'rgba(255, 206, 86, 1)',
-            'rgba(75, 192, 192, 1)',
-            'rgba(153, 102, 255, 1)',
-            'rgba(255, 159, 64, 1)',
-            'rgba(201, 203, 207, 1)',
-            'rgba(255, 205, 86, 1)',
-            'rgba(75, 192, 192, 1)',
-            'rgba(153, 102, 255, 1)',
-          ].slice(0, filteredTags.length),
-          borderWidth: 2,
-        }],
-      });
-    }
-  }, [data, loading]);
-  
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: false, 
-        labels: {
-          color: '#ffffff',
-        },
-      },
-      title: {
-        display: true,
-        text: 'Your spendings by Tags',
-        color: '#ffffff', 
-        font: {
-          size: 18,
-        },
-      },
-      tooltip: {
-        callbacks: {
-          label: function(context) {
-            const originalValue = context.dataset.originalData[context.dataIndex];
-            if (originalValue >= 1000000) return `₹${(originalValue / 1000000).toFixed(1)}M`;
-            if (originalValue >= 1000) return `₹${(originalValue / 1000).toFixed(1)}K`;
-            return `₹${originalValue.toFixed(2)}`;
-          }
-        }
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        type: 'linear',
-        ticks: {
-          color: '#ffffff',
-          callback: function (value) {
-            const originalValue = Math.pow(value, 2);
-            if (originalValue >= 1000000) return `₹${(originalValue / 1000000).toFixed(1)}M`;
-            if (originalValue >= 1000) return `₹${(originalValue / 1000).toFixed(1)}K`;
-            return `₹${originalValue.toFixed(0)}`;
-          },
-        },
-        grid: {
-          color: '#444', 
-        },
-      },
-      x: {
-        ticks: {
-          color: '#ffffff',
-          maxRotation: 45,
-          minRotation: 45,
-        },
-      },
-    },
-    barThickness: (barGraphData.labels.length <= 3) ? 100 : undefined,
+  // Helper to format large numbers to Indian System (k, L, Cr)
+  const formatCurrency = (amount) => {
+    if (amount >= 10000000) return `₹${(amount / 10000000).toFixed(2)} Cr`;
+    if (amount >= 100000) return `₹${(amount / 100000).toFixed(2)} L`;
+    if (amount >= 1000) return `₹${(amount / 1000).toFixed(2)} k`;
+    return `₹${amount.toFixed(2)}`;
   };
-  
-  
-
 
   return (
     <div className="p-6 min-h-screen text-white mt-3">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-        {/* hero Section */}
-        {/* <div className="col-span-1 md:col-span-3 form-Background rounded-lg shadow p-6 flex flex-col md:flex-row items-center justify-between">
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold">Hey {formatName(loggedInUser?.fullName)},</h2>
-            {quoteLoading ? ( 
-                <div className="loader">.......</div>
-            ) : (
-              <div className="text-gray-300 font-thin pr-5">
-                <blockquote className="italic">"{quote}"</blockquote>
-                <p className="text-right mt-2 font-thin">- {author}</p>
-              </div>
-            )}
-
-          </div>
-
-          <img src={loggedInUser?.profilePicture} alt="profilePicture" className="h-24 w-auto mt-4 md:mt-0" loading='lazy' />
-        </div> */}
-
         {/* Financial Summary Row */}
-        <div className="col-span-1 md:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="col-span-1 md:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {loading ? (
             <>
               <SkeletonCard gradient="bg-gradient-to-br from-red-500 via-red-500 to-red-700" />
@@ -240,92 +57,202 @@ const HomePage = ({ loggedInUser }) => {
           ) : (
             <>
               {/* Monthly Expense Card */}
-              <div className="bg-gradient-to-br from-red-500 via-red-500 to-red-700 text-white p-6 rounded-lg shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-red-500/25 cursor-pointer">
-                <p className="text-lg opacity-90">Monthly Expense</p>
-                <h2 className="text-3xl font-bold transition-all duration-300 hover:text-red-100">
-                  ₹ {totalExpenses.toFixed(2)}
-                </h2>
-                <img src="./pngwing.com.png" alt="Graph" className="mt-4 transition-transform duration-300 hover:scale-110" />
-              </div>
+              <div className="finance-card-expense glass-card rounded-2xl p-6 relative overflow-hidden group cursor-pointer transition-all duration-300 border border-white/10">
+                {/* Background Glow */}
+                <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-pink-500/10 opacity-100"></div>
+                
+                {/* Floating Icon */}
+                <div className="absolute top-4 right-4 opacity-30">
+                  <FaFire className="text-6xl text-red-400" />
+                </div>
 
-              {/* Monthly Savings Card */}
-              <div className="bg-gradient-to-br from-green-500 via-green-600 to-green-700 text-white p-6 rounded-lg shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 cursor-pointer">
-                <p className="text-lg opacity-90">Monthly Savings</p>
-                <h2 className="text-3xl font-bold transition-all duration-300 hover:text-green-100">
-                  ₹ {totalSavings.toFixed(2)}
-                </h2>
-                <img src="./pngegg.png" alt="Graph" className="mt-4 transition-transform duration-300 hover:scale-110" />
-              </div>
-
-              {/* Monthly Investment Card */}
-              <div className="bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 text-white p-6 rounded-lg shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25 cursor-pointer">
-                <p className="text-lg opacity-90">Monthly Investment</p>
-                <h2 className="text-3xl font-bold transition-all duration-300 hover:text-blue-100">
-                  ₹ {totalInvestment.toFixed(2)}
-                </h2>
-                <img src="./growingGraph.png" alt="Graph" className="mt-4 transition-transform duration-300 hover:scale-110" />
-              </div>
-            </>
-          )}
-
-
-          {/* RECENT TRANSACTIONS CARD */}
-          <div className="bg-gradient-to-br from-cyan-900 to-slate-900 p-6 rounded-2xl shadow-xl border border-cyan-800/40 text-sm backdrop-blur-md transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/25 cursor-pointer">
-            <p className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-              <span className="inline-block w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></span>
-              Recent Transactions
-            </p>
-
-            {loading? (
-              <ComponentLoader />
-            ) : recentTransactions?.length > 0 ? (
-              <div className="divide-y divide-gray-700/40">
-                {recentTransactions.map((transaction) => (
-                  <div
-                    key={transaction._id}
-                    className="py-3 px-2 flex flex-col sm:flex-row sm:items-center sm:justify-between hover:bg-cyan-800/30 transition-all duration-200 rounded-lg"
-                  >
-                    <div>
-                      <p className="font-medium text-white">
-                        {transaction.description.length > 12
-                          ? `${transaction.description.substring(0,8).toUpperCase()}...`
-                          : transaction.description.toUpperCase()}
-                      </p>
-                      <p className="text-gray-400 text-xs mt-0.5">
-                        {new Date(parseInt(transaction.date)).toLocaleDateString()} •{" "}
-                        {formatName(transaction.category)}
-                      </p>
+                <div className="relative z-10">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl glass-card border border-red-500/30 flex items-center justify-center shrink-0">
+                      <FaFire className="text-xl text-red-400 drop-shadow-neon-red animate-pulse-glow" />
                     </div>
-
-                    <div className="flex flex-col sm:items-end mt-2 sm:mt-0">
-                      <p
-                        className={`text-sm font-semibold ${
-                          transaction.category.toLowerCase().includes('investment') ? "text-blue-400" :
-                          transaction.category.toLowerCase().includes('saving') ? "text-green-400" :
-                          "text-red-400"
-                        }`}
-                      >
-                        ₹ {transaction.amount.toFixed(2)}
-                      </p>
-                      <p className="text-gray-300 text-xs">
-                        {transaction.paymentType === "upi"
-                          ? "UPI"
-                          : formatName(transaction.paymentType)}
+                    <div>
+                      {/* UPDATED HEADER: Brighter, bolder, larger */}
+                      <p className="text-sm text-white font-bold uppercase tracking-wider shadow-sm">
+                        Monthly Expense
                       </p>
                     </div>
                   </div>
-                ))}
+
+                  {/* Formatted Amount */}
+                  <h2 className="text-3xl sm:text-4xl font-bold text-red-400 drop-shadow-neon-red mb-4">
+                    {formatCurrency(totalExpenses)}
+                  </h2>
+
+                  {/* SVG Visualization (Centered) */}
+                  <div className="w-full h-16 flex items-center justify-center opacity-80 group-hover:scale-110 transition-all duration-300">
+                     <FaChartArea className="w-full h-full text-red-500/30" />
+                  </div>
+
+                  <div className="mt-3 flex items-center gap-2 text-xs text-gray-400">
+                    <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0"></div>
+                    <span>Tracking your spending</span>
+                  </div>
+                </div>
+
+                {/* Bottom Border Accent (Default Visible) */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-red-500 to-pink-500"></div>
               </div>
-            ) : (
-              <p className="text-gray-400 text-center py-6">
-                No recent transactions available.
-              </p>
-            )}
-          </div>
 
+              {/* Monthly Savings Card */}
+              <div className="finance-card-savings glass-card rounded-2xl p-6 relative overflow-hidden group cursor-pointer transition-all duration-300 border border-white/10" style={{ animationDelay: '0.1s' }}>
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 opacity-100"></div>
+                
+                <div className="absolute top-4 right-4 opacity-30">
+                  <FaShieldAlt className="text-6xl text-emerald-400" />
+                </div>
 
+                <div className="relative z-10">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl glass-card border border-emerald-500/30 flex items-center justify-center shrink-0">
+                      <FaShieldAlt className="text-xl text-emerald-400 drop-shadow-neon-emerald animate-pulse-glow" />
+                    </div>
+                    <div>
+                       {/* UPDATED HEADER */}
+                      <p className="text-sm text-white font-bold uppercase tracking-wider shadow-sm">
+                        Monthly Savings
+                      </p>
+                    </div>
+                  </div>
 
+                  <h2 className="text-3xl sm:text-4xl font-bold text-emerald-400 drop-shadow-neon-emerald mb-4">
+                    {formatCurrency(totalSavings)}
+                  </h2>
 
+                  {/* SVG Visualization (Centered) */}
+                  <div className="w-full h-16 flex items-center justify-center opacity-80 group-hover:scale-110 transition-all duration-300">
+                    <FaPiggyBank className="w-16 h-16 text-emerald-500/30" />
+                  </div>
+
+                  <div className="mt-3 flex items-center gap-2 text-xs text-gray-400">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></div>
+                    <span>Building your safety net</span>
+                  </div>
+                </div>
+
+                {/* Bottom Border Accent (Default Visible) */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500"></div>
+              </div>
+
+              {/* Monthly Investment Card */}
+              <div className="finance-card-investment glass-card rounded-2xl p-6 relative overflow-hidden group cursor-pointer transition-all duration-300 border border-white/10" style={{ animationDelay: '0.2s' }}>
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 opacity-100"></div>
+                
+                <div className="absolute top-4 right-4 opacity-30">
+                  <FaRocket className="text-6xl text-cyan-400" />
+                </div>
+
+                <div className="relative z-10">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl glass-card border border-cyan-500/30 flex items-center justify-center shrink-0">
+                      <FaRocket className="text-xl text-cyan-400 drop-shadow-neon-cyan animate-pulse-glow" />
+                    </div>
+                    <div>
+                       {/* UPDATED HEADER */}
+                      <p className="text-sm text-white font-bold uppercase tracking-wider shadow-sm">
+                        Monthly Investment
+                      </p>
+                    </div>
+                  </div>
+
+                  <h2 className="text-3xl sm:text-4xl font-bold text-cyan-400 drop-shadow-neon-cyan mb-4">
+                    {formatCurrency(totalInvestment)}
+                  </h2>
+
+                  {/* SVG Visualization (Centered) */}
+                  <div className="w-full h-16 flex items-center justify-center opacity-80 group-hover:scale-110 transition-all duration-300">
+                    <FaChartLine className="w-full h-full text-cyan-500/30" />
+                  </div>
+
+                  <div className="mt-3 flex items-center gap-2 text-xs text-gray-400">
+                    <div className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse shrink-0"></div>
+                    <span>Growing your wealth</span>
+                  </div>
+                </div>
+
+                {/* Bottom Border Accent (Default Visible) */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 to-blue-500"></div>
+              </div>
+
+              {/* RECENT TRANSACTIONS CARD */}
+              <div className="glass-card rounded-2xl p-6 relative overflow-hidden group cursor-pointer finance-card-transactions border border-white/10" style={{ animationDelay: '0.3s' }}>
+                <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 to-purple-500/10 opacity-100"></div>
+                
+                <div className="absolute top-4 right-4 opacity-30">
+                  <FaClock className="text-6xl text-violet-400" />
+                </div>
+
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl glass-card border border-violet-500/30 flex items-center justify-center shrink-0">
+                        <FaClock className="text-xl text-violet-400 drop-shadow-neon-violet animate-pulse-glow" />
+                      </div>
+                       {/* UPDATED HEADER */}
+                      <h3 className="text-sm font-bold text-white uppercase tracking-wider shadow-sm">
+                        Recent Activity
+                      </h3>
+                    </div>
+                    <div className="w-2 h-2 rounded-full bg-violet-500 animate-pulse drop-shadow-neon-violet shrink-0"></div>
+                  </div>
+
+                  {loading ? (
+                    <div className="flex items-center justify-center py-8">
+                      <ComponentLoader />
+                    </div>
+                  ) : recentTransactions?.length > 0 ? (
+                    <div className="space-y-3 max-h-48 overflow-y-auto no-scrollbar">
+                      {recentTransactions.map((transaction, index) => (
+                        <div
+                          key={transaction._id}
+                          className="transaction-item glass-card rounded-xl p-3 border border-white/5 hover:border-violet-500/30 transition-all w-full"
+                          style={{ animationDelay: `${0.4 + index * 0.1}s` }}
+                        >
+                          <div className="flex items-center justify-between gap-2 w-full">
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-white text-sm truncate">
+                                {transaction.description.toUpperCase()}
+                              </p>
+                              <p className="text-gray-400 text-xs mt-0.5 truncate">
+                                {new Date(parseInt(transaction.date)).toLocaleDateString()} • {formatName(transaction.category)}
+                              </p>
+                            </div>
+
+                            <div className="flex flex-col items-end shrink-0 pl-2">
+                              <p
+                                className={`text-sm font-bold text-right ${
+                                  transaction.category.toLowerCase().includes('investment') ? 'text-cyan-400 drop-shadow-neon-cyan' :
+                                  transaction.category.toLowerCase().includes('saving') ? 'text-emerald-400 drop-shadow-neon-emerald' :
+                                  'text-red-400 drop-shadow-neon-red'
+                                }`}
+                              >
+                                {formatCurrency(transaction.amount)}
+                              </p>
+                              <p className="text-gray-500 text-xs mt-0.5">
+                                {transaction.paymentType === 'upi' ? 'UPI' : formatName(transaction.paymentType)}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-gray-400 text-sm">No recent transactions</p>
+                    </div>
+                  )}
+                </div>
+                
+                 {/* Bottom Border Accent (Default Visible) */}
+                 <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-500 to-purple-500"></div>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Finance Carousel Section */}
@@ -333,9 +260,6 @@ const HomePage = ({ loggedInUser }) => {
           <FinanceCarousel />
         </div>
 
-        {/* TAG GRAPH Section */}
-        
-        
       </div>
 
       <Footer />
@@ -344,5 +268,3 @@ const HomePage = ({ loggedInUser }) => {
 };
 
 export default HomePage;
-
-
