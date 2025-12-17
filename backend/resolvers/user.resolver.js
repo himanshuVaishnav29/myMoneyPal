@@ -2,6 +2,7 @@ import USER from '../models/userSchema.js';
 import {createToken} from '../services/authentication.js';
 import {createHmac, randomBytes } from "crypto";
 import { sendOTPEmail, sendSignupOTPEmail } from '../services/mailService.js';
+import { validateEmail } from '../helpers/index.js';
 import cloudinary from '../services/cloudinaryService.js';
 import { cache } from '../services/redisService.js';
 
@@ -247,6 +248,12 @@ const userResolver={
         },
         requestPasswordReset: async (_, { email, timezone }) => {
             try {
+                // Validate email before processing
+                const { isValid, error } = await validateEmail(email.toLowerCase().trim());
+                if (!isValid) {
+                    throw new Error(error);
+                }
+                
                 const user = await USER.findOne({ email });
                 if (!user) {
                     throw new Error("User not found");
@@ -300,16 +307,10 @@ const userResolver={
                     throw new Error("All fields are required");
                 }
                 
-                const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-                if (!emailRegex.test(email)) {
-                    throw new Error("Please enter a valid email address");
-                }
-                
-                // Check for disposable/fake email domains
-                const disposableDomains = ['10minutemail.com', 'tempmail.org', 'guerrillamail.com', 'mailinator.com', 'throwaway.email'];
-                const emailDomain = email.split('@')[1]?.toLowerCase();
-                if (disposableDomains.includes(emailDomain)) {
-                    throw new Error("Please use a valid email address");
+                // Robust email validation (format, disposable check, MX verification)
+                const { isValid, error } = await validateEmail(email.toLowerCase().trim());
+                if (!isValid) {
+                    throw new Error(error);
                 }
                 
                 if (fullName.trim().length < 2) {
@@ -416,6 +417,12 @@ const userResolver={
         },
         resendVerificationOTP: async (_, { email, password }) => {
             try {
+                // Validate email format and quality
+                const { isValid, error } = await validateEmail(email.toLowerCase().trim());
+                if (!isValid) {
+                    throw new Error(error);
+                }
+                
                 const user = await USER.findOne({ email, isVerified: false });
                 if (!user) {
                     throw new Error("User not found or already verified");
