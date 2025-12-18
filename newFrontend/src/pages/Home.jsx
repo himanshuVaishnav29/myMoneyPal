@@ -43,7 +43,7 @@ const HomePage = ({ loggedInUser }) => {
   };
 
   return (
-    <div className="p-6 min-h-screen text-white mt-3">
+    <div className="p-6 min-h-screen text-white mt-3 ">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
         {/* Financial Summary Row */}

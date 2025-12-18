@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link ,useNavigate} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useMutation, useApolloClient } from "@apollo/client";
 import toast from "react-hot-toast";
 import { FaHome } from "react-icons/fa";
@@ -9,13 +9,13 @@ import { getUserTimezone } from "../helpers/timezoneHelper";
 
 const Login = () => {
 
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const client = useApolloClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loginData, setLoginData] = useState({
-		email: "",
-		password: "",
-	});
+    email: "",
+    password: "",
+  });
 
   const [showPassword, setShowPassword] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
@@ -34,17 +34,16 @@ const Login = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e) => {
-		const { name, value } = e.target;
-		setLoginData((prevData) => ({
-			...prevData,
-			[name]: value,
-		}));
-	};
+    const { name, value } = e.target;
+    setLoginData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
-	
-	const [login, { loading }] = useMutation(LOGIN, {
+  const [login, { loading }] = useMutation(LOGIN, {
     refetchQueries: [{ query: GET_AUTHETICATED_USER }],
-	});
+  });
 
   const [requestPasswordReset, { loading: resetLoading }] = useMutation(REQUEST_PASSWORD_RESET);
   const [verifyOTPAndResetPassword, { loading: verifyLoading }] = useMutation(VERIFY_OTP_AND_RESET_PASSWORD, {
@@ -53,9 +52,8 @@ const Login = () => {
   const [resendVerificationOTP, { loading: resendLoading }] = useMutation(RESEND_VERIFICATION_OTP);
   const [verifyEmailOTP, { loading: verifyEmailLoading }] = useMutation(VERIFY_EMAIL_OTP);
 
-
   const handleSubmit = async (e) => {
-		e.preventDefault();
+    e.preventDefault();
     if (isSubmitting) return;
     if (!loginData.email || !loginData.password) {
       return toast.error("Please fill in all fields");
@@ -63,7 +61,6 @@ const Login = () => {
 
     setIsSubmitting(true);
     try {
-      console.log("Login Data: ", loginData);
       const response = await login({
         variables: {
           input: {
@@ -74,7 +71,6 @@ const Login = () => {
       });
 
       if (response?.data?.login) {
-        // If server returned a token, store it as a fallback
         const returnedToken = response.data.login.token;
         if (returnedToken) {
           try {
@@ -84,14 +80,12 @@ const Login = () => {
           }
         }
 
-        // Reset store so Apollo uses the new auth context
         try {
           await client.resetStore();
         } catch (resetErr) {
           console.warn('Error resetting Apollo store after login', resetErr);
         }
 
-        // Explicitly refetch authUser
         try {
           await client.refetchQueries({
             include: [GET_AUTHETICATED_USER]
@@ -103,16 +97,12 @@ const Login = () => {
         navigate("/dashboard");
         toast.success("Login successful!");
       } 
-      // Note: We don't need an 'else toast.error' here because GraphQL errors are thrown and caught below
     } catch (error) {
       console.log("error in handleSubmit login", error);
       
-      // Specific logic for unverified users needs to stay, 
-      // but we let the global handler show the error message.
       if (error.message.includes("Please verify your email before logging in")) {
         setVerificationEmail(loginData.email);
         setShowEmailVerification(true);
-        // Automatically send verification OTP
         try {
           await resendVerificationOTP({ 
             variables: { 
@@ -124,14 +114,12 @@ const Login = () => {
           startVerificationCountdown();
         } catch (otpError) {
            console.error("Error sending OTP automatically", otpError);
-           // No toast here, Global Handler catches it
         }
       } 
-      // Removed: 'else { toast.error(error.message) }' -> Global handler does this now.
     } finally {
       setIsSubmitting(false);
     }
-	};
+  };
 
   const handleForgotPasswordChange = (e) => {
     const { name, value } = e.target;
@@ -159,7 +147,6 @@ const Login = () => {
         setForgotPasswordStep(2);
       }
     } catch (error) {
-      // Removed toast.error -> Global Handler
       console.error("Forgot Password Request Error:", error);
     }
   };
@@ -190,7 +177,6 @@ const Login = () => {
         navigate("/dashboard");
       }
     } catch (error) {
-      // Removed toast.error -> Global Handler
       console.error("Reset Password Error:", error);
     }
   };
@@ -230,7 +216,6 @@ const Login = () => {
       toast.success("Verification OTP sent to your email!");
       startVerificationCountdown();
     } catch (error) {
-      // Removed toast.error -> Global Handler
       console.error("Resend OTP Error:", error);
     }
   };
@@ -254,7 +239,6 @@ const Login = () => {
       setShowEmailVerification(false);
       setVerificationOTP("");
     } catch (error) {
-      // Removed toast.error -> Global Handler
       console.error("Verify Email Error:", error);
     }
   };
@@ -266,36 +250,47 @@ const Login = () => {
     setVerificationCountdown(0);
   };
 
+  // Shared Input Styles matching Landing Page glass effect
+  const inputClasses = "bg-white/5 border border-white/10 text-white text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 placeholder-gray-500";
+  const otpInputClasses = "bg-white/5 border border-white/10 text-white rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3 sm:p-2.5 text-center text-xl sm:text-2xl tracking-widest placeholder-gray-600";
+
   return (
-    <section className="">
+    <section className="bg-[#080312] min-h-screen">
       <Link
         to="/"
-        className="fixed top-4 left-4 z-10 p-2 sm:p-3 text-neutral-200 hover:text-white 
+        className="fixed top-4 left-4 z-50 p-2 sm:p-3 text-neutral-200 hover:text-white 
         border border-neutral-600 rounded-xl hover:border-indigo-500 
         transition-all duration-300 bg-white/5 backdrop-blur-sm"
         title="Back to Home"
       >
         <FaHome size={16} className="sm:w-5 sm:h-5" />
       </Link>
-      <div className="flex flex-col items-center justify-center px-4 sm:px-6 py-4 sm:py-8 mx-auto min-h-screen lg:py-0">
-        <a
-          href=""
+      
+      {/* Background Gradient Effect */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.08),transparent_60%)] pointer-events-none"></div>
+
+      <div className="flex flex-col items-center justify-center px-4 sm:px-6 py-4 sm:py-8 mx-auto min-h-screen lg:py-0 relative z-10">
+        <Link
+          to="/"
           className="flex items-center mb-4 sm:mb-6 text-2xl sm:text-3xl font-thin tracking-wide text-neutral-200 hover:text-neutral-100 transition duration-200 ease-in-out bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent"
           style={{ letterSpacing: '0.05em', padding: '10px' }}
         >
           My MoneyPal
-        </a>
+        </Link>
+        
         <div className='relative mb-6 sm:mb-10 w-1/2 mx-auto hidden md:block'>
           <div className='absolute inset-x-20 top-0 bg-gradient-to-r from-transparent via-indigo-500 to-transparent h-[2px] w-3/4 blur-sm' />
           <div className='absolute inset-x-20 top-0 bg-gradient-to-r from-transparent via-indigo-500 to-transparent h-px w-3/4' />
           <div className='absolute inset-x-60 top-0 bg-gradient-to-r from-transparent via-sky-500 to-transparent h-[5px] w-1/4 blur-sm' />
           <div className='absolute inset-x-60 top-0 bg-gradient-to-r from-transparent via-sky-500 to-transparent h-px w-1/4' />
         </div> 
-        <div className="w-full max-w-sm sm:max-w-md form-Background rounded-lg shadow dark:border xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+
+        <div className="w-full max-w-sm sm:max-w-md bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl shadow-xl">
           <div className="p-4 sm:p-6 lg:p-8 space-y-4 md:space-y-6">
-            <h1 className="text-lg sm:text-xl md:text-2xl font-thin leading-tight tracking-tight text-neutral-100 dark:text-white text-center sm:text-left">
+            <h1 className="text-lg sm:text-xl md:text-2xl font-thin leading-tight tracking-tight text-white text-center sm:text-left">
               {showEmailVerification ? "Verify Your Email" : showForgotPassword ? "Reset Password" : "Sign in to your account"}
             </h1>
+            
             {showEmailVerification ? (
             <form className="space-y-4 md:space-y-6" onSubmit={handleVerifyEmail}>
               <div className="text-center mb-4 sm:mb-6">
@@ -306,7 +301,7 @@ const Login = () => {
               </div>
               
               <div>
-                <label htmlFor="verificationOTP" className="block mb-2 text-xs sm:text-sm font-medium text-neutral-100">
+                <label htmlFor="verificationOTP" className="block mb-2 text-xs sm:text-sm font-medium text-neutral-200">
                   Verification Code
                 </label>
                 <input
@@ -315,7 +310,7 @@ const Login = () => {
                   maxLength="6"
                   value={verificationOTP}
                   onChange={(e) => setVerificationOTP(e.target.value.replace(/\D/g, ''))}
-                  className="form-Background border bg-transparent text-neutral-200 border-gray-300 rounded-lg focus:text-neutral-100 focus:ring-primary-600 focus:border-primary-600 block w-full p-3 sm:p-2.5 text-center text-xl sm:text-2xl tracking-widest"
+                  className={otpInputClasses}
                   placeholder="000000"
                   required
                 />
@@ -359,7 +354,7 @@ const Login = () => {
               <div>
                 <label
                   htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-neutral-100 "
+                  className="block mb-2 text-sm font-medium text-neutral-200"
                 >
                   Email
                 </label>
@@ -368,7 +363,7 @@ const Login = () => {
                   name='email'
                   value={loginData.email}
                   onChange={handleChange}
-                  className="form-Background border bg-transparent text-neutral-200 border-gray-300  rounded-lg focus:text-neutral-100 focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  className={inputClasses}
                   placeholder="john@gmail.com"
                   required
                 />
@@ -376,7 +371,7 @@ const Login = () => {
               <div>
                 <label
                   htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-neutral-100  "
+                  className="block mb-2 text-sm font-medium text-neutral-200"
                 >
                   Password
                 </label>
@@ -388,7 +383,7 @@ const Login = () => {
                     value={loginData.password}
                     onChange={handleChange}
                     placeholder="••••••••"
-                    className="form-Background border border-gray-300 rounded-lg focus:text-neutral-100 focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 pr-10 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className={`${inputClasses} pr-10`}
                     required
                   />
                   <button
@@ -413,7 +408,7 @@ const Login = () => {
                 <button
                   type="button"
                   onClick={() => setShowForgotPassword(true)}
-                  className="text-sm text-primary-600 hover:underline  hover: text-purple-400 cursor-pointer"
+                  className="text-sm text-indigo-400 hover:underline hover:text-purple-400 cursor-pointer"
                 >
                   Forgot password?
                 </button>
@@ -425,11 +420,11 @@ const Login = () => {
               >
                 {(loading || isSubmitting) ? "Loading..." : "Login"}
               </button>
-              <p className="text-sm font-light text-neutral-100 ">
+              <p className="text-sm font-light text-neutral-300">
                 Don’t have an account yet? {" "}
                 <Link
                   to='/signup'
-                  className="font-medium text-primary-600 hover:underline  hover: text-purple-400 cursor-pointer"
+                  className="font-medium text-indigo-400 hover:underline hover:text-purple-400 cursor-pointer"
                 >
                   Sign up
                 </Link>
@@ -440,7 +435,7 @@ const Login = () => {
               {forgotPasswordStep === 1 ? (
                 <form onSubmit={handleRequestReset} className="space-y-4">
                   <div>
-                    <label className="block mb-2 text-sm font-medium text-neutral-100">
+                    <label className="block mb-2 text-sm font-medium text-neutral-200">
                       Email
                     </label>
                     <input
@@ -448,7 +443,7 @@ const Login = () => {
                       type="email"
                       value={forgotPasswordData.email}
                       onChange={handleForgotPasswordChange}
-                      className="form-Background border bg-transparent text-neutral-200 border-gray-300 rounded-lg focus:text-neutral-100 focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                      className={inputClasses}
                       placeholder="Enter your email"
                       required
                     />
@@ -464,7 +459,7 @@ const Login = () => {
               ) : (
                 <form onSubmit={handleResetPassword} className="space-y-4">
                   <div>
-                    <label className="block mb-2 text-xs sm:text-sm font-medium text-neutral-100">
+                    <label className="block mb-2 text-xs sm:text-sm font-medium text-neutral-200">
                       OTP Code
                     </label>
                     <input
@@ -473,13 +468,13 @@ const Login = () => {
                       maxLength="6"
                       value={forgotPasswordData.otp}
                       onChange={(e) => setForgotPasswordData(prev => ({...prev, otp: e.target.value.replace(/\D/g, '')}))}
-                      className="form-Background border bg-transparent text-neutral-200 border-gray-300 rounded-lg focus:text-neutral-100 focus:ring-primary-600 focus:border-primary-600 block w-full p-3 sm:p-2.5 text-center text-lg sm:text-xl tracking-widest"
+                      className={otpInputClasses}
                       placeholder="000000"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block mb-2 text-sm font-medium text-neutral-100">
+                    <label className="block mb-2 text-sm font-medium text-neutral-200">
                       New Password
                     </label>
                     <div className="relative">
@@ -488,9 +483,7 @@ const Login = () => {
                         type={showNewPassword ? 'text' : 'password'}
                         value={forgotPasswordData.newPassword}
                         onChange={handleForgotPasswordChange}
-                        // className="form-Background border border-gray-300 rounded-lg focus:text-neutral-100 focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 pr-10"
-                        className="form-Background border bg-transparent text-neutral-200 border-gray-300  rounded-lg focus:text-neutral-100 focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 pr-10 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-
+                        className={`${inputClasses} pr-10`}
                         placeholder="••••••••"
                         required
                       />
@@ -513,7 +506,7 @@ const Login = () => {
                     </div>
                   </div>
                   <div>
-                    <label className="block mb-2 text-sm font-medium text-neutral-100">
+                    <label className="block mb-2 text-sm font-medium text-neutral-200">
                       Confirm Password
                     </label>
                     <div className="relative">
@@ -522,10 +515,8 @@ const Login = () => {
                         type={showConfirmPassword ? 'text' : 'password'}
                         value={forgotPasswordData.confirmPassword}
                         onChange={handleForgotPasswordChange}
-                        // className="form-Background border border-gray-300 rounded-lg focus:text-neutral-100 focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 pr-10"
+                        className={`${inputClasses} pr-10`}
                         placeholder="••••••••"
-                        className="form-Background border bg-transparent text-neutral-200 border-gray-300  rounded-lg focus:text-neutral-100 focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 pr-10 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-
                         required
                       />
                       <button

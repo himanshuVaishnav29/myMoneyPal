@@ -17,7 +17,9 @@ input {
 
 :root{
     /* background-color: #01352c; */
-    background-image: linear-gradient(to right, #434343 0%, black 100%);
+    /* background-image: linear-gradient(to right, #434343 0%, black 100%); */
+    /* background-color: #080312; */
+      background: linear-gradient(135deg, #0a0e1a 0%, #1a1625 50%, #0f0a1f 100%);
     scrollbar-width: thin;
 
 }
